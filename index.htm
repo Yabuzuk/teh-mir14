@@ -16,6 +16,16 @@ body {
     display: flex;
     justify-content: center; /* Центрирование контента */
     padding: 20px 0;
+    box-sizing: border-box; /* Чтобы отступы и границы учитывались в общей ширине */
+}
+
+a {
+    text-decoration: none;
+    color: #0088cc; /* Цвет для нормального состояния */
+}
+
+a:hover {
+    color: #003b5c;
 }
 
 /* Контейнер для всей страницы */
@@ -23,6 +33,7 @@ body {
     width: 100%;
     max-width: 1200px; /* Ограничиваем максимальную ширину */
     margin: 0 auto;
+    box-sizing: border-box; /* Чтобы отступы и границы учитывались в общей ширине */
 }
 
 header {
@@ -36,6 +47,7 @@ header {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     width: 100%;
     margin-bottom: 20px;
+    box-sizing: border-box; /* Чтобы отступы и границы учитывались в общей ширине */
 }
 
 .header-left {
@@ -65,6 +77,7 @@ main {
     width: 100%;
     margin: 0 auto;
     flex-wrap: wrap; /* На мобильных устройствах элементы будут переходить на новую строку */
+    box-sizing: border-box; /* Чтобы отступы и границы учитывались в общей ширине */
 }
 
 .left-column, .right-column {
@@ -73,6 +86,7 @@ main {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
     width: 50%; /* Задали 48% ширины для каждой колонки */
+    box-sizing: border-box; /* Чтобы отступы и границы учитывались в общей ширине */
 }
 
 .right-column {
@@ -376,13 +390,14 @@ label {
     color: #333;
 }
 
-input, select, button {
+input, select, button, textarea {
     width: 100%;
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 16px;
     color: #333;
+    box-sizing: border-box; /* Учитываем паддинги и границы в общей ширине */
 }
 
 button {
@@ -403,15 +418,24 @@ button:hover {
     margin-bottom: 10px;
 }
 
-.form-group input[type="date"] {
-    width: calc(100% - 24px);
+/* Исправление ширины для textarea */
+.form-group textarea {
+    width: 100%;  /* Задание 100% ширины */
     display: inline-block;
+    box-sizing: border-box; /* Учитываем паддинги и границы в общей ширине */
+}
+
+/* Исправление для input[type="date"] */
+.form-group input[type="date"] {
+    width: 100%;  /* Задание 100% ширины */
+    display: inline-block;
+    box-sizing: border-box; /* Учитываем паддинги и границы в общей ширине */
 }
 
 .form-group select {
-    width: 100%;
+    width: 100%;  /* Задание 100% ширины */
+    box-sizing: border-box; /* Учитываем паддинги и границы в общей ширине */
 }
-
 
     </style>
 </head>
@@ -467,7 +491,8 @@ button:hover {
                     <tr><td>O3 - Прицепы < 10т</td><td>1423 руб.</td></tr>
                     <tr><td>O4 - Прицепы > 10т</td><td>1423 руб.</td></tr>
                     <tr><td>L - Мотоциклы</td><td>359 руб.</td></tr>
-                        </tbody>
+				<td>	Размер платы за проведение повторного технического осмотра, который определяется объемом выполненных работ, устанавливается оператором технического осмотра и не может превышать предельный размер платы за проведение технического осмотра.
+                   </td>     </tbody>
                     </table>
                 </section>
             </div>
