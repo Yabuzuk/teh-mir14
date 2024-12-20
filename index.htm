@@ -1,0 +1,759 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пункт техосмотра ООО «АиРТ»</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+    <style>
+/* Общие стили */
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color: #f0f0f5; /* Светлый фон */
+    margin: 0;
+    color: #000; /* Черный текст */
+    display: flex;
+    justify-content: center; /* Центрирование контента */
+    padding: 20px 0;
+}
+
+/* Контейнер для всей страницы */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    background-color: #0088cc; /* Цвет фона как у Telegram */
+    color: white;
+    padding: 20px;
+	border-radius: 8px;
+    display: flex;
+   justify-content: center; /* Центрируем содержимое */
+    align-items: center; /* Выравниваем по центру по вертикали */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: flex;
+    margin-bottom: 20px;
+}
+
+.header-left {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.header-right {
+    text-align: right;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.contact-item img {
+    margin-right: 8px;
+}
+
+/* Основной контент */
+main {
+    display: flex;
+    justify-content: space-between; /* Блоки по бокам */
+    gap: 40px;
+    width: 100%;
+    margin: 0 auto;
+    flex-wrap: wrap; /* На мобильных устройствах элементы будут переходить на новую строку */
+}
+
+.left-column, .right-column {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 50%; /* Задали 48% ширины для каждой колонки */
+}
+
+.right-column {
+    flex: 1;
+}
+
+h2 {
+    font-size: 1.6rem;
+    color: #0088cc; /* Цвет заголовков */
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    margin-bottom: 10px;
+}
+
+.prices table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.prices th, .prices td {
+    padding: 12px;
+    border: 1px solid #e1e1e1; /* Лёгкая тень для таблиц */
+    text-align: left;
+}
+
+.prices th {
+    background-color: #f0f0f5; /* Лёглый фон для заголовков таблицы */
+}
+
+.booking-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.booking-form input, .booking-form textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #e1e1e1;
+    font-size: 1rem;
+}
+
+.booking-form button {
+    background-color: #0088cc; /* Цвет кнопки */
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.3s;
+}
+
+.booking-form button:hover {
+    background-color: #057c99; /* Темнее при наведении */
+}
+
+.map-images-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.map {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.image-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.gallery-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+    text-align: center;
+    padding: 20px 0;
+    background-color: #f0f0f5;
+    color: #737373;
+    border-top: 1px solid #e1e1e1;
+    width: 100%;
+    margin: 20px auto;
+}
+
+/* FAQ стили */
+.faq {
+	margin-top: 20px;
+    background-color: #f0f0f5;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    color: white;
+}
+
+.faq h1 {
+    color: #000;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.faq-item {
+    margin-bottom: 15px;
+}
+
+.faq-question {
+    background-color: #0088cc; /* Цвет фона вопросов */
+    color: #ffffff;
+    padding: 15px;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    text-align: left;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 5px;
+}
+
+.faq-question:hover {
+    background-color: #046b80;
+}
+
+.faq-answer {
+    background-color: #ffffff;
+    padding: 15px;
+    margin-top: 10px;
+    border-radius: 8px;
+    display: none;
+    font-size: 1rem;
+    color: #000; /* Черный цвет для ответов */
+}
+
+.faq-answer p {
+    margin: 0;
+}
+
+.faq-answer ul {
+    list-style-type: none;
+    padding-left: 15px;
+}
+
+.faq-answer ul li {
+    margin-bottom: 8px;
+}
+
+.faq-answer a {
+    color: #57b7f7; /* Акцент на ссылки */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.faq-answer a:hover {
+    color: #fff;
+}
+
+.faq-item.active .faq-answer {
+    display: block;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Мобильная адаптивность */
+@media (max-width: 768px) {
+    main {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .left-column, .right-column {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .map-images-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .map {
+        width: 100%;
+        height: 250px;
+    }
+
+    .image-gallery {
+        width: 100%;
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .gallery-image {
+        width: 45%;
+    }
+}
+
+/* Стили для секции "Сведения об операторе" */
+.operator-info {
+    background-color: #f0f0f5;
+    padding: 30px;
+    margin-top: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.operator-info h2 {
+    color: #0088cc;
+    font-size: 1.6rem;
+}
+
+.operator-info p {
+    color: #000; /* Черный текст для секции "Сведения об операторе" */
+}
+/* Мобильная адаптивность */
+@media (max-width: 768px) {
+    body {
+        display: 100%;
+        flex-direction: column;
+        justify-content: center; /* Центрируем элементы по вертикали */
+        align-items: center; /* Центрируем элементы по горизонтали */
+        padding: 20px;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 100%; /* Убираем максимальную ширину */
+		justify-content: center;
+        margin: 0 auto;
+    }
+
+    header {
+        display: 100%;
+        flex-direction: column; /* Заголовок и контент выравниваются по колонкам */
+        align-items: center; /* Выравнивание по центру */
+        padding: 20px;
+        margin-top: 10px; /* Отступ сверху */
+    }
+
+    main {
+        display: flex;
+        flex-direction: column; /* Элементы внутри main идут в столбик */
+		justify-content: center;
+        align-items: center; /* Центрирование всех блоков внутри main */
+        gap: 20px; /* Расстояние между блоками */
+        width: 100%;
+        padding: 0;
+    }
+
+    .left-column, .right-column {
+        width: 100%; /* Колонки занимают всю ширину экрана */
+		justify-content: center;
+        padding: 15px;
+        margin: 0;
+    }
+
+    .map-images-container {
+        flex-direction: column; /* Изменение порядка на мобильных */
+        align-items: center;
+        width: 100%;
+    }
+
+    .map {
+        width: 100%;
+        height: 250px; /* Ограничиваем высоту карты */
+    }
+
+    .image-gallery {
+        display: flex;
+        flex-direction: row; /* Изменение направления изображений */
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .gallery-image {
+        width: 45%; /* Изображения занимают 45% от ширины */
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .faq {
+        width: 100%; /* Выравнивание всего блока FAQ по ширине */
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .operator-info {
+        width: 100%; /* Выравнивание по ширине */
+        padding: 20px;
+        margin-top: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+   .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        button {
+            background-color: #0088cc;
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #005fa3;
+        }
+
+        .time-slot {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .form-group input[type="date"] {
+            width: calc(100% - 24px);
+            display: inline-block;
+        }
+
+        .form-group select {
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                Пункт техосмотра ООО «АиРТ»
+            </div>
+            
+        </header>
+
+        <main>
+		
+		
+            <!-- Левая колонка -->
+			
+			
+			
+			
+            <div class="left-column">
+                <section class="schedule">
+				
+                    <h1>График работы</h1>
+                    <ul>
+                        <li>Пн-Пт: 9:00 - 20:00</li>
+                        <li>Сб: 9:00 - 18:00</li>
+                        <li>Вс: Выходной</li>
+                    </ul>
+                </section>
+				
+				
+
+                <section class="prices">
+                    <h1>Цена техосмотра</h1>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Категория ТС</th>
+                                <th>Стоимость</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           <tr><td>M1 - Легковые</td><td>1022 руб.</td></tr>
+                    <tr><td>M2 - Автобусы < 5т</td><td>1749 руб.</td></tr>
+                    <tr><td>M3 - Автобусы > 5т</td><td>2113 руб.</td></tr>
+                    <tr><td>N1 - Грузовые < 3.5т</td><td>1118 руб.</td></tr>
+                    <tr><td>N2 - Грузовые < 12т</td><td>2038 руб.</td></tr>
+                    <tr><td>N3 - Грузовые > 12т</td><td>2200 руб.</td></tr>
+                    <tr><td>O1 - Прицепы < 0.75т</td><td>843 руб.</td></tr>
+                    <tr><td>O2 - Прицепы < 3.5т</td><td>843 руб.</td></tr>
+                    <tr><td>O3 - Прицепы < 10т</td><td>1423 руб.</td></tr>
+                    <tr><td>O4 - Прицепы > 10т</td><td>1423 руб.</td></tr>
+                    <tr><td>L - Мотоциклы</td><td>359 руб.</td></tr>
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+
+            <!-- Правая колонка -->
+			
+            <div class="right-column">
+			  <div class="info-block">
+            <div class="contact-item">
+                <img src="https://img.icons8.com/ios-filled/20/0088cc/marker.png" alt="Адрес">
+                <span>Мирный, ш Чернышевское, д 5Г</span>
+            </div>
+            <div class="contact-item">
+                <img src="https://img.icons8.com/ios-filled/20/0088cc/phone.png" alt="Телефон">
+                <a href="tel:+79142520328">+7 (914) 252 03 28</a>
+                &nbsp;&nbsp;
+                <img src="https://img.icons8.com/ios-filled/20/0088cc/mail.png" alt="Email">
+                <a href="mailto:tehosmotr.mir1@yandex.ru">tehosmotr.mir1@yandex.ru</a>
+            </div>
+        </div>
+                <section class="map-images-container">
+                    <div class="map" id="map"></div>
+                    <div class="image-gallery">
+                        <img src="image1.jpg" alt="Фото 1" class="gallery-image">
+                        <img src="image2.jpg" alt="Фото 2" class="gallery-image">
+                    </div>
+                </section>
+
+                <section class="booking-form">
+                    <h1>Онлайн запись на техосмотр</h1>
+                     <form id="bookingForm">
+            <!-- Имя -->
+            <div class="form-group">
+                <label for="name">Имя</label>
+                <input type="text" id="name" name="name" required placeholder="Введите ваше имя">
+            </div>
+
+            <!-- Номер телефона -->
+            <div class="form-group">
+                <label for="phone">Номер телефона</label>
+                <input type="tel" id="phone" name="phone" required placeholder="Введите номер телефона">
+            </div>
+
+            <!-- Вид транспортного средства -->
+            <div class="form-group">
+                <label for="vehicleType">Вид транспортного средства</label>
+                <select id="vehicleType" name="vehicleType" required>
+                    <option value="">Выберите вид ТС</option>
+                    <option value="car">Легковой автомобиль</option>
+                    <option value="bus">Автобус</option>
+                    <option value="truck">Грузовой автомобиль</option>
+                    <option value="motorcycle">Мотоцикл</option>
+                    <option value="trailer">Прицеп</option>
+                </select>
+            </div>
+
+            <!-- Дата -->
+            <div class="form-group">
+                <label for="date">Дата</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+
+            <!-- Время -->
+            <div class="form-group">
+                <label for="time">Время</label>
+                <select id="time" name="time" required>
+                    <option value="">Выберите время</option>
+                    <option value="09:30">09:30</option>
+                    <option value="10:00">10:00</option>
+                    <option value="10:30">10:30</option>
+                    <option value="11:00">11:00</option>
+                    <option value="11:30">11:30</option>
+                    <option value="12:00">12:00</option>
+                    <option value="12:30">12:30</option>
+                    <option value="13:00">13:00</option>
+                    <option value="13:30">13:30</option>
+                    <option value="14:00">14:00</option>
+                    <option value="14:30">14:30</option>
+                    <option value="15:00">15:00</option>
+                    <option value="15:30">15:30</option>
+                    <option value="16:00">16:00</option>
+                    <option value="16:30">16:30</option>
+					<option value="16:00">17:00</option>
+                    <option value="16:30">17:30</option>
+                </select>
+            </div>
+
+            <!-- Подробности -->
+            <div class="form-group">
+                <label for="details">Подробности</label>
+                <textarea id="details" name="details" rows="4" placeholder="Напишите дополнительные пожелания или комментарии"></textarea>
+            </div>
+
+            <!-- Кнопка отправки -->
+            <button type="submit">Записаться</button>
+        </form>
+                </section>
+            </div>
+        </main>
+ <div>
+ 
+ 
+    <!-- FAQ Блок -->
+       <section class="faq">
+    <h1>Часто задаваемые вопросы</h1>
+
+    <div class="faq-item">
+        <button class="faq-question">Периодичность технического осмотра</button>
+        <div class="faq-answer">
+             <p>Периодичность проведения технического осмотра с 01.04.2020 года
+
+            <br>Легковые и грузовые автомобили с разрешенной максимальной массой до 3,5 тонн, прицепы и полуприцепы с разрешенной максимальной массой до 3,5 тонн, а также мототранспортные средства в первые 4 года, включая год выпуска в обращение, не подлежат проверке. В дальнейшем осмотр проводится со следующей периодичностью:
+
+            <br>— каждые 24 месяца, если с года их выпуска прошло не более 10 лет, включая год выпуска;
+
+            <br>— в дальнейшем — каждые 12 месяцев.
+
+            <br>I. Транспортным средствам категорий M1, N1, O1-O4, L:
+            <br>1. В первые 4 года, включая год выпуска – техосмотр не требуется;
+           <br> 2. Возрастом от 5 до 10 лет, включая год выпуска – диагностическая карта выдается на 2 года;
+            <br>3. Возрастом старше 10 лет, включая год выпуска – диагностическая карта выдается на 1 год.
+
+           <br> Для легковых машин, использующихся в качестве такси, и грузовых машин, оборудованных для перевозки пассажиров, с числом мест для сидения более 8 (за исключением водительского) предусмотрены более жесткие нормы.
+
+           <br> II. Транспортным средствам категорий М1 (такси), М2, М3, N2, N3, учебные ТС, ТС с устройствами для подачи спец. световых и звуковых сигналов:
+           <br> 1. В первый год (в год выпуска ТС) — техосмотр не требуется;
+           <br> 2. Возрастом до 5 лет, включая год выпуска – диагностическая карта выдается на 1 год;
+           <br> 3. Возрастом старше 5 лет, включая год выпуска – диагностическая карта выдается на 6 месяцев;
+
+           <br> III. Транспортным средствам для перевозки опасных грузов:
+           <br> 1. В первый год (в год выпуска ТС) – техосмотр не требуется;
+           <br> 2. Далее – диагностическая карта выдается на 6 месяцев.
+
+           <br> Сроки исчисляются с даты первого осмотра. Первый технический осмотр проводится до заключения договора ОСАГО. Для последующих осмотров владелец машины должен представить ее до истечения срока действия диагностической карты.</p>
+        
+ </div>
+    </div>
+
+    <div class="faq-item">
+        <button class="faq-question">Какие документы необходимы?</button>
+        <div class="faq-answer">
+              <p>Для техосмотра владелец машины должен представить автомобиль и следующие документы:
+           <br> — документ, удостоверяющий личность, а в том случае, когда техосмотр проходит представитель, — также доверенность в простой письменной форме;
+           <br> — свидетельство о регистрации транспортного средства (СТС) или паспорт транспортного средства (ПТС).
+
+            <br>Марка, модель, модификация (тип), цвет, год выпуска, идентификационный номер транспортного средства (VIN), идентификационный (порядковый производственный) номер шасси (рамы), кузова (коляски, прицепа), двигателя, государственный регистрационный знак должны соответствовать данным, указанным в регистрационных документах.
+
+          <br>  В случае соответствия транспортного средства данным, указанным в представленных документах, и после его идентификации это транспортное средство допускается к проведению технического диагностирования.</p>
+         </div>
+    </div>
+
+    <div class="faq-item">
+        <button class="faq-question">Законодательство</button>
+        <div class="faq-answer">
+            <ul>
+                <li><a href="https://base.garant.ru/12187349/" target="_blank">Федеральный закон от 01.07.2011 N 170-ФЗ «О техническом осмотре»</a></li>
+                <li><a href="https://www.garant.ru/products/ipo/prime/doc/74571754/" target="_blank">Постановление Правительства РФ от 15 сентября 2020 г. № 1434</a></li>
+                <li><a href="https://base.garant.ru/70103612/" target="_blank">Постановление Правительства РФ от 05.12.11</a></li>
+                <li><a href="http://docs.cntd.ru/document/902320557" target="_blank">Технический регламент ТР ТС 018/2011 «О безопасности колесных транспортных средств»</a></li>
+				<li><a href="https://base.garant.ru/12192261/53f89421bbdaf741eb2d1ecc4ddb4c33/" target="_blank">Форма типового договора о проведении технического осмотра</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+        <!-- Сведения об операторе -->
+        <section class="operator-info">
+            <h1>Сведения об операторе техосмотра</h1>
+            <p><strong>№ в реестре:</strong> 10749</p>
+            <p><strong>Статус:</strong> Аттестат действителен</p>
+            <p><strong>Наименование:</strong> Общество с ограниченной ответственностью Александр и Роман Телевицкий</p>
+            <p><strong>Директор:</strong> Телевицкий Роман Евгеньевич</p>
+            <p><strong>ИНН:</strong> 1433028015</p>
+            <p><strong>ОГРН / ОГРНИП:</strong> 1121433000864</p>
+            <p><strong>Юридический адрес:</strong> 678175, Саха /Якутия/ Респ, Мирнинский у, г Мирный, ул Советская, д. 12, оф. 16</p>
+        </section>
+
+    
+
+        <footer>
+            <p>&copy; 2024 Пункт техосмотра ООО «АиРТ». Все права защищены.</p>
+        </footer>
+    </div>
+
+    <script>
+        ymaps.ready(init);
+
+        function init() {
+            var map = new ymaps.Map("map", {
+                center: [62.552159, 113.982474], // Координаты центра карты (Мирный)
+                zoom: 18
+            });
+
+            var placemark = new ymaps.Placemark([62.552159, 113.982474], {
+                balloonContent: '<strong>Пункт техосмотра ООО «АиРТ»</strong><br>Респ Саха /Якутия/, г Мирный, ш Чернышевское, д 5Г'
+            }, {
+                preset: 'islands#blueDotIcon'
+            });
+
+            map.geoObjects.add(placemark);
+        }
+
+        // Скрипт для FAQ
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                item.classList.toggle('active');
+            });
+        });
+		
+		
+        // Получите токен вашего бота и ID чата (если не используете чат-бот, замените ID на свой)
+        const botToken = 'YOUR_BOT_TOKEN'; // Замените на ваш токен
+        const chatId = '@buzuchok'; // Замените на свой Telegram chatId или @username
+
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Сбор данных формы
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const vehicleType = document.getElementById('vehicleType').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const details = document.getElementById('details').value;
+
+            // Формирование сообщения для Telegram
+            const message = `
+                Новый запрос на техосмотр:
+                Имя: ${name}
+                Телефон: ${phone}
+                Вид ТС: ${vehicleType}
+                Дата: ${date}
+                Время: ${time}
+                Подробности: ${details}
+            `;
+
+            // Отправка сообщения через Telegram API
+            const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+
+            // Отправляем запрос
+            fetch(telegramUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        alert('Ваши данные успешно отправлены!');
+                        document.getElementById('bookingForm').reset(); // Сброс формы
+                    } else {
+                        alert('Произошла ошибка при отправке данных.');
+                    }
+                })
+                .catch(error => {
+                    alert('Ошибка при отправке данных в Telegram.');
+                    console.error(error);
+                });
+        });
+   
+    </script>
+</body>
+</html>
