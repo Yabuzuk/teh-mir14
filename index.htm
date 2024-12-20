@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -21,7 +21,7 @@ body {
 /* Контейнер для всей страницы */
 .container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1200px; /* Ограничиваем максимальную ширину */
     margin: 0 auto;
 }
 
@@ -29,12 +29,12 @@ header {
     background-color: #0088cc; /* Цвет фона как у Telegram */
     color: white;
     padding: 20px;
-	border-radius: 8px;
+    border-radius: 8px;
     display: flex;
-   justify-content: center; /* Центрируем содержимое */
+    justify-content: center; /* Центрируем содержимое */
     align-items: center; /* Выравниваем по центру по вертикали */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: flex;
+    width: 100%;
     margin-bottom: 20px;
 }
 
@@ -178,12 +178,12 @@ footer {
 
 /* FAQ стили */
 .faq {
-	margin-top: 20px;
+    margin-top: 20px;
     background-color: #f0f0f5;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     padding: 30px;
-    color: white;
+    color: #333; /* Черный цвет для текста */
 }
 
 .faq h1 {
@@ -264,58 +264,8 @@ footer {
 
 /* Мобильная адаптивность */
 @media (max-width: 768px) {
-    main {
-        flex-direction: column;
-        padding: 20px;
-    }
-
-    .left-column, .right-column {
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-    .map-images-container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .map {
-        width: 100%;
-        height: 250px;
-    }
-
-    .image-gallery {
-        width: 100%;
-        flex-direction: row;
-        gap: 10px;
-    }
-
-    .gallery-image {
-        width: 45%;
-    }
-}
-
-/* Стили для секции "Сведения об операторе" */
-.operator-info {
-    background-color: #f0f0f5;
-    padding: 30px;
-    margin-top: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.operator-info h2 {
-    color: #0088cc;
-    font-size: 1.6rem;
-}
-
-.operator-info p {
-    color: #000; /* Черный текст для секции "Сведения об операторе" */
-}
-/* Мобильная адаптивность */
-@media (max-width: 768px) {
     body {
-        display: 100%;
+        display: flex;
         flex-direction: column;
         justify-content: center; /* Центрируем элементы по вертикали */
         align-items: center; /* Центрируем элементы по горизонтали */
@@ -325,12 +275,11 @@ footer {
     .container {
         width: 100%;
         max-width: 100%; /* Убираем максимальную ширину */
-		justify-content: center;
         margin: 0 auto;
     }
 
     header {
-        display: 100%;
+        display: flex;
         flex-direction: column; /* Заголовок и контент выравниваются по колонкам */
         align-items: center; /* Выравнивание по центру */
         padding: 20px;
@@ -340,7 +289,7 @@ footer {
     main {
         display: flex;
         flex-direction: column; /* Элементы внутри main идут в столбик */
-		justify-content: center;
+        justify-content: center;
         align-items: center; /* Центрирование всех блоков внутри main */
         gap: 20px; /* Расстояние между блоками */
         width: 100%;
@@ -349,7 +298,6 @@ footer {
 
     .left-column, .right-column {
         width: 100%; /* Колонки занимают всю ширину экрана */
-		justify-content: center;
         padding: 15px;
         margin: 0;
     }
@@ -396,52 +344,73 @@ footer {
         align-items: center;
     }
 }
-   .form-group {
-            margin-bottom: 15px;
-        }
 
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #333;
-        }
+/* Стили для секции "Сведения об операторе" */
+.operator-info {
+    background-color: #f0f0f5;
+    padding: 30px;
+    margin-top: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
 
-        input, select, button {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            color: #333;
-        }
+.operator-info h2 {
+    color: #0088cc;
+    font-size: 1.6rem;
+}
 
-        button {
-            background-color: #0088cc;
-            color: white;
-            cursor: pointer;
-            border: none;
-            transition: background-color 0.3s;
-        }
+.operator-info p {
+    color: #000; /* Черный текст для секции "Сведения об операторе" */
+}
 
-        button:hover {
-            background-color: #005fa3;
-        }
+/* Общие стили для форм */
+.form-group {
+    margin-bottom: 15px;
+}
 
-        .time-slot {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+}
 
-        .form-group input[type="date"] {
-            width: calc(100% - 24px);
-            display: inline-block;
-        }
+input, select, button {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #333;
+}
 
-        .form-group select {
-            width: 100%;
-        }
+button {
+    background-color: #0088cc;
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #005fa3;
+}
+
+.time-slot {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.form-group input[type="date"] {
+    width: calc(100% - 24px);
+    display: inline-block;
+}
+
+.form-group select {
+    width: 100%;
+}
+
 
     </style>
 </head>
