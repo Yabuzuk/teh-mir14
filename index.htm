@@ -276,108 +276,6 @@ footer {
     }
 }
 
-/* Мобильная адаптивность */
-@media (max-width: 768px) {
-    body {
-        display: flex;
-        flex-direction: column;
-        justify-content: center; /* Центрируем элементы по вертикали */
-        align-items: center; /* Центрируем элементы по горизонтали */
-        padding: 20px;
-    }
-
-    .container {
-        width: 100%;
-        max-width: 100%; /* Убираем максимальную ширину */
-        margin: 0 auto;
-    }
-
-    header {
-        display: flex;
-        flex-direction: column; /* Заголовок и контент выравниваются по колонкам */
-        align-items: center; /* Выравнивание по центру */
-        padding: 20px;
-		width: 98%;
-        margin-top: 10px; /* Отступ сверху */
-    }
-
-    main {
-        display: flex;
-        flex-direction: column; /* Элементы внутри main идут в столбик */
-        justify-content: center;
-        align-items: center; /* Центрирование всех блоков внутри main */
-        gap: 20px; /* Расстояние между блоками */
-        width: 100%;
-        padding: 0;
-    }
-
-    .left-column, .right-column {
-        width: 100%; /* Колонки занимают всю ширину экрана */
-        padding: 15px;
-        margin: 0;
-    }
-
-    .map-images-container {
-        flex-direction: column; /* Изменение порядка на мобильных */
-        align-items: center;
-        width: 100%;
-    }
-
-    .map {
-        width: 100%;
-        height: 250px; /* Ограничиваем высоту карты */
-    }
-
-    .image-gallery {
-        display: flex;
-        flex-direction: row; /* Изменение направления изображений */
-        justify-content: center;
-        gap: 10px;
-        width: 100%;
-    }
-
-    .gallery-image {
-        width: 45%; /* Изображения занимают 45% от ширины */
-        height: auto;
-        border-radius: 8px;
-    }
-
-    .faq {
-        width: 100%; /* Выравнивание всего блока FAQ по ширине */
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .operator-info {
-        width: 100%; /* Выравнивание по ширине */
-        padding: 20px;
-        margin-top: 30px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-}
-
-/* Стили для секции "Сведения об операторе" */
-.operator-info {
-    background-color: #f0f0f5;
-    padding: 30px;
-    margin-top: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.operator-info h2 {
-    color: #0088cc;
-    font-size: 1.6rem;
-}
-
-.operator-info p {
-    color: #000; /* Черный текст для секции "Сведения об операторе" */
-}
-
 /* Общие стили для форм */
 .form-group {
     margin-bottom: 15px;
@@ -436,6 +334,203 @@ button:hover {
     width: 100%;  /* Задание 100% ширины */
     box-sizing: border-box; /* Учитываем паддинги и границы в общей ширине */
 }
+
+/* Мобильная адаптивность */
+@media (max-width: 768px) {
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 10px;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 15px; /* Убираем ограничение по ширине */
+        box-sizing: border-box;
+    }
+
+    header {
+        display: flex;
+        flex-direction: column; /* Заголовок и контент выравниваются по колонкам */
+        align-items: center; /* Выравнивание по центру */
+        width: 100%;
+        padding: 20px;
+        margin-top: 10px; /* Отступ сверху */
+    }
+
+    main {
+        display: flex;
+        flex-direction: column; /* Элементы внутри main идут в столбик */
+        justify-content: center;
+        align-items: stretch; /* Центрируем все блоки внутри main */
+        gap: 20px;
+        width: 100%;
+    }
+
+    .left-column, .right-column {
+        width: 100%; /* Колонки занимают всю ширину экрана */
+        padding: 15px;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    /* Для изображений в галерее */
+    .map-images-container {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .map {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .image-gallery {
+        display: flex;
+        flex-direction: column; /* Столбик для изображений */
+        justify-content: center;
+        gap: 15px;
+        width: 100%;
+    }
+
+    .gallery-image {
+        width: 100%; /* Изображения занимают всю ширину */
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .faq {
+        width: 100%; /* Выравнивание всего блока FAQ по ширине */
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-sizing: border-box;
+    }
+
+    .operator-info {
+        width: 100%; /* Выравнивание по ширине */
+        padding: 20px;
+        margin-top: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-sizing: border-box;
+    }
+
+    /* Форма */
+    .booking-form {
+        width: 100%; /* Занимаем всю ширину экрана */
+        padding: 0 15px; /* Отступы по бокам */
+        box-sizing: border-box;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+        width: 100%; /* Убираем ограничение по ширине */
+        box-sizing: border-box;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    input, select, button, textarea {
+        width: 100%; /* Задание 100% ширины для всех элементов */
+        padding: 12px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+        color: #333;
+        box-sizing: border-box;
+    }
+
+    button {
+        background-color: #0088cc;
+        color: white;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #005fa3;
+    }
+
+    .time-slot {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    /* Исправление для input[type="date"] */
+    .form-group input[type="date"] {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-group select {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* FAQ стили */
+    .faq-item {
+        margin-bottom: 15px;
+        width: 100%; /* Делаем все элементы одинаковой ширины */
+    }
+
+    .faq-question {
+        background-color: #0088cc;
+        color: #ffffff;
+        padding: 15px;
+        width: 100%;
+        border: none;
+        border-radius: 8px;
+        text-align: left;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .faq-answer {
+        background-color: #ffffff;
+        padding: 15px;
+        margin-top: 10px;
+        border-radius: 8px;
+        display: none;
+        font-size: 1rem;
+        color: #000;
+    }
+
+    .faq-item.active .faq-answer {
+        display: block;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+}
+
+
 
     </style>
 </head>
