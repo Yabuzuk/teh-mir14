@@ -19,6 +19,50 @@ body {
     box-sizing: border-box; /* Чтобы отступы и границы учитывались в общей ширине */
 }
 
+      /* Убедитесь, что блок с формой не вылезает за пределы родителя */
+    .booking-form {
+        width: 100%; /* родительский контейнер растягивается на всю ширину */
+        box-sizing: border-box; /* Включаем расчет с учетом отступов */
+    }
+
+    /* Анимация мигания текста между черным и голубым */
+    .blinking-button {
+        animation: blink-color 1s infinite alternate;
+        cursor: pointer; /* Курсор как на ссылке */
+        display: block; /* Заголовок ведет себя как блок */
+        width: 100%; /* Растягиваем кнопку на всю ширину */
+        padding: 15px; /* Отступы внутри кнопки */
+        background-color: #0088cc; /* Цвет фона */
+        color: white; /* Белый цвет текста */
+        border-radius: 8px; /* Скругленные углы */
+        text-align: center; /* Центрирование текста */
+        font-size: 18px; /* Размер шрифта */
+        font-weight: bold; /* Жирный шрифт */
+        text-decoration: none; /* Убираем подчеркивание */
+        transition: all 0.3s ease; /* Плавный переход при наведении */
+        box-sizing: border-box; /* Чтобы padding не увеличивал ширину */
+    }
+
+    @keyframes blink-color {
+        0% {
+            color: black; /* Черный цвет в начале */
+        }
+        50% {
+            color: #ffffff; /* Голубой цвет */
+        }
+        100% {
+            color: black; /* Черный цвет в конце */
+        }
+    }
+
+    /* Стили для ховера (наведении) */
+    .blinking-button:hover {
+        background-color: #57b7f7; /* Цвет фона при наведении */
+        color: black; /* Цвет текста при наведении */
+        
+        animation: none; /* Останавливаем анимацию мигания при наведении */
+    }
+
 a {
     text-decoration: none;
     color: #0088cc; /* Цвет для нормального состояния */
@@ -586,8 +630,9 @@ button:hover {
                     <tr><td>O3 - Прицепы < 10т</td><td>1423 руб.</td></tr>
                     <tr><td>O4 - Прицепы > 10т</td><td>1423 руб.</td></tr>
                     <tr><td>L - Мотоциклы</td><td>359 руб.</td></tr>
-				<td>	Размер платы за проведение повторного технического осмотра, который определяется объемом выполненных работ, устанавливается оператором технического осмотра и не может превышать предельный размер платы за проведение технического осмотра.
-                   </td>     </tbody>
+				 <td colspan="2">
+                    Размер платы за проведение повторного технического осмотра, который определяется объемом выполненных работ, устанавливается оператором технического осмотра и не может превышать предельный размер платы за проведение технического осмотра.
+                </td>   </tbody>
                     </table>
                 </section>
             </div>
@@ -599,9 +644,9 @@ button:hover {
 			  	<h3>Наш адрес</h3>
             <div class="contact-item">
 		
-                <img src="https://img.icons8.com/ios-filled/20/0088cc/marker.png" alt="Адрес">
-                <span>Мирный, ш Чернышевское, д 5Г</span>
-            </div>
+               <img src="https://img.icons8.com/ios-filled/20/0088cc/marker.png" alt="Адрес">
+<span><strong>Мирный, ш. Чернышевское, д 5Г</strong></span>
+</div>
 			<h3>Контакты</h3>
             <div class="contact-item">
                 <img src="https://img.icons8.com/ios-filled/20/0088cc/phone.png" alt="Телефон">
@@ -620,9 +665,11 @@ button:hover {
                     </div>
                 </section>
 
-                <section class="booking-form">
-                    <h1>Онлайн запись на техосмотр</h1>
-                     <form id="bookingForm">
+            <section class="booking-form">
+    <h1 id="formToggle" class="blinking-button">Онлайн запись на техосмотр</h1> <!-- Мигающая кнопка -->
+
+    <div id="formContainer" class="form-container" style="display: none;"> <!-- Изначально скрыто -->
+        <form id="bookingForm">
             <!-- Имя -->
             <div class="form-group">
                 <label for="name">Имя</label>
@@ -674,7 +721,7 @@ button:hover {
                     <option value="15:30">15:30</option>
                     <option value="16:00">16:00</option>
                     <option value="16:30">16:30</option>
-					<option value="16:00">17:00</option>
+                    <option value="16:00">17:00</option>
                     <option value="16:30">17:30</option>
                 </select>
             </div>
@@ -688,13 +735,18 @@ button:hover {
             <!-- Кнопка отправки -->
             <button type="submit">Записаться</button>
         </form>
-                </section>
-            </div>
+    </div>
+	
+</section>
+
+
+
         </main>
  <div>
  
  
     <!-- FAQ Блок -->
+
        <section class="faq">
     <h1>Часто задаваемые вопросы</h1>
 
@@ -756,8 +808,10 @@ button:hover {
         </div>
     </div>
 </section>
+
         <!-- Сведения об операторе -->
         <section class="operator-info">
+		<div>
             <h1>Сведения об операторе техосмотра</h1>
             <p><strong>№ в реестре:</strong> 10749</p>
             <p><strong>Статус:</strong> Аттестат действителен</p>
@@ -766,9 +820,10 @@ button:hover {
             <p><strong>ИНН:</strong> 1433028015</p>
             <p><strong>ОГРН / ОГРНИП:</strong> 1121433000864</p>
             <p><strong>Юридический адрес:</strong> 678175, Саха /Якутия/ Респ, Мирнинский у, г Мирный, ул Советская, д. 12, оф. 16</p>
-        </section>
+</div>
+           
+	   </section>
 
-    
 
         <footer>
             <p>&copy; 2024 Пункт техосмотра ООО «АиРТ». Все права защищены.</p>
@@ -849,6 +904,23 @@ button:hover {
                 });
         });
    
+   
+   // Получаем элементы
+    const formContainer = document.getElementById('formContainer');
+    const formToggle = document.getElementById('formToggle');
+
+    // Добавляем обработчик клика на заголовок
+    formToggle.addEventListener('click', function() {
+        // Убираем анимацию мигания
+        formToggle.classList.remove('blinking-text');
+        
+        // Переключаем видимость формы
+        if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+            formContainer.style.display = 'block'; // Разворачиваем форму
+        } else {
+            formContainer.style.display = 'none'; // Сворачиваем форму
+        }
+    });
     </script>
 </body>
 </html>
