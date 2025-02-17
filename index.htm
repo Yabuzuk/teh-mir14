@@ -819,35 +819,34 @@ button:hover {
         </footer>
     </div>
 
-    <script>
-        ymaps.ready(init);
+   <script>
+    ymaps.ready(init);
 
-        function init() {
-            var map = new ymaps.Map("map", {
-                center: [62.552159, 113.982474], // Координаты центра карты (Мирный)
-                zoom: 18
-            });
-
-            var placemark = new ymaps.Placemark([62.552159, 113.982474], {
-                balloonContent: '<strong>Пункт техосмотра ООО «АиРТ»</strong><br>Респ Саха /Якутия/, г Мирный, ш Чернышевское, д 5Г'
-            }, {
-                preset: 'islands#blueDotIcon'
-            });
-
-            map.geoObjects.add(placemark);
-        }
-
-        // Скрипт для FAQ
-        const faqItems = document.querySelectorAll('.faq-item');
-        faqItems.forEach(item => {
-            const question = item.querySelector('.faq-question');
-            question.addEventListener('click', () => {
-                item.classList.toggle('active');
-            });
+    function init() {
+        var map = new ymaps.Map("map", {
+            center: [62.552159, 113.982474], // Координаты центра карты (Мирный)
+            zoom: 18
         });
 
+        var placemark = new ymaps.Placemark([62.552159, 113.982474], {
+            balloonContent: '<strong>Пункт техосмотра ООО «АиРТ»</strong><br>Респ Саха /Якутия/, г Мирный, ш Чернышевское, д 5Г'
+        }, {
+            preset: 'islands#blueDotIcon'
+        });
 
-	// JavaScript для работы с формой бронирования
+        map.geoObjects.add(placemark);
+    }
+
+    // Скрипт для FAQ
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        question.addEventListener('click', () => {
+            item.classList.toggle('active');
+        });
+    });
+
+    // JavaScript для работы с формой бронирования
     const API_URL = 'https://teh-mir14.onrender.com'; // URL вашего сервера
 
     // Получаем элементы
@@ -856,17 +855,30 @@ button:hover {
     const dateInput = document.getElementById('date');
     const timeSelect = document.getElementById('time');
     const bookingForm = document.getElementById('bookingForm');
+    const vehicleTypeSelect = document.getElementById('vehicleType');
 
-    // Функция для обновления доступных временных слотов
+    // Функция для обновления доступных временных слотов и ограничения дат для автобусов
     async function updateAvailableTimes() {
         const date = dateInput.value;
+        const vehicleType = vehicleTypeSelect.value;
 
-        // Очищаем текущие опции
+        // Очищаем текущие опции времени
         timeSelect.innerHTML = '<option value="">Выберите время</option>';
 
-        // Если дата не выбрана, ничего не делаем
-        if (!date) {
+        // Если дата или тип ТС не выбраны, ничего не делаем
+        if (!date || !vehicleType) {
             return;
+        }
+
+        // Ограничение выбора дней для "автобуса" (среда и пятница)
+        if (vehicleType === 'автобус') {
+            const selectedDate = new Date(date);
+            const dayOfWeek = selectedDate.getDay(); // 0 (Вс) - 6 (Сб)
+            if (dayOfWeek !== 3 && dayOfWeek !== 5) { // 3 (Ср), 5 (Пт)
+                alert('Для автобусов доступна запись только по средам и пятницам.');
+                dateInput.value = ''; // Сбросить дату
+                return; // Прекратить выполнение функции
+            }
         }
 
         try {
@@ -902,7 +914,10 @@ button:hover {
     // Обработчик события для выбора даты
     dateInput.addEventListener('change', updateAvailableTimes);
 
-   // Функция для отправки данных формы на сервер и в Telegram
+    // Обработчик события для выбора типа транспортного средства
+    vehicleTypeSelect.addEventListener('change', updateAvailableTimes);
+
+    // Функция для отправки данных формы на сервер и в Telegram
     bookingForm.onsubmit = async function (event) {
         event.preventDefault(); // Предотвратить стандартное поведение формы
 
@@ -974,6 +989,6 @@ button:hover {
             formContainer.style.display = 'none'; // Сворачиваем форму
         }
     });
-    </script>
+</script>
 </body>
 </html>
