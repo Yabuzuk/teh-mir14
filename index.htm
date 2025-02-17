@@ -860,52 +860,60 @@ button:hover {
             });
         });
 		
-		
-        // Получите токен вашего бота и ID чата (если не используете чат-бот, замените ID на свой)
-        const botToken = '6644637602:AAEVKKrYraoHa9Wm1augxMrWYSK8I8K-HEw'; // Замените на ваш токен
-        const chatId = '@buzuchok'; // Замените на свой Telegram chatId или @username
 
-        document.getElementById('bookingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+	    
+    const bookedTimes = ["09:30", "11:00", "13:30", "15:00"]; // Занятые временные слоты
 
-            // Сбор данных формы
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const vehicleType = document.getElementById('vehicleType').value;
-            const date = document.getElementById('date').value;
-            const time = document.getElementById('time').value;
-            const details = document.getElementById('details').value;
+    window.onload = function () {
+        const timeSelect = document.getElementById("time");
+        const options = timeSelect.getElementsByTagName("option");
 
-            // Формирование сообщения для Telegram
-            const message = `
-                Новый запрос на техосмотр:
-                Имя: ${name}
-                Телефон: ${phone}
-                Вид ТС: ${vehicleType}
-                Дата: ${date}
-                Время: ${time}
-                Подробности: ${details}
-            `;
+        // Скрыть занятые временные слоты
+        for (let i = 0; i < options.length; i++) {
+            if (bookedTimes.includes(options[i].value)) {
+                options[i].style.display = "none";
+            }
+        }
+    }
 
-            // Отправка сообщения через Telegram API
-            const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+    const form = document.getElementById("bookingForm");
 
-            // Отправляем запрос
-            fetch(telegramUrl)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.ok) {
-                        alert('Ваши данные успешно отправлены!');
-                        document.getElementById('bookingForm').reset(); // Сброс формы
-                    } else {
-                        alert('Произошла ошибка при отправке данных.');
-                    }
-                })
-                .catch(error => {
-                    alert('Ошибка при отправке данных в Telegram.');
-                    console.error(error);
-                });
-        });
+    form.onsubmit = async function(event) {
+        event.preventDefault(); // Предотвратить стандартное поведение формы
+
+        const formData = new FormData(form);
+        const formObject = {};
+        formData.forEach((value, key) => formObject[key] = value);
+
+        const token = "6804774061:AAF79b9pf8lW5UXwhpOSx3EMpjjjmTZhGAo";  // Ваш токен бота
+        const chatId = "-1002380612626";   // Ваш chat_id канала
+
+        // Формируем сообщение для отправки в Telegram
+        const message = `
+            Новая запись на техосмотр:
+            Имя: ${formObject.name}
+            Номер телефона: ${formObject.phone}
+            Вид ТС: ${formObject.vehicleType}
+            Дата: ${formObject.date}
+            Время: ${formObject.time}
+            Подробности: ${formObject.details}
+        `;
+
+        const telegramUrl = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+
+        try {
+            const response = await fetch(telegramUrl);
+            if (response.ok) {
+                alert("Запись успешно отправлена!");
+            } else {
+                alert("Ошибка при отправке записи.");
+            }
+        } catch (error) {
+            alert("Ошибка при подключении к Telegram.");
+        }
+    };
+
+
    
    
    // Получаем элементы
