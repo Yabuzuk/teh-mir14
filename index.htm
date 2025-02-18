@@ -854,7 +854,7 @@ button:hover {
             });
         });
 
-        // JavaScript для работы с формой бронирования
+  // JavaScript для работы с формой бронирования
         const API_URL = 'https://teh-mir14.onrender.com'; // URL вашего сервера
 
         // Получаем элементы
@@ -864,6 +864,12 @@ button:hover {
         const timeSelect = document.getElementById('time');
         const bookingForm = document.getElementById('bookingForm');
         const vehicleTypeSelect = document.getElementById('vehicleType');
+        const carBrandInput = document.getElementById('carBrand');
+        const carNumberInput = document.getElementById('carNumber');
+        const organizationInput = document.getElementById('organization'); // Получаем input организации
+        const nameInput = document.getElementById('name'); // Получаем input имени
+        const phoneInput = document.getElementById('phone'); // Получаем input телефона
+        const detailsTextarea = document.getElementById('details'); // Получаем textarea деталей
 
         // Функция для обновления доступных временных слотов и ограничения дат
         async function updateAvailableTimes() {
@@ -953,7 +959,9 @@ button:hover {
                         name: formObject.name,
                         phone: formObject.phone,
                         vehicleType: formObject.vehicleType,
-                        details: formObject.details
+                        details: formObject.details,
+                        carBrand: formObject.carBrand,
+                        carNumber: formObject.carNumber
                     })
                 });
 
@@ -987,6 +995,8 @@ button:hover {
                         Имя: ${formObject.name}
                         Номер телефона: ${formObject.phone}
                         Вид ТС: ${formObject.vehicleType}
+                        Марка автомобиля: ${formObject.carBrand}
+                        Номер автомобиля: ${formObject.carNumber}
                         Дата: ${formObject.date}
                         Время: ${formObject.time}
                         Подробности: ${formObject.details}
@@ -1004,6 +1014,8 @@ button:hover {
                             Организация: ${formObject.organization}
                             Имя: ${formObject.name}
                             Номер телефона: ${formObject.phone}
+                            Марка автомобиля: ${formObject.carBrand}
+                            Номер автомобиля: ${formObject.carNumber}
                             Дата: ${formObject.date}
                             Время: ${formObject.time}
                             Подробности: ${formObject.details}
@@ -1013,6 +1025,21 @@ button:hover {
                     }
 
                     alert("Запись успешно отправлена!");
+
+                    // Очистка формы (индивидуально для каждого поля)
+                    organizationInput.value = "";
+                    nameInput.value = "";
+                    phoneInput.value = "";
+                    carBrandInput.value = "";
+                    carNumberInput.value = "";
+                    vehicleTypeSelect.value = ""; // Сброс выбора типа ТС
+                    dateInput.value = ""; // Сброс даты
+                    timeSelect.innerHTML = '<option value="">Выберите время</option>'; // Очистка списка времени
+                    detailsTextarea.value = "";
+
+                    // Обновление списка доступного времени
+                    updateAvailableTimes();
+
                 } else {
                     alert(data.message);
                 }
@@ -1035,6 +1062,5 @@ button:hover {
                 formContainer.style.display = 'none'; // Сворачиваем форму
             }
         });
-    </script>
 </body>
 </html>
