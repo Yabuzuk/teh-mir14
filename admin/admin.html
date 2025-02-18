@@ -58,6 +58,7 @@
         .fc-event-title {
             font-size: 0.9em;
             font-weight: bold;
+            color: #000; /* Цвет текста заголовка события */
         }
 
         .fc-col-header-cell {
@@ -76,12 +77,13 @@
             box-sizing: border-box;
             border-radius: 4px;
             border: 1px solid #ccc;
-            background-color: #fff;
-            height: 80px;
+            background-color: #e0f2f1; /* Более приятный цвет фона ячейки */
+            color: #000; /* Темный цвет текста в ячейке */
+            height: 100px; /* Увеличенная высота ячейки */
         }
 
         .fc-timegrid-event:hover {
-            background-color: #f5f5f5;
+            background-color: #d0e8e6;
             border-color: #999;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
         }
@@ -228,13 +230,11 @@
                     const phone = event.extendedProps.phone || '';
                     const carBrand = event.extendedProps.carBrand || '';
                     const carNumber = event.extendedProps.carNumber || '';
-
-                    // Check if extendedProps and vehicleType exist before accessing them
                     const vehicleType = (event.extendedProps && event.extendedProps.vehicleType) || '';
                     const name = event.title.split(' (')[0];
 
                     let eventHtml = `
-                        <div>
+                        <div style="color:#000;">  <!-- Установили цвет текста в ячейке -->
                             <b>${name}</b><br>
                             ${vehicleType}<br>
                             ${organization ? `<b>Орг:</b> ${organization}<br>` : ''}
@@ -292,7 +292,7 @@
                                     carBrand: booking.carBrand,
                                     carNumber: booking.carNumber,
                                     time: booking.time,
-                                    vehicleType: booking.vehicleType // Ensure vehicleType is included
+                                    vehicleType: booking.vehicleType
                                 },
                                 allDay: false
                             };
