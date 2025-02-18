@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Админ-панель</title>
+    <title>Админ-панель в стиле Telegram</title>
     <style>
         body {
             font-family: sans-serif;
@@ -114,22 +114,8 @@
 </head>
 <body>
     <div class="container">
-        <div id="loginFormContainer">
-            <h2>Вход в админ-панель</h2>
-            <form id="loginForm">
-                <label for="username">Имя пользователя:</label>
-                <input type="text" id="username" name="username"><br><br>
-
-                <label for="password">Пароль:</label>
-                <input type="password" id="password" name="password"><br><br>
-
-                <button type="submit">Войти</button>
-            </form>
-            <div id="loginMessage"></div>
-        </div>
-
-        <div id="adminPanel" style="display: none;">
-            <h1>Админ-панель</h1>
+        <div id="adminPanel">
+            <h1>Админ-панель в стиле Telegram</h1>
 
             <div id="message"></div>
 
@@ -178,15 +164,11 @@
 
     <script>
         const API_URL = 'https://teh-mir14.onrender.com'; // URL вашего API
-        let ADMIN_TOKEN = localStorage.getItem('adminToken'); // Get token from localStorage
         const bookingList = document.getElementById('bookingList');
         const bookingForm = document.getElementById('bookingForm');
         const messageDiv = document.getElementById('message');
         const deleteBtn = document.getElementById('deleteBtn');
-        const loginForm = document.getElementById('loginForm');
-        const loginFormContainer = document.getElementById('loginFormContainer');
         const adminPanel = document.getElementById('adminPanel');
-        const loginMessageDiv = document.getElementById('loginMessage');
 
         function displayMessage(message, isError = false) {
             messageDiv.textContent = message;
@@ -199,18 +181,9 @@
             }
         }
 
-        function displayLoginMessage(message, isError = false) {
-            loginMessageDiv.textContent = message;
-            loginMessageDiv.style.color = isError ? 'red' : 'green';
-        }
-
         async function fetchBookings() {
             try {
-                const response = await fetch(`${API_URL}/admin/bookings`, {
-                    headers: {
-                        'x-admin-token': ADMIN_TOKEN
-                    }
-                });
+                const response = await fetch(`${API_URL}/admin/bookings`);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -250,11 +223,7 @@
 
         async function editBooking(id) {
             try {
-                const response = await fetch(`${API_URL}/admin/bookings/${id}`, {
-                    headers: {
-                        'x-admin-token': ADMIN_TOKEN
-                    }
-                });
+                const response = await fetch(`${API_URL}/admin/bookings/${id}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -299,8 +268,7 @@
                 const response = await fetch(url, {
                     method: method,
                     headers: {
-                        'Content-Type': 'application/json',
-                        'x-admin-token': ADMIN_TOKEN
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(formData)
                 });
@@ -332,10 +300,7 @@
             if (confirm('Вы уверены, что хотите удалить эту запись?')) {
                 try {
                     const response = await fetch(`${API_URL}/admin/bookings/${bookingId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'x-admin-token': ADMIN_TOKEN
-                        }
+                        method: 'DELETE'
                     });
 
                     if (!response.ok) {
@@ -353,60 +318,8 @@
             }
         });
 
-        // Function to handle admin login
-        loginForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                const response = await fetch(`${API_URL}/admin/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username: username, password: password })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Login failed: ${response.status}`);
-                }
-
-                const data = await response.json();
-                if (data.success) {
-                    ADMIN_TOKEN = data.token;
-                    localStorage.setItem('adminToken', ADMIN_TOKEN);
-                    displayLoginMessage('Вход выполнен успешно!');
-                    showAdminPanel();
-                } else {
-                    displayLoginMessage(data.message, true);
-                }
-
-            } catch (error) {
-                console.error('Login error:', error);
-                displayLoginMessage('Ошибка входа. Пожалуйста, попробуйте еще раз.', true);
-            }
-        });
-
-        function showAdminPanel() {
-            loginFormContainer.style.display = 'none';
-            adminPanel.style.display = 'block';
-            fetchBookings();
-        }
-
-        function checkAuth() {
-            ADMIN_TOKEN = localStorage.getItem('adminToken');
-            if (ADMIN_TOKEN) {
-                showAdminPanel();
-            } else {
-                loginFormContainer.style.display = 'block';
-                adminPanel.style.display = 'none';
-            }
-        }
-
-        // Check authentication on page load
-        checkAuth();
+        // Initial fetch of bookings on page load
+        fetchBookings();
     </script>
 </body>
 </html>
