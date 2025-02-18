@@ -49,7 +49,7 @@ function generateTimeSlots(dayOfWeek) {
     const timeSlots = [];
     for (let hour = startTime; hour < endTime; hour++) {
         timeSlots.push(`${String(hour).padStart(2, '0')}:00`);
-        timeSlots.push(`${String(hour).padStart(2, '0')}:30`);
+        //timeSlots.push(`${String(hour).padStart(2, '0')}:30`); // Убрали интервал в 30 минут
     }
 
     return timeSlots;
