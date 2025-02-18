@@ -110,6 +110,17 @@
             display: inline-block;
             text-align: left;
         }
+        /* Стили для сортировки по дате */
+        .booking-group {
+            margin-bottom: 20px;
+            border-top: 2px solid #0088cc; /* Цвет разделителя */
+            padding-top: 10px;
+        }
+
+        .booking-group h3 {
+            color: #0088cc;
+            margin-top: 0;
+        }
     </style>
 </head>
 <body>
@@ -163,6 +174,12 @@
                     <option value="прицеп">Прицеп</option>
                 </select><br><br>
 
+                <label for="carBrand">Марка ТС:</label>
+                <input type="text" id="carBrand" name="carBrand"><br><br>
+
+                <label for="carNumber">Номер ТС:</label>
+                <input type="text" id="carNumber" name="carNumber"><br><br>
+
                 <label for="details">Подробности:</label>
                 <textarea id="details" name="details"></textarea><br><br>
 
@@ -202,30 +219,59 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const bookings = await response.json();
-                displayBookings(bookings);
+                displayBookingsByDate(bookings); // Call the new function
             } catch (error) {
                 console.error('Error fetching bookings:', error);
                 displayMessage('Ошибка при получении записей', true);
             }
         }
 
-        function displayBookings(bookings) {
-            bookingList.innerHTML = '';
+        // Function to display bookings grouped by date
+        function displayBookingsByDate(bookings) {
+            // Sort bookings by date
+            bookings.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            const groupedBookings = {};
+
             bookings.forEach(booking => {
-                const bookingDiv = document.createElement('div');
-                bookingDiv.classList.add('booking-item');
-                bookingDiv.innerHTML = `
-                    <p><strong>Дата:</strong> ${booking.date}</p>
-                    <p><strong>Время:</strong> ${booking.time}</p>
-                    <p><strong>Организация:</strong> ${booking.organization}</p>
-                    <p><strong>Имя:</strong> ${booking.name}</p>
-                    <p><strong>Телефон:</strong> ${booking.phone}</p>
-                    <p><strong>Тип ТС:</strong> ${booking.vehicleType}</p>
-                    <p><strong>Подробности:</strong> ${booking.details}</p>
-                    <button onclick="editBooking('${booking._id}')">Редактировать</button>
-                `;
-                bookingList.appendChild(bookingDiv);
+                if (!groupedBookings[booking.date]) {
+                    groupedBookings[booking.date] = [];
+                }
+                groupedBookings[booking.date].push(booking);
             });
+
+            bookingList.innerHTML = ''; // Clear existing list
+
+            for (const date in groupedBookings) {
+                if (groupedBookings.hasOwnProperty(date)) {
+                    const bookingGroupDiv = document.createElement('div');
+                    bookingGroupDiv.classList.add('booking-group');
+
+                    const dateHeading = document.createElement('h3');
+                    dateHeading.textContent = date;
+                    bookingGroupDiv.appendChild(dateHeading);
+
+                    groupedBookings[date].forEach(booking => {
+                        const bookingDiv = document.createElement('div');
+                        bookingDiv.classList.add('booking-item');
+                        bookingDiv.innerHTML = `
+                            <p><strong>Дата:</strong> ${booking.date}</p>
+                            <p><strong>Время:</strong> ${booking.time}</p>
+                            <p><strong>Организация:</strong> ${booking.organization}</p>
+                            <p><strong>Имя:</strong> ${booking.name}</p>
+                            <p><strong>Телефон:</strong> ${booking.phone}</p>
+                            <p><strong>Тип ТС:</strong> ${booking.vehicleType}</p>
+                            <p><strong>Марка ТС:</strong> ${booking.carBrand || 'Не указана'}</p>
+                            <p><strong>Номер ТС:</strong> ${booking.carNumber || 'Не указан'}</p>
+                            <p><strong>Подробности:</strong> ${booking.details}</p>
+                            <button onclick="editBooking('${booking._id}')">Редактировать</button>
+                        `;
+                        bookingGroupDiv.appendChild(bookingDiv);
+                    });
+
+                    bookingList.appendChild(bookingGroupDiv);
+                }
+            }
         }
 
         function clearForm() {
@@ -248,6 +294,8 @@
                 document.getElementById('name').value = booking.name;
                 document.getElementById('phone').value = booking.phone;
                 document.getElementById('vehicleType').value = booking.vehicleType;
+                document.getElementById('carBrand').value = booking.carBrand;  // Set carBrand value
+                document.getElementById('carNumber').value = booking.carNumber; // Set carNumber value
                 document.getElementById('details').value = booking.details;
                 document.getElementById('bookingId').value = booking._id;
                 deleteBtn.style.display = 'inline';
@@ -274,6 +322,8 @@
                 name: document.getElementById('name').value,
                 phone: document.getElementById('phone').value,
                 vehicleType: document.getElementById('vehicleType').value,
+                carBrand: document.getElementById('carBrand').value, // Get carBrand
+                carNumber: document.getElementById('carNumber').value, // Get carNumber
                 details: document.getElementById('details').value
             };
 
