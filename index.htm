@@ -826,176 +826,215 @@ button:hover {
         </footer>
     </div>
 
-   <script>
-    ymaps.ready(init);
+ 
+    <script>
+        ymaps.ready(init);
 
-    function init() {
-        var map = new ymaps.Map("map", {
-            center: [62.552159, 113.982474], // Координаты центра карты (Мирный)
-            zoom: 18
-        });
+        function init() {
+            var map = new ymaps.Map("map", {
+                center: [62.552159, 113.982474], // Координаты центра карты (Мирный)
+                zoom: 18
+            });
 
-        var placemark = new ymaps.Placemark([62.552159, 113.982474], {
-            balloonContent: '<strong>Пункт техосмотра ООО «АиРТ»</strong><br>Респ Саха /Якутия/, г Мирный, ш Чернышевское, д 5Г'
-        }, {
-            preset: 'islands#blueDotIcon'
-        });
+            var placemark = new ymaps.Placemark([62.552159, 113.982474], {
+                balloonContent: '<strong>Пункт техосмотра ООО «АиРТ»</strong><br>Респ Саха /Якутия/, г Мирный, ш Чернышевское, д 5Г'
+            }, {
+                preset: 'islands#blueDotIcon'
+            });
 
-        map.geoObjects.add(placemark);
-    }
-
-    // Скрипт для FAQ
-    const faqItems = document.querySelectorAll('.faq-item');
-    faqItems.forEach(item => {
-        const question = item.querySelector('.faq-question');
-        question.addEventListener('click', () => {
-            item.classList.toggle('active');
-        });
-    });
-
-    // JavaScript для работы с формой бронирования
-    const API_URL = 'https://teh-mir14.onrender.com'; // URL вашего сервера
-
-    // Получаем элементы
-    const formContainer = document.getElementById('formContainer');
-    const formToggle = document.getElementById('formToggle');
-    const dateInput = document.getElementById('date');
-    const timeSelect = document.getElementById('time');
-    const bookingForm = document.getElementById('bookingForm');
-    const vehicleTypeSelect = document.getElementById('vehicleType');
-
-    // Функция для обновления доступных временных слотов и ограничения дат для автобусов
-    async function updateAvailableTimes() {
-        const date = dateInput.value;
-        const vehicleType = vehicleTypeSelect.value;
-
-        // Очищаем текущие опции времени
-        timeSelect.innerHTML = '<option value="">Выберите время</option>';
-
-        // Если дата или тип ТС не выбраны, ничего не делаем
-        if (!date || !vehicleType) {
-            return;
+            map.geoObjects.add(placemark);
         }
 
-        // Ограничение выбора дней для "автобуса" (среда и пятница)
-        if (vehicleType === 'автобус') {
+        // Скрипт для FAQ
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                item.classList.toggle('active');
+            });
+        });
+
+        // JavaScript для работы с формой бронирования
+        const API_URL = 'https://teh-mir14.onrender.com'; // URL вашего сервера
+
+        // Получаем элементы
+        const formContainer = document.getElementById('formContainer');
+        const formToggle = document.getElementById('formToggle');
+        const dateInput = document.getElementById('date');
+        const timeSelect = document.getElementById('time');
+        const bookingForm = document.getElementById('bookingForm');
+        const vehicleTypeSelect = document.getElementById('vehicleType');
+
+        // Функция для обновления доступных временных слотов и ограничения дат
+        async function updateAvailableTimes() {
+            const date = dateInput.value;
+            const vehicleType = vehicleTypeSelect.value;
+
+            // Очищаем текущие опции времени
+            timeSelect.innerHTML = '<option value="">Выберите время</option>';
+
+            // Если дата или тип ТС не выбраны, ничего не делаем
+            if (!date || !vehicleType) {
+                return;
+            }
+
             const selectedDate = new Date(date);
-            const dayOfWeek = selectedDate.getDay(); // 0 (Вс) - 6 (Сб)
-            if (dayOfWeek !== 3 && dayOfWeek !== 5) { // 3 (Ср), 5 (Пт)
-                alert('Для автобусов доступна запись только по средам и пятницам.');
+            const dayOfWeek = selectedDate.getDay();
+
+            if (dayOfWeek === 0) { // Sunday is disabled
+                alert('Запись на воскресенье не производится.');
                 dateInput.value = ''; // Сбросить дату
-                return; // Прекратить выполнение функции
-            }
-        }
-
-        try {
-            const response = await fetch(`${API_URL}/get-available-slots`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ date: date })
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                return;
             }
 
-            const data = await response.json();
-            const availableSlots = data.availableSlots;
-
-            // Добавляем доступные временные слоты в выпадающий список
-            availableSlots.forEach(slot => {
-                const option = document.createElement('option');
-                option.value = slot;
-                option.textContent = slot;
-                timeSelect.appendChild(option);
-            });
-
-        } catch (error) {
-            console.error('Ошибка при получении доступных слотов:', error);
-            alert('Ошибка при получении доступных слотов. Пожалуйста, попробуйте позже.');
-        }
-    }
-
-    // Обработчик события для выбора даты
-    dateInput.addEventListener('change', updateAvailableTimes);
-
-    // Обработчик события для выбора типа транспортного средства
-    vehicleTypeSelect.addEventListener('change', updateAvailableTimes);
-
-    // Функция для отправки данных формы на сервер и в Telegram
-    bookingForm.onsubmit = async function (event) {
-        event.preventDefault(); // Предотвратить стандартное поведение формы
-
-        const formData = new FormData(bookingForm);
-        const formObject = {};
-        formData.forEach((value, key) => formObject[key] = value);
-
-        try {
-            const response = await fetch(`${API_URL}/book-slot`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ date: formObject.date, time: formObject.time })
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            if (data.success) {
-                // Отправляем данные в Telegram после успешного бронирования
-                const token = "6804774061:AAF79b9pf8lW5UXwhpOSx3EMpjjjmTZhGAo";  // Ваш токен бота
-                const chatId = "-1002380612626";   // Ваш chat_id канала
-
-                // Формируем сообщение для отправки в Telegram
-                const message = `
-                    Новая запись на техосмотр:
-                    Имя: ${formObject.name}
-                    Номер телефона: ${formObject.phone}
-                    Вид ТС: ${formObject.vehicleType}
-                    Дата: ${formObject.date}
-                    Время: ${formObject.time}
-                    Подробности: ${formObject.details}
-                `;
-
-                const telegramUrl = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
-
-                try {
-                    const telegramResponse = await fetch(telegramUrl);
-                    if (telegramResponse.ok) {
-                        alert("Запись успешно отправлена!");
-                    } else {
-                        alert("Ошибка при отправке записи в Telegram.");
-                    }
-                } catch (telegramError) {
-                    alert("Ошибка при подключении к Telegram.");
+            // Ограничение выбора дней для "автобуса" (среда и пятница)
+            if (vehicleType === 'автобус') {
+                if (dayOfWeek !== 3 && dayOfWeek !== 5) { // 3 (Ср), 5 (Пт)
+                    alert('Для автобусов доступна запись только по средам и пятницам.');
+                    dateInput.value = ''; // Сбросить дату
+                    return; // Прекратить выполнение функции
                 }
-            } else {
-                alert(data.message);
             }
 
-        } catch (error) {
-            console.error('Ошибка при бронировании слота:', error);
-            alert('Ошибка при бронировании слота. Пожалуйста, попробуйте позже.');
-        }
-    };
+            try {
+                const response = await fetch(`${API_URL}/get-available-slots`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ date: date })
+                });
 
-    // Добавляем обработчик клика на заголовок для отображения/скрытия формы
-    formToggle.addEventListener('click', function () {
-        // Убираем анимацию мигания
-        formToggle.classList.remove('blinking-text');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-        // Переключаем видимость формы
-        if (formContainer.style.display === 'none' || formContainer.style.display === '') {
-            formContainer.style.display = 'block'; // Разворачиваем форму
-        } else {
-            formContainer.style.display = 'none'; // Сворачиваем форму
+                const data = await response.json();
+                const availableSlots = data.availableSlots;
+
+                // Добавляем доступные временные слоты в выпадающий список
+                availableSlots.forEach(slot => {
+                    const option = document.createElement('option');
+                    option.value = slot;
+                    option.textContent = slot;
+                    timeSelect.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error('Ошибка при получении доступных слотов:', error);
+                alert('Ошибка при получении доступных слотов. Пожалуйста, попробуйте позже.');
+            }
         }
-    });
-</script>
+
+        // Обработчик события для выбора даты
+        dateInput.addEventListener('change', updateAvailableTimes);
+
+        // Обработчик события для выбора типа транспортного средства
+        vehicleTypeSelect.addEventListener('change', updateAvailableTimes);
+
+        // Функция для отправки данных формы на сервер и в Telegram
+        bookingForm.onsubmit = async function (event) {
+            event.preventDefault(); // Предотвратить стандартное поведение формы
+
+            const formData = new FormData(bookingForm);
+            const formObject = {};
+            formData.forEach((value, key) => formObject[key] = value);
+
+            try {
+                const response = await fetch(`${API_URL}/book-slot`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        date: formObject.date,
+                        time: formObject.time,
+                        organization: formObject.organization,
+                        name: formObject.name,
+                        phone: formObject.phone,
+                        vehicleType: formObject.vehicleType,
+                        details: formObject.details
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    // Функция для отправки сообщения в Telegram
+                    async function sendTelegramMessage(token, chatId, message) {
+                        const telegramUrl = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+
+                        try {
+                            const telegramResponse = await fetch(telegramUrl);
+                            if (!telegramResponse.ok) {
+                                console.error("Ошибка при отправке сообщения в Telegram:", telegramResponse.status);
+                            }
+                        } catch (telegramError) {
+                            console.error("Ошибка при подключении к Telegram:", telegramError);
+                        }
+                    }
+
+                    // Отправляем основное сообщение в Telegram
+                    const mainToken = "6804774061:AAF79b9pf8lW5UXwhpOSx3EMpjjjmTZhGAo"; // Основной токен бота
+                    const mainChatId = "-1002380612626"; // Основной chat_id канала
+
+                    const mainMessage = `
+                        Новая запись на техосмотр:
+                        Организация: ${formObject.organization}
+                        Имя: ${formObject.name}
+                        Номер телефона: ${formObject.phone}
+                        Вид ТС: ${formObject.vehicleType}
+                        Дата: ${formObject.date}
+                        Время: ${formObject.time}
+                        Подробности: ${formObject.details}
+                    `;
+
+                    await sendTelegramMessage(mainToken, mainChatId, mainMessage);
+
+                    // Если это автобус, отправляем сообщение в дополнительный чат
+                    if (formObject.vehicleType === 'автобус') {
+                        const busToken = "549572405:AAHx4MjhJrJAQGERbRqloes3Qcxkn1qUAS4"; // Токен бота для автобусов
+                        const busChatId = "-1002391051206"; // ID чата для автобусов
+
+                        const busMessage = `
+                            Новая запись на техосмотр АВТОБУСА:
+                            Организация: ${formObject.organization}
+                            Имя: ${formObject.name}
+                            Номер телефона: ${formObject.phone}
+                            Дата: ${formObject.date}
+                            Время: ${formObject.time}
+                            Подробности: ${formObject.details}
+                        `;
+
+                        await sendTelegramMessage(busToken, busChatId, busMessage);
+                    }
+
+                    alert("Запись успешно отправлена!");
+                } else {
+                    alert(data.message);
+                }
+
+            } catch (error) {
+                console.error('Ошибка при бронировании слота:', error);
+                alert('Ошибка при бронировании слота. Пожалуйста, попробуйте позже.');
+            }
+        };
+
+        // Добавляем обработчик клика на заголовок для отображения/скрытия формы
+        formToggle.addEventListener('click', function () {
+            // Убираем анимацию мигания
+            formToggle.classList.remove('blinking-text');
+
+            // Переключаем видимость формы
+            if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+                formContainer.style.display = 'block'; // Разворачиваем форму
+            } else {
+                formContainer.style.display = 'none'; // Сворачиваем форму
+            }
+        });
+    </script>
 </body>
 </html>
