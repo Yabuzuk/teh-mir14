@@ -7,7 +7,23 @@
             font-family: sans-serif;
             background-color: #f0f2f5; /* Light gray background like Telegram */
             color: #222; /* Dark text */
+            margin: 0; /* Reset default body margins */
+            display: flex;
+            justify-content: center; /* Center horizontally */
         }
+
+        .container {
+            max-width: 800px; /* Set a maximum width for the content */
+            width: 90%; /* Take up 90% of the screen width, but no more than 800px */
+            background-color: #fff;
+            padding: 20px;
+            box-sizing: border-box; /* Include padding in the width */
+            border-radius: 8px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+
         h1, h2 {
             color: #0088cc; /* Telegram blue */
         }
@@ -87,50 +103,52 @@
     </style>
 </head>
 <body>
-    <h1>Telegram-Style Admin Panel</h1>
+    <div class="container">
+        <h1>Telegram-Style Admin Panel</h1>
 
-    <div id="message"></div>
+        <div id="message"></div>
 
-    <h2>Bookings</h2>
-    <div id="bookingList">
-        <!-- Здесь будет список забронированных слотов -->
+        <h2>Bookings</h2>
+        <div id="bookingList">
+            <!-- Здесь будет список забронированных слотов -->
+        </div>
+
+        <h2>Create/Edit Booking</h2>
+        <form id="bookingForm">
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date"><br><br>
+
+            <label for="time">Time:</label>
+            <input type="text" id="time" name="time"><br><br>
+
+            <label for="organization">Organization:</label>
+            <input type="text" id="organization" name="organization"><br><br>
+
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name"><br><br>
+
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" name="phone"><br><br>
+
+            <label for="vehicleType">Vehicle Type:</label>
+            <select id="vehicleType" name="vehicleType">
+                <option value="легковой автомобиль">Легковой автомобиль</option>
+                <option value="автобус">Автобус</option>
+                <option value="грузовой автомобиль">Грузовой автомобиль</option>
+                <option value="мотоцикл">Мотоцикл</option>
+                <option value="прицеп">Прицеп</option>
+            </select><br><br>
+
+            <label for="details">Details:</label>
+            <textarea id="details" name="details"></textarea><br><br>
+
+            <input type="hidden" id="bookingId" name="bookingId">  <!-- Hidden field for editing -->
+
+            <button type="submit">Save</button>
+            <button type="button" id="cancelBtn">Cancel</button>
+            <button type="button" id="deleteBtn" style="color: red;">Delete</button>  <!-- Delete Button -->
+        </form>
     </div>
-
-    <h2>Create/Edit Booking</h2>
-    <form id="bookingForm">
-        <label for="date">Date:</label>
-        <input type="date" id="date" name="date"><br><br>
-
-        <label for="time">Time:</label>
-        <input type="text" id="time" name="time"><br><br>
-
-        <label for="organization">Organization:</label>
-        <input type="text" id="organization" name="organization"><br><br>
-
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name"><br><br>
-
-        <label for="phone">Phone:</label>
-        <input type="text" id="phone" name="phone"><br><br>
-
-        <label for="vehicleType">Vehicle Type:</label>
-        <select id="vehicleType" name="vehicleType">
-            <option value="легковой автомобиль">Легковой автомобиль</option>
-            <option value="автобус">Автобус</option>
-            <option value="грузовой автомобиль">Грузовой автомобиль</option>
-            <option value="мотоцикл">Мотоцикл</option>
-            <option value="прицеп">Прицеп</option>
-        </select><br><br>
-
-        <label for="details">Details:</label>
-        <textarea id="details" name="details"></textarea><br><br>
-
-        <input type="hidden" id="bookingId" name="bookingId">  <!-- Hidden field for editing -->
-
-        <button type="submit">Save</button>
-        <button type="button" id="cancelBtn">Cancel</button>
-        <button type="button" id="deleteBtn" style="color: red;">Delete</button>  <!-- Delete Button -->
-    </form>
 
     <script>
         const API_URL = 'https://teh-mir14.onrender.com/admin/bookings'; // URL вашего API
