@@ -97,6 +97,7 @@ app.post('/book-slot', async (req, res) => {
         let bookedSlot = await BookedSlot.findOne({ date: date });
 
         if (!bookedSlot) {
+            // Если слот еще не существует, создаем новый
             bookedSlot = new BookedSlot({
                 date: date,
                 time: [time],
@@ -108,26 +109,24 @@ app.post('/book-slot', async (req, res) => {
                 carBrand: carBrand,
                 carNumber: carNumber
             });
-             await bookedSlot.save();
         } else {
+            // Если слот существует, проверяем, забронировано ли это время
             if (!bookedSlot.time.includes(time)) {
-                bookedSlot.time.push(time);
-                 bookedSlot.organization = organization;
-                 bookedSlot.name = name;
-                 bookedSlot.phone = phone;
-                 bookedSlot.vehicleType = vehicleType;
-                 bookedSlot.details = details;
-                 bookedSlot.carBrand = carBrand;
-                 bookedSlot.carNumber = carNumber;
-               await bookedSlot.save();
+                bookedSlot.time.push(time); // Добавляем время только если его еще нет
             } else {
-               return res.status(400).json({ success: false, message: 'Это время уже забронировано!' });
+                // Если время уже забронировано, возвращаем ошибку
+                return res.status(400).json({ message: 'Этот временной слот уже забронирован.' });
             }
-
+            bookedSlot.organization = organization;
+            bookedSlot.name = name;
+            bookedSlot.phone = phone;
+            bookedSlot.vehicleType = vehicleType;
+            bookedSlot.details = details;
+            bookedSlot.carBrand = carBrand;
+            bookedSlot.carNumber = carNumber;
         }
 
-
-
+        await bookedSlot.save();
         res.json({ success: true, message: 'Слот успешно забронирован!' });
     } catch (err) {
         console.error('Error booking slot:', err);
