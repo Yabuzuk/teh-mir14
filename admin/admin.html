@@ -31,16 +31,16 @@
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            margin-bottom: 10px; /* Уменьшаем отступ */
-            padding: 10px; /* Уменьшаем отступ */
+            margin-bottom: 10px;
+            padding: 10px;
             transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-            font-size: 0.9em; /* Уменьшаем размер шрифта */
+            font-size: 0.9em;
         }
         .booking-item:hover {
             box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22);
         }
         .booking-item p {
-            margin: 5px 0; /* Уменьшаем отступ */
+            margin: 5px 0;
         }
         label {
             display: block;
@@ -71,11 +71,11 @@
         button {
             background-color: #0088cc;
             color: white;
-            padding: 10px 16px; /* Уменьшаем отступы */
+            padding: 10px 16px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 15px; /* Уменьшаем отступ */
+            margin-top: 15px;
             transition: background-color 0.3s;
         }
         button:hover {
@@ -110,10 +110,10 @@
             display: inline-block;
             text-align: left;
         }
-        /* Стили для сортировки по дате */
+        /* Стили для сортировки по дате и времени */
         .booking-group {
             margin-bottom: 20px;
-            border-top: 2px solid #0088cc; /* Цвет разделителя */
+            border-top: 2px solid #0088cc;
             padding-top: 10px;
         }
 
@@ -219,17 +219,21 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const bookings = await response.json();
-                displayBookingsByDate(bookings); // Call the new function
+                displayBookingsByDateTime(bookings);
             } catch (error) {
                 console.error('Error fetching bookings:', error);
                 displayMessage('Ошибка при получении записей', true);
             }
         }
 
-        // Function to display bookings grouped by date
-        function displayBookingsByDate(bookings) {
-            // Sort bookings by date
-            bookings.sort((a, b) => new Date(a.date) - new Date(b.date));
+        // Function to display bookings grouped and sorted by date and time
+        function displayBookingsByDateTime(bookings) {
+            // Sort bookings by date and time
+            bookings.sort((a, b) => {
+                const dateA = new Date(a.date + 'T' + a.time + ':00'); // Create date-time objects
+                const dateB = new Date(b.date + 'T' + b.time + ':00');
+                return dateA - dateB; // Sort by date and time
+            });
 
             const groupedBookings = {};
 
@@ -250,6 +254,12 @@
                     const dateHeading = document.createElement('h3');
                     dateHeading.textContent = date;
                     bookingGroupDiv.appendChild(dateHeading);
+
+                    // Sort bookings within each date by time
+                    groupedBookings[date].sort((a, b) => {
+                        return a.time.localeCompare(b.time);
+                    });
+
 
                     groupedBookings[date].forEach(booking => {
                         const bookingDiv = document.createElement('div');
@@ -294,8 +304,8 @@
                 document.getElementById('name').value = booking.name;
                 document.getElementById('phone').value = booking.phone;
                 document.getElementById('vehicleType').value = booking.vehicleType;
-                document.getElementById('carBrand').value = booking.carBrand;  // Set carBrand value
-                document.getElementById('carNumber').value = booking.carNumber; // Set carNumber value
+                document.getElementById('carBrand').value = booking.carBrand;
+                document.getElementById('carNumber').value = booking.carNumber;
                 document.getElementById('details').value = booking.details;
                 document.getElementById('bookingId').value = booking._id;
                 deleteBtn.style.display = 'inline';
@@ -322,8 +332,8 @@
                 name: document.getElementById('name').value,
                 phone: document.getElementById('phone').value,
                 vehicleType: document.getElementById('vehicleType').value,
-                carBrand: document.getElementById('carBrand').value, // Get carBrand
-                carNumber: document.getElementById('carNumber').value, // Get carNumber
+                carBrand: document.getElementById('carBrand').value,
+                carNumber: document.getElementById('carNumber').value,
                 details: document.getElementById('details').value
             };
 
