@@ -9,86 +9,59 @@
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
     <style>
         #calendar {
-            max-width: 1000px; /* Increased calendar width */
+            max-width: 1000px;
             margin: 40px auto;
         }
         .fc-timegrid-slot-label {
-            font-size: 0.8em; /* Smaller time labels */
+            font-size: 0.8em;
         }
         .fc-event-title {
-            font-size: 0.8em; /* Smaller event title */
+            font-size: 0.8em;
         }
         .fc-col-header-cell {
-             font-size: 0.8em; /* Smaller day names */
+             font-size: 0.8em;
         }
         .fc-timegrid-event {
-            height: 2.5em;  /* Increased event height */
+            height: 4em; /* Increased event height */
+        }
+         .fc-event-title {
+            font-size: 0.8em;
         }
         #eventDetails {
             margin-top: 20px;
             border: 1px solid #ccc;
-            padding: 15px; /* Increased padding */
+            padding: 15px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Added subtle shadow */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         #eventDetails label {
             display: block;
             margin-bottom: 8px;
-            font-weight: bold; /* Bolder labels */
-            color: #555; /* Darker labels */
+            font-weight: bold;
+            color: #555;
         }
         #eventDetails input, #eventDetails textarea, #eventDetails select {
             width: 100%;
-            padding: 10px; /* Increased padding */
+            padding: 10px;
             margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 6px;
             box-sizing: border-box;
-            font-size: 1em; /* Adjust font size */
+            font-size: 1em;
         }
         #eventDetails button {
             background-color: #0088cc;
             color: white;
-            padding: 12px 20px; /* Increased button padding */
+            padding: 12px 20px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             margin-right: 10px;
-            transition: background-color 0.3s; /* Smooth transition */
-            font-size: 1em; /* Adjust font size */
+            transition: background-color 0.3s;
+            font-size: 1em;
         }
         #eventDetails button:hover {
             background-color: #0077b3;
-        }
-
-        /* Tooltip styles */
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 250px;
-            background-color: #333;
-            color: #fff;
-            text-align: left;
-            border-radius: 6px;
-            padding: 8px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -125px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.9em; /* Adjust tooltip font size */
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
         }
     </style>
 </head>
@@ -190,22 +163,16 @@
                     const carBrand = event.extendedProps.carBrand || '';
                     const carNumber = event.extendedProps.carNumber || '';
                     const vehicleType = event.extendedProps.vehicleType || '';
-                    const name = event.title.split(' (')[0]; // Extract name from title
-
-                    let tooltipHtml = `
-                        <b>Имя:</b> ${name}<br>
-                        <b>Тип ТС:</b> ${vehicleType}<br>
-                        <b>Организация:</b> ${organization}<br>
-                        <b>Телефон:</b> ${phone}<br>
-                        <b>Марка ТС:</b> ${carBrand}<br>
-                        <b>Номер ТС:</b> ${carNumber}
-                    `;
+                    const name = event.title.split(' (')[0];
 
                     let eventHtml = `
-                        <div class="tooltip">
+                        <div>
                             <b>${name}</b><br>
-                            ${vehicleType}
-                            <span class="tooltiptext">${tooltipHtml}</span>
+                            ${vehicleType}<br>
+                            ${organization ? `<b>Орг:</b> ${organization}<br>` : ''}
+                            ${phone ? `<b>Тел:</b> ${phone}<br>` : ''}
+                            ${carBrand ? `<b>М:</b> ${carBrand} ` : ''}
+                            ${carNumber ? `<b>№:</b> ${carNumber}` : ''}
                         </div>
                     `;
 
@@ -259,7 +226,7 @@
                                     time: booking.time,
                                     vehicleType: booking.vehicleType
                                 },
-                                allDay: false  // add allDay
+                                allDay: false
                             };
                         }).filter(event => event !== null);
                         successCallback(events);
