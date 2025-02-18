@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Panel</title>
+    <title>Админ-панель в стиле Telegram</title>
     <style>
         body {
             font-family: sans-serif;
-            background-color: #f0f2f5; /* Light gray background like Telegram */
-            color: #222; /* Dark text */
-            margin: 0; /* Reset default body margins */
+            background-color: #f0f2f5;
+            color: #222;
+            margin: 0;
             display: flex;
-            justify-content: center; /* Center horizontally */
+            justify-content: center;
         }
 
         .container {
-            max-width: 800px; /* Set a maximum width for the content */
-            width: 90%; /* Take up 90% of the screen width, but no more than 800px */
+            max-width: 800px;
+            width: 90%;
             background-color: #fff;
             padding: 20px;
-            box-sizing: border-box; /* Include padding in the width */
+            box-sizing: border-box;
             border-radius: 8px;
             margin-top: 20px;
             margin-bottom: 20px;
@@ -25,21 +25,22 @@
         }
 
         h1, h2 {
-            color: #0088cc; /* Telegram blue */
+            color: #0088cc;
         }
         .booking-item {
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            margin-bottom: 15px;
-            padding: 15px;
+            margin-bottom: 10px; /* Уменьшаем отступ */
+            padding: 10px; /* Уменьшаем отступ */
             transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+            font-size: 0.9em; /* Уменьшаем размер шрифта */
         }
         .booking-item:hover {
             box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22);
         }
         .booking-item p {
-            margin: 8px 0;
+            margin: 5px 0; /* Уменьшаем отступ */
         }
         label {
             display: block;
@@ -50,16 +51,17 @@
         input[type="text"],
         input[type="date"],
         select,
-        textarea {
+        textarea,
+        input[type="password"] {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            box-sizing: border-box; /* Make sure padding doesn't affect width */
+            box-sizing: border-box;
         }
         select {
-            appearance: none; /* Remove default arrow in some browsers */
+            appearance: none;
             background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666"><path d="M7 10l5 5 5-5z"/></svg>');
             background-repeat: no-repeat;
             background-position: right 10px top 50%;
@@ -67,23 +69,23 @@
             padding-right: 30px;
         }
         button {
-            background-color: #0088cc; /* Telegram blue */
+            background-color: #0088cc;
             color: white;
-            padding: 12px 20px;
+            padding: 10px 16px; /* Уменьшаем отступы */
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 15px; /* Уменьшаем отступ */
             transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #0077b3; /* Darker blue on hover */
+            background-color: #0077b3;
         }
-        button[style="color: red;"] { /* Style for Delete button */
-            background-color: #f44336; /* Red color */
+        button[style="color: red;"] {
+            background-color: #f44336;
         }
         button[style="color: red;"]:hover {
-            background-color: #d32f2f; /* Darker red on hover */
+            background-color: #d32f2f;
         }
         #message {
             margin-bottom: 20px;
@@ -100,65 +102,92 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+
+        #loginFormContainer {
+            text-align: center;
+        }
+        #loginForm {
+            display: inline-block;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Admin Panel</h1>
+        <div id="loginFormContainer">
+            <h2>Вход в админ-панель</h2>
+            <form id="loginForm">
+                <label for="username">Имя пользователя:</label>
+                <input type="text" id="username" name="username"><br><br>
 
-        <div id="message"></div>
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" name="password"><br><br>
 
-        <h2>Bookings</h2>
-        <div id="bookingList">
-            <!-- Здесь будет список забронированных слотов -->
+                <button type="submit">Войти</button>
+            </form>
+            <div id="loginMessage"></div>
         </div>
 
-        <h2>Create/Edit Booking</h2>
-        <form id="bookingForm">
-            <label for="date">Date:</label>
-            <input type="date" id="date" name="date"><br><br>
+        <div id="adminPanel" style="display: none;">
+            <h1>Админ-панель в стиле Telegram</h1>
 
-            <label for="time">Time:</label>
-            <input type="text" id="time" name="time"><br><br>
+            <div id="message"></div>
 
-            <label for="organization">Organization:</label>
-            <input type="text" id="organization" name="organization"><br><br>
+            <h2>Записи</h2>
+            <div id="bookingList">
+                <!-- Здесь будет список забронированных слотов -->
+            </div>
 
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name"><br><br>
+            <h2>Создать/Редактировать запись</h2>
+            <form id="bookingForm">
+                <label for="date">Дата:</label>
+                <input type="date" id="date" name="date"><br><br>
 
-            <label for="phone">Phone:</label>
-            <input type="text" id="phone" name="phone"><br><br>
+                <label for="time">Время:</label>
+                <input type="text" id="time" name="time"><br><br>
 
-            <label for="vehicleType">Vehicle Type:</label>
-            <select id="vehicleType" name="vehicleType">
-                <option value="легковой автомобиль">Легковой автомобиль</option>
-                <option value="автобус">Автобус</option>
-                <option value="грузовой автомобиль">Грузовой автомобиль</option>
-                <option value="мотоцикл">Мотоцикл</option>
-                <option value="прицеп">Прицеп</option>
-            </select><br><br>
+                <label for="organization">Организация:</label>
+                <input type="text" id="organization" name="organization"><br><br>
 
-            <label for="details">Details:</label>
-            <textarea id="details" name="details"></textarea><br><br>
+                <label for="name">Имя:</label>
+                <input type="text" id="name" name="name"><br><br>
 
-            <input type="hidden" id="bookingId" name="bookingId">  <!-- Hidden field for editing -->
+                <label for="phone">Телефон:</label>
+                <input type="text" id="phone" name="phone"><br><br>
 
-            <button type="submit">Save</button>
-            <button type="button" id="cancelBtn">Cancel</button>
-            <button type="button" id="deleteBtn" style="color: red;">Delete</button>  <!-- Delete Button -->
-        </form>
+                <label for="vehicleType">Тип ТС:</label>
+                <select id="vehicleType" name="vehicleType">
+                    <option value="легковой автомобиль">Легковой автомобиль</option>
+                    <option value="автобус">Автобус</option>
+                    <option value="грузовой автомобиль">Грузовой автомобиль</option>
+                    <option value="мотоцикл">Мотоцикл</option>
+                    <option value="прицеп">Прицеп</option>
+                </select><br><br>
+
+                <label for="details">Подробности:</label>
+                <textarea id="details" name="details"></textarea><br><br>
+
+                <input type="hidden" id="bookingId" name="bookingId">  <!-- Hidden field for editing -->
+
+                <button type="submit">Сохранить</button>
+                <button type="button" id="cancelBtn">Отмена</button>
+                <button type="button" id="deleteBtn" style="color: red;">Удалить</button>  <!-- Delete Button -->
+            </form>
+        </div>
     </div>
 
     <script>
-        const API_URL = 'https://teh-mir14.onrender.com/admin/bookings'; // URL вашего API
-        const ADMIN_TOKEN = "47e8b2d9-5a6c-4b1f-9e0a-3c8d2f1e7a5b"; // Получаем токен из переменной окружения
+        const API_URL = 'https://teh-mir14.onrender.com'; // URL вашего API
+        let ADMIN_TOKEN = localStorage.getItem('adminToken'); // Get token from localStorage
         const bookingList = document.getElementById('bookingList');
         const bookingForm = document.getElementById('bookingForm');
         const messageDiv = document.getElementById('message');
         const deleteBtn = document.getElementById('deleteBtn');
+        const loginForm = document.getElementById('loginForm');
+        const loginFormContainer = document.getElementById('loginFormContainer');
+        const adminPanel = document.getElementById('adminPanel');
+        const loginMessageDiv = document.getElementById('loginMessage');
 
-        // Function to display messages
         function displayMessage(message, isError = false) {
             messageDiv.textContent = message;
             messageDiv.className = ''; // Reset class
@@ -170,10 +199,14 @@
             }
         }
 
-        // Function to fetch and display bookings
+        function displayLoginMessage(message, isError = false) {
+            loginMessageDiv.textContent = message;
+            loginMessageDiv.style.color = isError ? 'red' : 'green';
+        }
+
         async function fetchBookings() {
             try {
-                const response = await fetch(API_URL, {
+                const response = await fetch(`${API_URL}/admin/bookings`, {
                     headers: {
                         'x-admin-token': ADMIN_TOKEN
                     }
@@ -186,41 +219,38 @@
                 displayBookings(bookings);
             } catch (error) {
                 console.error('Error fetching bookings:', error);
-                displayMessage('Error fetching bookings', true);
+                displayMessage('Ошибка при получении записей', true);
             }
         }
 
-        // Function to display bookings
         function displayBookings(bookings) {
             bookingList.innerHTML = '';
             bookings.forEach(booking => {
                 const bookingDiv = document.createElement('div');
                 bookingDiv.classList.add('booking-item');
                 bookingDiv.innerHTML = `
-                    <p><strong>Date:</strong> ${booking.date}</p>
-                    <p><strong>Time:</strong> ${booking.time}</p>
-                    <p><strong>Organization:</strong> ${booking.organization}</p>
-                    <p><strong>Name:</strong> ${booking.name}</p>
-                    <p><strong>Phone:</strong> ${booking.phone}</p>
-                    <p><strong>Vehicle Type:</strong> ${booking.vehicleType}</p>
-                    <p><strong>Details:</strong> ${booking.details}</p>
-                    <button onclick="editBooking('${booking._id}')">Edit</button>
+                    <p><strong>Дата:</strong> ${booking.date}</p>
+                    <p><strong>Время:</strong> ${booking.time}</p>
+                    <p><strong>Организация:</strong> ${booking.organization}</p>
+                    <p><strong>Имя:</strong> ${booking.name}</p>
+                    <p><strong>Телефон:</strong> ${booking.phone}</p>
+                    <p><strong>Тип ТС:</strong> ${booking.vehicleType}</p>
+                    <p><strong>Подробности:</strong> ${booking.details}</p>
+                    <button onclick="editBooking('${booking._id}')">Редактировать</button>
                 `;
                 bookingList.appendChild(bookingDiv);
             });
         }
 
-        // Function to clear the form
         function clearForm() {
             bookingForm.reset();
-            document.getElementById('bookingId').value = ''; // Clear hidden ID field
-            deleteBtn.style.display = 'none';  // Hide delete button by default
+            document.getElementById('bookingId').value = '';
+            deleteBtn.style.display = 'none';
         }
 
-        // Function to populate the form for editing
         async function editBooking(id) {
             try {
-                const response = await fetch(`${API_URL}/${id}`, {
+                const response = await fetch(`${API_URL}/admin/bookings/${id}`, {
                     headers: {
                         'x-admin-token': ADMIN_TOKEN
                     }
@@ -237,24 +267,23 @@
                 document.getElementById('phone').value = booking.phone;
                 document.getElementById('vehicleType').value = booking.vehicleType;
                 document.getElementById('details').value = booking.details;
-                document.getElementById('bookingId').value = booking._id; // Set the hidden ID field
-                deleteBtn.style.display = 'inline'; // Show delete button
+                document.getElementById('bookingId').value = booking._id;
+                deleteBtn.style.display = 'inline';
 
-                displayMessage(`Editing booking: ${id}`);
+                displayMessage(`Редактирование записи: ${id}`);
 
             } catch (error) {
                 console.error('Error fetching booking for edit:', error);
-                displayMessage('Error fetching booking for edit', true);
+                displayMessage('Ошибка при получении записи для редактирования', true);
             }
         }
 
-        // Function to handle form submission (Create/Update)
         bookingForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
             const bookingId = document.getElementById('bookingId').value;
-            const method = bookingId ? 'PUT' : 'POST';  // Determine method based on bookingId
-            const url = bookingId ? `${API_URL}/${bookingId}` : API_URL;
+            const method = bookingId ? 'PUT' : 'POST';
+            const url = `${API_URL}/admin/bookings/${bookingId || ''}`;
 
             const formData = {
                 date: document.getElementById('date').value,
@@ -280,31 +309,29 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                displayMessage(`Booking ${bookingId ? 'updated' : 'created'} successfully`);
-                clearForm();  // Clear the form after submission
-                fetchBookings(); // Refresh the booking list
+                displayMessage(`Запись ${bookingId ? 'обновлена' : 'создана'} успешно`);
+                clearForm();
+                fetchBookings();
 
             } catch (error) {
                 console.error('Error saving booking:', error);
-                displayMessage('Error saving booking', true);
+                displayMessage('Ошибка при сохранении записи', true);
             }
         });
 
-        // Function to handle cancel button
         document.getElementById('cancelBtn').addEventListener('click', clearForm);
 
-         // Function to handle delete button
         deleteBtn.addEventListener('click', async () => {
             const bookingId = document.getElementById('bookingId').value;
 
             if (!bookingId) {
-                displayMessage('No booking selected to delete', true);
+                displayMessage('Не выбрана запись для удаления', true);
                 return;
             }
 
-            if (confirm('Are you sure you want to delete this booking?')) {
+            if (confirm('Вы уверены, что хотите удалить эту запись?')) {
                 try {
-                    const response = await fetch(`${API_URL}/${bookingId}`, {
+                    const response = await fetch(`${API_URL}/admin/bookings/${bookingId}`, {
                         method: 'DELETE',
                         headers: {
                             'x-admin-token': ADMIN_TOKEN
@@ -315,19 +342,71 @@
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
 
-                    displayMessage('Booking deleted successfully');
+                    displayMessage('Запись успешно удалена');
                     clearForm();
                     fetchBookings();
 
                 } catch (error) {
                     console.error('Error deleting booking:', error);
-                    displayMessage('Error deleting booking', true);
+                    displayMessage('Ошибка при удалении записи', true);
                 }
             }
         });
 
-        // Initial fetch of bookings on page load
-        fetchBookings();
+        // Function to handle admin login
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_URL}/admin/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username: username, password: password })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Login failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    ADMIN_TOKEN = data.token;
+                    localStorage.setItem('adminToken', ADMIN_TOKEN);
+                    displayLoginMessage('Вход выполнен успешно!');
+                    showAdminPanel();
+                } else {
+                    displayLoginMessage(data.message, true);
+                }
+
+            } catch (error) {
+                console.error('Login error:', error);
+                displayLoginMessage('Ошибка входа. Пожалуйста, попробуйте еще раз.', true);
+            }
+        });
+
+        function showAdminPanel() {
+            loginFormContainer.style.display = 'none';
+            adminPanel.style.display = 'block';
+            fetchBookings();
+        }
+
+        function checkAuth() {
+            ADMIN_TOKEN = localStorage.getItem('adminToken');
+            if (ADMIN_TOKEN) {
+                showAdminPanel();
+            } else {
+                loginFormContainer.style.display = 'block';
+                adminPanel.style.display = 'none';
+            }
+        }
+
+        // Check authentication on page load
+        checkAuth();
     </script>
 </body>
 </html>
