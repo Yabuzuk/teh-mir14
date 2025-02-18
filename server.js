@@ -23,16 +23,57 @@ mongoose.connect(dbUrl, {
 // Define schema and model
 const BookedSlotSchema = new mongoose.Schema({
     date: String,
-    time: [String]
+    time: [String],
+    organization: String, // Добавлено поле organization
+    name: String,
+    phone: String,
+    vehicleType: String,
+    details: String
 });
 
 const BookedSlot = mongoose.model('BookedSlot', BookedSlotSchema);
 
+// Функция для генерации временных слотов на день
+function generateTimeSlots(dayOfWeek) {
+    let startTime = 9;  // 9:00
+    let endTime;
+
+    if (dayOfWeek >= 1 && dayOfWeek <= 5) { // Понедельник - Пятница
+        endTime = 20; // 20:00
+    } else if (dayOfWeek === 6) { // Суббота
+        endTime = 18; // 18:00
+    } else {
+        return []; // Воскресенье - нет слотов
+    }
+
+    const timeSlots = [];
+    for (let hour = startTime; hour < endTime; hour++) {
+        timeSlots.push(`${String(hour).padStart(2, '0')}:00`);
+        timeSlots.push(`${String(hour).padStart(2, '0')}:30`);
+    }
+
+    return timeSlots;
+}
+
 // Endpoint to get available slots
 app.post('/get-available-slots', async (req, res) => {
     const { date } = req.body;
-    const allSlots = ['09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
-                      '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'];
+
+    // Check if date is valid
+    if (!date) {
+        return res.status(400).json({ message: 'Date is required' });
+    }
+
+    const selectedDate = new Date(date);
+    const dayOfWeek = selectedDate.getDay(); // 0 (Вс) - 6 (Сб)
+
+    // Generate all time slots for the selected day
+    const allSlots = generateTimeSlots(dayOfWeek);
+
+    // If it's Sunday, return an empty array
+    if (dayOfWeek === 0) {
+        return res.json({ availableSlots: [] });
+    }
 
     try {
         const bookedSlot = await BookedSlot.findOne({ date: date });
@@ -48,17 +89,30 @@ app.post('/get-available-slots', async (req, res) => {
 
 // Endpoint to book a slot
 app.post('/book-slot', async (req, res) => {
-    const { date, time } = req.body;
+    const { date, time, organization, name, phone, vehicleType, details } = req.body; // Added organization, name, phone, vehicleType, details
 
     try {
         let bookedSlot = await BookedSlot.findOne({ date: date });
 
         if (!bookedSlot) {
-            bookedSlot = new BookedSlot({ date: date, time: [time] });
+            bookedSlot = new BookedSlot({
+                date: date,
+                time: [time],
+                organization: organization,
+                name: name,
+                phone: phone,
+                vehicleType: vehicleType,
+                details: details
+            });
         } else {
             if (!bookedSlot.time.includes(time)) {
                 bookedSlot.time.push(time);
             }
+            bookedSlot.organization = organization;
+            bookedSlot.name = name;
+            bookedSlot.phone = phone;
+            bookedSlot.vehicleType = vehicleType;
+            bookedSlot.details = details;
         }
 
         await bookedSlot.save();
