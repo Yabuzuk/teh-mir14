@@ -34,9 +34,6 @@ const BookedSlotSchema = new mongoose.Schema({
 
 const BookedSlot = mongoose.model('BookedSlot', BookedSlotSchema);
 
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'tehosmotr';
-
 // Функция для генерации временных слотов на день
 function generateTimeSlots(dayOfWeek) {
     let startTime = 9;  // 9:00
@@ -126,20 +123,6 @@ app.post('/book-slot', async (req, res) => {
     }
 });
 
-// Middleware для проверки авторизации (используем переменную окружения)
-function requireAdmin(req, res, next) {
-    const adminToken = process.env.ADMIN_TOKEN;
-    const token = req.headers['x-admin-token'];
-    if (token === adminToken && adminToken) {
-        next();
-    } else {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
-}
-
-// Применяем middleware requireAdmin ко всем endpoint'ам /admin
-app.use('/admin', requireAdmin);
-
 // Получение всех записей (GET /admin/bookings)
 app.get('/admin/bookings', async (req, res) => {
     try {
@@ -204,8 +187,6 @@ app.delete('/admin/bookings/:id', async (req, res) => {
         res.status(500).json({ message: 'Failed to delete booking' });
     }
 });
-
-// Не нужно обслуживать статические файлы, так как admin.html хостится на GitHub Pages
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
