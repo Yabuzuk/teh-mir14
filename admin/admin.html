@@ -2,77 +2,337 @@
 <html>
 <head>
     <title>Админ-панель (Календарь)</title>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <meta charset='utf-8' />
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.10'></script> <!-- Для перетаскивания -->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script> <!-- Для форматирования дат -->
     <style>
         #calendar {
             max-width: 900px;
             margin: 40px auto;
+        }
+        #eventDetails {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #eventDetails label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        #eventDetails input, #eventDetails textarea, #eventDetails select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        #eventDetails button {
+            background-color: #0088cc;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        #eventDetails button:hover {
+            background-color: #0077b3;
+        }
+         .fc-event-title {
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
     <div id='calendar'></div>
 
+    <div id="eventDetails" style="display:none;">
+        <h2>Детали бронирования</h2>
+        <label for="eventDate">Дата:</label>
+        <input type="date" id="eventDate" readonly>
+
+        <label for="eventTime">Время:</label>
+        <select id="eventTime">
+            <option value="09:00">09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="12:00">12:00</option>
+            <option value="13:00">13:00</option>
+            <option value="14:00">14:00</option>
+            <option value="15:00">15:00</option>
+            <option value="16:00">16:00</option>
+            <option value="17:00">17:00</option>
+            <option value="18:00">18:00</option>
+            <option value="19:00">19:00</option>
+            <option value="20:00">20:00</option>
+        </select>
+
+        <label for="eventOrganization">Организация:</label>
+        <input type="text" id="eventOrganization">
+
+        <label for="eventName">Имя:</label>
+        <input type="text" id="eventName">
+
+        <label for="eventPhone">Телефон:</label>
+        <input type="text" id="eventPhone">
+
+        <label for="eventVehicleType">Тип ТС:</label>
+        <select id="eventVehicleType">
+            <option value="легковой автомобиль">Легковой автомобиль</option>
+            <option value="автобус">Автобус</option>
+            <option value="грузовой автомобиль">Грузовой автомобиль</option>
+            <option value="мотоцикл">Мотоцикл</option>
+            <option value="прицеп">Прицеп</option>
+        </select>
+
+        <label for="eventCarBrand">Марка ТС:</label>
+        <input type="text" id="eventCarBrand">
+
+        <label for="eventCarNumber">Номер ТС:</label>
+        <input type="text" id="eventCarNumber">
+
+        <label for="eventDetails">Подробности:</label>
+        <textarea id="eventDetails"></textarea>
+
+        <input type="hidden" id="eventId">
+
+        <button id="saveEvent">Сохранить</button>
+        <button id="deleteEvent" style="color: red;">Удалить</button>
+        <button id="cancelEvent">Отмена</button>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
-            const API_URL = 'https://teh-mir14.onrender.com'; // Ваш API URL
+            const eventDetailsDiv = document.getElementById('eventDetails');
+            const eventDateInput = document.getElementById('eventDate');
+            const eventTimeSelect = document.getElementById('eventTime');
+            const eventOrganizationInput = document.getElementById('eventOrganization');
+            const eventNameInput = document.getElementById('eventName');
+            const eventPhoneInput = document.getElementById('eventPhone');
+            const eventVehicleTypeSelect = document.getElementById('eventVehicleType');
+            const eventCarBrandInput = document.getElementById('eventCarBrand');
+            const eventCarNumberInput = document.getElementById('eventCarNumber');
+            const eventDetailsTextarea = document.getElementById('eventDetails');
+            const eventIdInput = document.getElementById('eventId');
+            const saveEventButton = document.getElementById('saveEvent');
+            const deleteEventButton = document.getElementById('deleteEvent');
+            const cancelEventButton = document.getElementById('cancelEvent');
+            const API_URL = 'https://teh-mir14.onrender.com';
+
+            let currentEvent = null; // Для хранения текущего редактируемого события
 
             const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'timeGridWeek', // Или другой вид календаря
-                slotMinTime: '09:00:00', // Начало рабочего дня
-                slotMaxTime: '20:00:00', // Конец рабочего дня
-                locale: 'ru', // Локализация
+                initialView: 'timeGridWeek',
+                slotMinTime: '09:00:00',
+                slotMaxTime: '20:00:00',
+                locale: 'ru',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'timeGridWeek,timeGridDay' // Кнопки для переключения видов
+                    right: 'timeGridWeek,timeGridDay'
                 },
+                editable: true, // Разрешаем перетаскивание
+                eventDurationEditable: false,  // Disable event duration editing
                 events: async function(fetchInfo, successCallback, failureCallback) {
                     try {
-                        const response = await fetch(`${API_URL}/admin/bookings`); // Запрос к вашему API
+                        const response = await fetch(`${API_URL}/admin/bookings`);
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }
                         const bookings = await response.json();
 
                         const events = bookings.map(booking => {
-                            // Преобразование данных для FullCalendar
-                            const [hours, minutes] = booking.time.split(':');
+                           const [hours, minutes] = booking.time.split(':');
+
+                            // Проверка формата даты
+                            const isValidDate = !isNaN(new Date(booking.date).getTime());
+
+                            if (!isValidDate) {
+                                console.warn('Invalid date format:', booking.date, booking);
+                                return null; // Пропускаем это событие
+                            }
                             const startTime = `${booking.date}T${hours}:${minutes}:00`;
                             const endTime = `${booking.date}T${parseInt(hours) + 1}:${minutes}:00`; // Продолжительность 1 час
 
+
                             return {
                                 id: booking._id,
-                                title: `${booking.name} (${booking.vehicleType})`, // Заголовок события
+                                title: `${booking.name} (${booking.vehicleType})`,
                                 start: startTime,
                                 end: endTime,
                                 extendedProps: {
-                                    organization: booking.organization, // Дополнительные данные
+                                    organization: booking.organization,
                                     phone: booking.phone,
-                                    details: booking.details
-                                },
-                                //color: 'red' //  Можно задать цвет для каждого типа ТС
+                                    details: booking.details,
+                                     carBrand: booking.carBrand,
+                                    carNumber: booking.carNumber,
+                                    time: booking.time,
+                                    vehicleType: booking.vehicleType
+                                }
                             };
-                        });
-                        successCallback(events); // Передача событий FullCalendar
+                        }).filter(event => event !== null);
+                        successCallback(events);
                     } catch (error) {
                         console.error('Error fetching events:', error);
                         failureCallback(error);
                     }
                 },
                 eventClick: function(info) {
-                    // Обработка клика на событие (например, показ деталей)
-                    alert(`Детали бронирования:\n
-                           Имя: ${info.event.title}\n
-                           Организация: ${info.event.extendedProps.organization}\n
-                           Телефон: ${info.event.extendedProps.phone}\n
-                           Подробности: ${info.event.extendedProps.details}`);
+                   // Обработка клика на событие (показ формы редактирования)
+                    currentEvent = info.event;
+                    showEventDetails(info.event);
                 },
-                // Другие опции FullCalendar (например, для создания/редактирования событий)
+               eventDrop: async function(info) {  // Обработка перетаскивания
+                    const bookingId = info.event.id;
+                    const newDate = info.event.start.toISOString().slice(0, 10);
+                    const newTime = info.event.start.toISOString().slice(11, 16);
+
+                    try {
+                        const response = await fetch(`${API_URL}/admin/bookings/${bookingId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ date: newDate, time: newTime,  }) // Только дата и время
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                            info.revert(); // Откат изменений в случае ошибки
+                        }
+                         info.revert();  //  Перезагрузка  календаря после успешного изменения
+                         calendar.refetchEvents();
+
+                    } catch (error) {
+                        console.error('Error updating event (drop):', error);
+                        alert('Ошибка при обновлении события. Пожалуйста, попробуйте еще раз.');
+                        info.revert(); // Откат изменений в случае ошибки
+                    }
+                },
+                 dateClick: function(info) {
+                     // Обработка клика на пустую ячейку (для создания нового события)
+                    currentEvent = null; // Сбрасываем текущее событие
+                    showEventDetails(null, info.dateStr); // Передаем дату клика
+                }
             });
 
             calendar.render();
+
+            // Функции для отображения/скрытия формы деталей
+            function showEventDetails(event, dateStr = null) {
+                if (event) {
+                    // Заполнение формы данными существующего события
+                    eventDateInput.value = moment(event.start).format('YYYY-MM-DD');
+                    eventTimeSelect.value = moment(event.start).format('HH:mm'); // Assuming your time format is HH:mm
+                    eventOrganizationInput.value = event.extendedProps.organization;
+                    eventNameInput.value = event.title.split(' (')[0]; // Извлекаем имя
+                    eventPhoneInput.value = event.extendedProps.phone;
+                    eventVehicleTypeSelect.value = event.extendedProps.vehicleType;
+                    eventCarBrandInput.value = event.extendedProps.carBrand || '';
+                    eventCarNumberInput.value = event.extendedProps.carNumber || '';
+                    eventDetailsTextarea.value = event.extendedProps.details;
+                    eventIdInput.value = event.id;
+
+                } else if (dateStr) {
+                     // Если клик по пустой дате, заполняем только дату и время по умолчанию
+                      eventDateInput.value = dateStr;
+                      eventTimeSelect.value = '09:00'; // Или другое значение по умолчанию
+                      eventOrganizationInput.value = '';
+                      eventNameInput.value = '';
+                      eventPhoneInput.value = '';
+                      eventVehicleTypeSelect.value = 'легковой автомобиль';
+                      eventCarBrandInput.value = '';
+                      eventCarNumberInput.value = '';
+                      eventDetailsTextarea.value = '';
+                      eventIdInput.value = '';
+
+                }
+                eventDetailsDiv.style.display = 'block';
+                deleteEventButton.style.display = event ? 'inline' : 'none';
+            }
+
+            function hideEventDetails() {
+                eventDetailsDiv.style.display = 'none';
+            }
+
+            // Обработчики событий формы
+            saveEventButton.addEventListener('click', async () => {
+                const bookingId = eventIdInput.value;
+                const method = bookingId ? 'PUT' : 'POST';
+                const url = `${API_URL}/admin/bookings/${bookingId || ''}`;
+
+                const [hours, minutes] = eventTimeSelect.value.split(':');
+                const eventDate = eventDateInput.value;
+
+                const formData = {
+                    date: eventDate,
+                    time: eventTimeSelect.value,
+                    organization: eventOrganizationInput.value,
+                    name: eventNameInput.value,
+                    phone: eventPhoneInput.value,
+                    vehicleType: eventVehicleTypeSelect.value,
+                    carBrand: eventCarBrandInput.value,
+                    carNumber: eventCarNumberInput.value,
+                    details: eventDetailsTextarea.value
+                };
+
+                try {
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    //  Обновление календаря после сохранения
+                    calendar.refetchEvents();
+                    hideEventDetails();
+
+                } catch (error) {
+                    console.error('Error saving event:', error);
+                    alert('Ошибка при сохранении события. Пожалуйста, попробуйте еще раз.');
+                }
+            });
+
+            deleteEventButton.addEventListener('click', async () => {
+                if (!currentEvent || !currentEvent.id) {
+                    alert('Не выбрано событие для удаления.');
+                    return;
+                }
+
+                if (confirm('Вы уверены, что хотите удалить это бронирование?')) {
+                    try {
+                        const response = await fetch(`${API_URL}/admin/bookings/${currentEvent.id}`, {
+                            method: 'DELETE'
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        // Обновляем календарь
+                        calendar.refetchEvents();
+                        hideEventDetails();
+
+                    } catch (error) {
+                        console.error('Error deleting event:', error);
+                        alert('Ошибка при удалении события. Пожалуйста, попробуйте еще раз.');
+                    }
+                }
+            });
+
+            cancelEventButton.addEventListener('click', hideEventDetails);
+
         });
     </script>
 </body>
