@@ -228,6 +228,9 @@
                     const phone = event.extendedProps.phone || '';
                     const carBrand = event.extendedProps.carBrand || '';
                     const carNumber = event.extendedProps.carNumber || '';
+
+                    // Check if extendedProps and vehicleType exist before accessing them
+                    const vehicleType = (event.extendedProps && event.extendedProps.vehicleType) || '';
                     const name = event.title.split(' (')[0];
 
                     let eventHtml = `
@@ -289,7 +292,7 @@
                                     carBrand: booking.carBrand,
                                     carNumber: booking.carNumber,
                                     time: booking.time,
-                                    vehicleType: booking.vehicleType
+                                    vehicleType: booking.vehicleType // Ensure vehicleType is included
                                 },
                                 allDay: false
                             };
