@@ -77,7 +77,7 @@
             border-radius: 4px;
             border: 1px solid #ccc;
             background-color: #fff;
-            height: 80px; /* Фиксированная высота ячейки */
+            height: 80px;
         }
 
         .fc-timegrid-event:hover {
@@ -228,7 +228,6 @@
                     const phone = event.extendedProps.phone || '';
                     const carBrand = event.extendedProps.carBrand || '';
                     const carNumber = event.extendedProps.carNumber || '';
-                    const vehicleType = event.extendedProps.vehicleType || '';
                     const name = event.title.split(' (')[0];
 
                     let eventHtml = `
@@ -290,7 +289,7 @@
                                     carBrand: booking.carBrand,
                                     carNumber: booking.carNumber,
                                     time: booking.time,
-                                    vehicleType: vehicleType
+                                    vehicleType: booking.vehicleType
                                 },
                                 allDay: false
                             };
