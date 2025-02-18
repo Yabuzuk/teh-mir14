@@ -1,4 +1,4 @@
-                <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -644,16 +644,16 @@ button:hover {
 			  	<h3>Наш адрес</h3>
             <div class="contact-item">
 		
-               <img src="" alt="Адрес">
+               <img src="https://img.icons8.com/ios-filled/20/0088cc/marker.png" alt="Адрес">
 <span><strong>Мирный, ш. Чернышевское, д. 5Г</strong></span>
 </div>
 			<h3>Контакты</h3>
             <div class="contact-item">
-                <img src="" alt="Телефон">
+                <img src="https://img.icons8.com/ios-filled/20/0088cc/phone.png" alt="Телефон">
                <span> <a href="tel:+79142520328">+7 (914) 252 03 28</a></span>
              </div>
             <div class="contact-item">   
-			  <img src="" alt="Email">
+			  <img src="https://img.icons8.com/ios-filled/20/0088cc/mail.png" alt="Email">
               <span>  <a href="mailto:tehosmotr.mir1@yandex.ru">tehosmotr.mir1@yandex.ru</a></span>
 			  <br>
 			  <br>
@@ -662,9 +662,9 @@ button:hover {
                 <section class="map-images-container">
                     <div class="map" id="map"></div>
                     <div class="image-gallery">
-                        <img src="" alt="Фото 1" class="gallery-image">
-                        <img src="" alt="Фото 2" class="gallery-image">
-						<img src="" alt="Фото 2" class="gallery-image">
+                        <img src="image1.jpg" alt="Фото 1" class="gallery-image">
+                        <img src="image2.jpg" alt="Фото 2" class="gallery-image">
+						<img src="image3.jpg" alt="Фото 2" class="gallery-image">
                     </div>
                 </section>
 
@@ -693,18 +693,6 @@ button:hover {
                     <div class="form-group">
                         <label for="phone">Номер телефона</label>
                         <input type="tel" id="phone" name="phone" required placeholder="Введите номер телефона">
-                    </div>
-					
-					<!-- Марка автомобиля -->
-                    <div class="form-group">
-                        <label for="carBrand">Марка автомобиля</label>
-                        <input type="text" id="carBrand" name="carBrand" required placeholder="Укажите марку автомобиля">
-                    </div>
-
-                     <!-- Номер автомобиля -->
-                    <div class="form-group">
-                        <label for="carNumber">Номер автомобиля</label>
-                        <input type="text" id="carNumber" name="carNumber" required placeholder="Укажите номер автомобиля">
                     </div>
 
                     <!-- Вид транспортного средства -->
@@ -861,7 +849,8 @@ button:hover {
         const faqItems = document.querySelectorAll('.faq-item');
         faqItems.forEach(item => {
             const question = item.querySelector('.faq-question');
-            question.addEventListener('click', () => {item.classList.toggle('active');
+            question.addEventListener('click', () => {
+                item.classList.toggle('active');
             });
         });
 
@@ -875,8 +864,6 @@ button:hover {
         const timeSelect = document.getElementById('time');
         const bookingForm = document.getElementById('bookingForm');
         const vehicleTypeSelect = document.getElementById('vehicleType');
-		const carBrandInput = document.getElementById('carBrand');
-		const carNumberInput = document.getElementById('carNumber');
 
         // Функция для обновления доступных временных слотов и ограничения дат
         async function updateAvailableTimes() {
@@ -966,9 +953,7 @@ button:hover {
                         name: formObject.name,
                         phone: formObject.phone,
                         vehicleType: formObject.vehicleType,
-                        details: formObject.details,
-						carBrand: formObject.carBrand,
-                        carNumber: formObject.carNumber
+                        details: formObject.details
                     })
                 });
 
@@ -1002,8 +987,6 @@ button:hover {
                         Имя: ${formObject.name}
                         Номер телефона: ${formObject.phone}
                         Вид ТС: ${formObject.vehicleType}
-						Марка автомобиля: ${formObject.carBrand}
-                        Номер автомобиля: ${formObject.carNumber}
                         Дата: ${formObject.date}
                         Время: ${formObject.time}
                         Подробности: ${formObject.details}
@@ -1021,8 +1004,6 @@ button:hover {
                             Организация: ${formObject.organization}
                             Имя: ${formObject.name}
                             Номер телефона: ${formObject.phone}
-							Марка автомобиля: ${formObject.carBrand}
-                            Номер автомобиля: ${formObject.carNumber}
                             Дата: ${formObject.date}
                             Время: ${formObject.time}
                             Подробности: ${formObject.details}
@@ -1032,18 +1013,6 @@ button:hover {
                     }
 
                     alert("Запись успешно отправлена!");
-					
-					// Очистка формы
-                    bookingForm.reset();
-					//Сброс полей
-					carBrandInput.value = "";
-					carNumberInput.value = "";
-
-                    // Обновление страницы (перезагрузка)
-                   // window.location.reload();
-				   updateAvailableTimes(); // Альтернатива перезагрузке: обновить список доступных времен
-					
-
                 } else {
                     alert(data.message);
                 }
