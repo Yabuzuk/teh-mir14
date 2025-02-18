@@ -1,23 +1,93 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Simple Admin Panel</title>
+    <title>Telegram-Style Admin Panel</title>
     <style>
         body {
             font-family: sans-serif;
+            background-color: #f0f2f5; /* Light gray background like Telegram */
+            color: #222; /* Dark text */
+        }
+        h1, h2 {
+            color: #0088cc; /* Telegram blue */
         }
         .booking-item {
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-            padding: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            margin-bottom: 15px;
+            padding: 15px;
+            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        }
+        .booking-item:hover {
+            box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22);
         }
         .booking-item p {
-            margin: 5px 0;
+            margin: 8px 0;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box; /* Make sure padding doesn't affect width */
+        }
+        select {
+            appearance: none; /* Remove default arrow in some browsers */
+            background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+            background-size: 16px;
+            padding-right: 30px;
+        }
+        button {
+            background-color: #0088cc; /* Telegram blue */
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0077b3; /* Darker blue on hover */
+        }
+        button[style="color: red;"] { /* Style for Delete button */
+            background-color: #f44336; /* Red color */
+        }
+        button[style="color: red;"]:hover {
+            background-color: #d32f2f; /* Darker red on hover */
+        }
+        #message {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        #message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        #message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
     </style>
 </head>
 <body>
-    <h1>Simple Admin Panel</h1>
+    <h1>Telegram-Style Admin Panel</h1>
 
     <div id="message"></div>
 
@@ -73,7 +143,13 @@
         // Function to display messages
         function displayMessage(message, isError = false) {
             messageDiv.textContent = message;
-            messageDiv.style.color = isError ? 'red' : 'green';
+            messageDiv.className = ''; // Reset class
+            messageDiv.classList.add('message');
+            if (isError) {
+                messageDiv.classList.add('error');
+            } else {
+                messageDiv.classList.add('success');
+            }
         }
 
         // Function to fetch and display bookings
