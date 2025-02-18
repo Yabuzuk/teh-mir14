@@ -670,6 +670,7 @@ button:hover {
 
             </section>
 
+
         <!-- Форма бронирования -->
         <section class="booking-form">
             <h1 id="formToggle" class="blinking-button">Онлайн запись на техосмотр</h1> <!-- Мигающая кнопка -->
@@ -706,6 +707,18 @@ button:hover {
                             <option value="мотоцикл">Мотоцикл</option>
                             <option value="прицеп">Прицеп</option>
                         </select>
+                    </div>
+
+                      <!-- Марка автомобиля -->
+                    <div class="form-group">
+                        <label for="carBrand">Марка автомобиля</label>
+                        <input type="text" id="carBrand" name="carBrand" placeholder="Введите марку автомобиля">
+                    </div>
+
+                    <!-- Номер автомобиля -->
+                    <div class="form-group">
+                        <label for="carNumber">Номер автомобиля</label>
+                        <input type="text" id="carNumber" name="carNumber" placeholder="Введите номер автомобиля">
                     </div>
 
                     <!-- Дата -->
@@ -953,7 +966,9 @@ button:hover {
                         name: formObject.name,
                         phone: formObject.phone,
                         vehicleType: formObject.vehicleType,
-                        details: formObject.details
+                        details: formObject.details,
+                        carBrand: formObject.carBrand, // Добавляем отправку марки автомобиля
+                        carNumber: formObject.carNumber  // Добавляем отправку номера автомобиля
                     })
                 });
 
@@ -989,6 +1004,8 @@ button:hover {
                         Вид ТС: ${formObject.vehicleType}
                         Дата: ${formObject.date}
                         Время: ${formObject.time}
+                        Марка авто: ${formObject.carBrand || 'Не указана'}
+                        Номер авто: ${formObject.carNumber || 'Не указан'}
                         Подробности: ${formObject.details}
                     `;
 
@@ -1006,6 +1023,8 @@ button:hover {
                             Номер телефона: ${formObject.phone}
                             Дата: ${formObject.date}
                             Время: ${formObject.time}
+                             Марка авто: ${formObject.carBrand || 'Не указана'}
+                            Номер авто: ${formObject.carNumber || 'Не указан'}
                             Подробности: ${formObject.details}
                         `;
 
