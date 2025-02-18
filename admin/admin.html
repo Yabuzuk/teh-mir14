@@ -5,8 +5,8 @@
     <meta charset='utf-8' />
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.10'></script> <!-- Для перетаскивания -->
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script> <!-- Для форматирования дат -->
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.10'></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
     <style>
         #calendar {
             max-width: 900px;
@@ -42,7 +42,7 @@
         #eventDetails button:hover {
             background-color: #0077b3;
         }
-         .fc-event-title {
+        .fc-event-title {
             font-size: 0.9em;
         }
     </style>
@@ -124,7 +124,7 @@
             const cancelEventButton = document.getElementById('cancelEvent');
             const API_URL = 'https://teh-mir14.onrender.com';
 
-            let currentEvent = null; // Для хранения текущего редактируемого события
+            let currentEvent = null;
 
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'timeGridWeek',
@@ -136,8 +136,8 @@
                     center: 'title',
                     right: 'timeGridWeek,timeGridDay'
                 },
-                editable: true, // Разрешаем перетаскивание
-                eventDurationEditable: false,  // Disable event duration editing
+                editable: true,
+                eventDurationEditable: false,
                 events: async function(fetchInfo, successCallback, failureCallback) {
                     try {
                         const response = await fetch(`${API_URL}/admin/bookings`);
@@ -147,7 +147,13 @@
                         const bookings = await response.json();
 
                         const events = bookings.map(booking => {
-                           const [hours, minutes] = booking.time.split(':');
+                            // Проверяем, является ли booking.time строкой, прежде чем пытаться вызвать split
+                            if (typeof booking.time !== 'string') {
+                                console.warn('Invalid time format (not a string):', booking.time, booking);
+                                return null; // Пропускаем это событие, если время не является строкой
+                            }
+
+                            const [hours, minutes] = booking.time.split(':');
 
                             // Проверка формата даты
                             const isValidDate = !isNaN(new Date(booking.date).getTime());
@@ -169,7 +175,7 @@
                                     organization: booking.organization,
                                     phone: booking.phone,
                                     details: booking.details,
-                                     carBrand: booking.carBrand,
+                                    carBrand: booking.carBrand,
                                     carNumber: booking.carNumber,
                                     time: booking.time,
                                     vehicleType: booking.vehicleType
@@ -183,11 +189,10 @@
                     }
                 },
                 eventClick: function(info) {
-                   // Обработка клика на событие (показ формы редактирования)
                     currentEvent = info.event;
                     showEventDetails(info.event);
                 },
-               eventDrop: async function(info) {  // Обработка перетаскивания
+               eventDrop: async function(info) {
                     const bookingId = info.event.id;
                     const newDate = info.event.start.toISOString().slice(0, 10);
                     const newTime = info.event.start.toISOString().slice(11, 16);
@@ -203,34 +208,30 @@
 
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
-                            info.revert(); // Откат изменений в случае ошибки
+                            info.revert();
                         }
-                         info.revert();  //  Перезагрузка  календаря после успешного изменения
-                         calendar.refetchEvents();
+                        calendar.refetchEvents();
 
                     } catch (error) {
                         console.error('Error updating event (drop):', error);
                         alert('Ошибка при обновлении события. Пожалуйста, попробуйте еще раз.');
-                        info.revert(); // Откат изменений в случае ошибки
+                        info.revert();
                     }
                 },
                  dateClick: function(info) {
-                     // Обработка клика на пустую ячейку (для создания нового события)
-                    currentEvent = null; // Сбрасываем текущее событие
-                    showEventDetails(null, info.dateStr); // Передаем дату клика
+                    currentEvent = null;
+                    showEventDetails(null, info.dateStr);
                 }
             });
 
             calendar.render();
 
-            // Функции для отображения/скрытия формы деталей
             function showEventDetails(event, dateStr = null) {
                 if (event) {
-                    // Заполнение формы данными существующего события
                     eventDateInput.value = moment(event.start).format('YYYY-MM-DD');
-                    eventTimeSelect.value = moment(event.start).format('HH:mm'); // Assuming your time format is HH:mm
+                    eventTimeSelect.value = moment(event.start).format('HH:mm');
                     eventOrganizationInput.value = event.extendedProps.organization;
-                    eventNameInput.value = event.title.split(' (')[0]; // Извлекаем имя
+                    eventNameInput.value = event.title.split(' (')[0];
                     eventPhoneInput.value = event.extendedProps.phone;
                     eventVehicleTypeSelect.value = event.extendedProps.vehicleType;
                     eventCarBrandInput.value = event.extendedProps.carBrand || '';
@@ -239,9 +240,8 @@
                     eventIdInput.value = event.id;
 
                 } else if (dateStr) {
-                     // Если клик по пустой дате, заполняем только дату и время по умолчанию
                       eventDateInput.value = dateStr;
-                      eventTimeSelect.value = '09:00'; // Или другое значение по умолчанию
+                      eventTimeSelect.value = '09:00';
                       eventOrganizationInput.value = '';
                       eventNameInput.value = '';
                       eventPhoneInput.value = '';
@@ -260,7 +260,6 @@
                 eventDetailsDiv.style.display = 'none';
             }
 
-            // Обработчики событий формы
             saveEventButton.addEventListener('click', async () => {
                 const bookingId = eventIdInput.value;
                 const method = bookingId ? 'PUT' : 'POST';
@@ -294,7 +293,6 @@
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
 
-                    //  Обновление календаря после сохранения
                     calendar.refetchEvents();
                     hideEventDetails();
 
@@ -320,7 +318,6 @@
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }
 
-                        // Обновляем календарь
                         calendar.refetchEvents();
                         hideEventDetails();
 
