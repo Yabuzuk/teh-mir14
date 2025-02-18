@@ -257,7 +257,12 @@
 
                     // Sort bookings within each date by time
                     groupedBookings[date].sort((a, b) => {
-                        return a.time.localeCompare(b.time);
+                        if (typeof a.time === 'string' && typeof b.time === 'string') {
+                           return a.time.localeCompare(b.time);
+                        } else {
+                          console.warn('Invalid time format:', a.time, b.time);
+                           return 0; // Keep original order if time is invalid
+                         }
                     });
 
 
