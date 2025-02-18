@@ -9,30 +9,82 @@
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
     <style>
         #calendar {
-            max-width: 1200px;
+            max-width: 1400px; /* Увеличена ширина календаря */
             margin: 40px auto;
+            padding: 20px; /* Добавлен отступ вокруг календаря */
+            border: 1px solid #ddd; /* Добавлена рамка вокруг календаря */
+            border-radius: 10px; /* Скругленные углы рамки */
+            background-color: #f9f9f9; /* Светлый фон календаря */
+        }
+
+        /* Общие стили для FullCalendar */
+        .fc .fc-toolbar.fc-toolbar-solid { /* Стиль панели инструментов */
+            background-color: #0088cc; /* Голубой цвет фона */
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 1.5em; /* Больше размер заголовка */
+        }
+
+        .fc-button {
+            background-color: #fff; /* Белый фон кнопок */
+            color: #333; /* Темный текст кнопок */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin: 0 5px;
+            transition: background-color 0.2s ease;
+        }
+
+        .fc-button:hover {
+            background-color: #eee;
+            border-color: #999;
+        }
+
+        .fc-button:active {
+            background-color: #ddd;
         }
 
         .fc-timegrid-slot-label {
-            font-size: 0.8em;
+            font-size: 0.9em; /* Увеличен шрифт меток времени */
+            padding: 5px;
+            color: #555;
         }
 
         .fc-event-title {
-            font-size: 0.9em;
+            font-size: 1em; /* Немного увеличен шрифт для заголовка события */
+            font-weight: bold;
         }
 
         .fc-col-header-cell {
-            font-size: 0.9em;
+            font-size: 1em;
+            color: #333;
+            font-weight: bold; /* Bold day names */
+            padding: 10px; /* Add padding to day names */
+            background-color: #f0f0f0; /* Light grey background for day names */
+            border-bottom: 1px solid #ddd; /* Add a bottom border */
         }
 
         .fc-timegrid-event {
             overflow: hidden;
             word-wrap: break-word;
-            padding: 5px;
+            padding: 8px; /* Добавлен padding внутрь ячейки */
             box-sizing: border-box;
+            border-radius: 4px;
+            border: 1px solid #ccc; /* Add border to events */
+            background-color: #fff; /* White background for events */
+            height: auto; /* Автоматическая высота */
+            margin-bottom: 2px; /* Added a little space between events */
+            line-height: 1.4; /* Улучшение интервала между строк */
         }
-        .fc-timegrid-event-short {
-            height: auto;  /*  Сделали автоматическую высоту для коротких событий */
+        .fc-timegrid-event:hover {
+           background-color: #f5f5f5; /* Light grey background on hover */
+            border-color: #999;
+           box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Add a shadow on hover */
         }
 
         #eventDetails {
@@ -41,6 +93,7 @@
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff; /* Background color for the details section */
         }
 
         #eventDetails label {
