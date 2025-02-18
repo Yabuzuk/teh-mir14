@@ -26,15 +26,13 @@
         }
 
         .fc-timegrid-event {
-            height: 7em; /* Увеличиваем высоту ячеек еще больше */
             overflow: hidden;
-            word-wrap: break-word; /* Разрешаем перенос слов */
-            padding: 5px; /* Добавляем отступы внутри ячейки */
-            box-sizing: border-box;  /* Учитываем padding в общей высоте */
+            word-wrap: break-word;
+            padding: 5px;
+            box-sizing: border-box;
         }
-
-         .fc-event-title {
-            font-size: 0.8em;
+        .fc-timegrid-event-short {
+            height: auto;  /*  Сделали автоматическую высоту для коротких событий */
         }
 
         #eventDetails {
