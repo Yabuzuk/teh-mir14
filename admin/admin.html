@@ -50,12 +50,12 @@
         }
 
         .fc-timegrid-slot-label {
-            font-size: 1em; /* Slightly larger font */
+            font-size: 1em;
             padding: 5px;
             color: #555;
-            height: 40px; /* Increased height for time labels */
-            line-height: 40px; /* Vertically center time */
-            font-weight: bold; /* Make time bold */
+            height: 40px;
+            line-height: 40px;
+            font-weight: bold;
         }
 
         .fc-event-title {
@@ -89,50 +89,6 @@
             background-color: #d0e8e6;
             border-color: #999;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-        }
-
-        #eventDetails {
-            margin-top: 20px;
-            border: 1px solid #ccc;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-        }
-
-        #eventDetails label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        #eventDetails input,
-        #eventDetails textarea,
-        #eventDetails select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 1em;
-        }
-
-        #eventDetails button {
-            background-color: #0088cc;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-right: 10px;
-            transition: background-color 0.3s;
-            font-size: 1em;
-        }
-
-        #eventDetails button:hover {
-            background-color: #0077b3;
         }
     </style>
 </head>
@@ -227,13 +183,15 @@
                 },
                 editable: true,
                 eventDurationEditable: false,
+                slotLabelInterval: '01:00', /* Set the interval to 1 hour */
+                snapDuration: '01:00',   /* Set snap duration to 1 hour */
+                scrollTime: '09:00:00', // Initial scroll time
                 eventContent: function(arg) {
                     const event = arg.event;
                     const organization = event.extendedProps.organization || '';
                     const phone = event.extendedProps.phone || '';
                     const carBrand = event.extendedProps.carBrand || '';
                     const carNumber = event.extendedProps.carNumber || '';
-                      // Check if extendedProps and vehicleType exist before accessing them
                     const vehicleType = (event.extendedProps && event.extendedProps.vehicleType) || '';
                     const name = event.title.split(' (')[0];
 
