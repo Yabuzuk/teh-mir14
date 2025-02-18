@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
     <style>
         #calendar {
-            max-width: 1200px; /* Увеличена максимальная ширина календаря */
+            max-width: 1200px;
             margin: 40px auto;
         }
 
@@ -18,20 +18,23 @@
         }
 
         .fc-event-title {
-            font-size: 0.9em; /* Немного увеличен шрифт для лучшей читаемости */
+            font-size: 0.9em;
         }
 
         .fc-col-header-cell {
-            font-size: 0.9em; /* Немного увеличен шрифт для лучшей читаемости */
+            font-size: 0.9em;
         }
 
         .fc-timegrid-event {
-            height: 5em; /* Еще больше увеличена высота ячеек */
-            overflow: hidden; /* Скрываем все, что не помещается */
+            height: 7em; /* Увеличиваем высоту ячеек еще больше */
+            overflow: hidden;
+            word-wrap: break-word; /* Разрешаем перенос слов */
+            padding: 5px; /* Добавляем отступы внутри ячейки */
+            box-sizing: border-box;  /* Учитываем padding в общей высоте */
         }
 
-        .fc-timegrid-event div {
-            padding: 3px; /* Добавляем немного отступов внутри ячейки */
+         .fc-event-title {
+            font-size: 0.8em;
         }
 
         #eventDetails {
