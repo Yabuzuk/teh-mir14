@@ -53,12 +53,14 @@
             font-size: 0.9em;
             padding: 5px;
             color: #555;
+            height: 30px; /* Height of the time slots */
+            line-height: 30px; /* Vertically center the time */
         }
 
         .fc-event-title {
             font-size: 0.9em;
             font-weight: bold;
-            color: #000; /* Цвет текста заголовка события */
+            color: #000;
         }
 
         .fc-col-header-cell {
@@ -77,9 +79,9 @@
             box-sizing: border-box;
             border-radius: 4px;
             border: 1px solid #ccc;
-            background-color: #e0f2f1; /* Более приятный цвет фона ячейки */
-            color: #000; /* Темный цвет текста в ячейке */
-            height: 100px; /* Увеличенная высота ячейки */
+            background-color: #e0f2f1;
+            color: #000;
+            height: 100px;
         }
 
         .fc-timegrid-event:hover {
@@ -230,11 +232,12 @@
                     const phone = event.extendedProps.phone || '';
                     const carBrand = event.extendedProps.carBrand || '';
                     const carNumber = event.extendedProps.carNumber || '';
+                     // Check if extendedProps and vehicleType exist before accessing them
                     const vehicleType = (event.extendedProps && event.extendedProps.vehicleType) || '';
                     const name = event.title.split(' (')[0];
 
                     let eventHtml = `
-                        <div style="color:#000;">  <!-- Установили цвет текста в ячейке -->
+                        <div style="color:#000;">
                             <b>${name}</b><br>
                             ${vehicleType}<br>
                             ${organization ? `<b>Орг:</b> ${organization}<br>` : ''}
