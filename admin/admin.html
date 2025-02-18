@@ -9,41 +9,56 @@
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
     <style>
         #calendar {
-            max-width: 900px;
+            max-width: 1000px; /* Increased calendar width */
             margin: 40px auto;
+        }
+        .fc-timegrid-slot-label {
+            font-size: 0.8em; /* Smaller time labels */
+        }
+        .fc-event-title {
+            font-size: 0.8em; /* Smaller event title */
+        }
+        .fc-col-header-cell {
+             font-size: 0.8em; /* Smaller day names */
+        }
+        .fc-timegrid-event {
+            height: 2.5em;  /* Increased event height */
         }
         #eventDetails {
             margin-top: 20px;
             border: 1px solid #ccc;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 15px; /* Increased padding */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Added subtle shadow */
         }
         #eventDetails label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-weight: bold; /* Bolder labels */
+            color: #555; /* Darker labels */
         }
         #eventDetails input, #eventDetails textarea, #eventDetails select {
             width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
+            padding: 10px; /* Increased padding */
+            margin-bottom: 15px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 6px;
             box-sizing: border-box;
+            font-size: 1em; /* Adjust font size */
         }
         #eventDetails button {
             background-color: #0088cc;
             color: white;
-            padding: 10px 15px;
+            padding: 12px 20px; /* Increased button padding */
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             margin-right: 10px;
+            transition: background-color 0.3s; /* Smooth transition */
+            font-size: 1em; /* Adjust font size */
         }
         #eventDetails button:hover {
             background-color: #0077b3;
-        }
-        .fc-event-title {
-            font-size: 0.9em;
         }
 
         /* Tooltip styles */
@@ -60,7 +75,7 @@
             color: #fff;
             text-align: left;
             border-radius: 6px;
-            padding: 5px;
+            padding: 8px;
             position: absolute;
             z-index: 1;
             bottom: 125%;
@@ -68,6 +83,7 @@
             margin-left: -125px;
             opacity: 0;
             transition: opacity 0.3s;
+            font-size: 0.9em; /* Adjust tooltip font size */
         }
 
         .tooltip:hover .tooltiptext {
@@ -167,25 +183,28 @@
                 },
                 editable: true,
                 eventDurationEditable: false,
-                eventContent: function(arg) { // Custom event rendering function
+                eventContent: function(arg) {
                     const event = arg.event;
                     const organization = event.extendedProps.organization || '';
                     const phone = event.extendedProps.phone || '';
                     const carBrand = event.extendedProps.carBrand || '';
                     const carNumber = event.extendedProps.carNumber || '';
+                    const vehicleType = event.extendedProps.vehicleType || '';
+                    const name = event.title.split(' (')[0]; // Extract name from title
 
-                    // Create tooltip text
                     let tooltipHtml = `
+                        <b>Имя:</b> ${name}<br>
+                        <b>Тип ТС:</b> ${vehicleType}<br>
                         <b>Организация:</b> ${organization}<br>
                         <b>Телефон:</b> ${phone}<br>
                         <b>Марка ТС:</b> ${carBrand}<br>
                         <b>Номер ТС:</b> ${carNumber}
                     `;
 
-                    // Create event content with tooltip
                     let eventHtml = `
                         <div class="tooltip">
-                            ${event.title}
+                            <b>${name}</b><br>
+                            ${vehicleType}
                             <span class="tooltiptext">${tooltipHtml}</span>
                         </div>
                     `;
@@ -239,7 +258,8 @@
                                     carNumber: booking.carNumber,
                                     time: booking.time,
                                     vehicleType: booking.vehicleType
-                                }
+                                },
+                                allDay: false  // add allDay
                             };
                         }).filter(event => event !== null);
                         successCallback(events);
@@ -270,7 +290,6 @@
                             throw new Error(`HTTP error! status: ${response.status}`);
                             info.revert();
                         }
-                         info.revert();
                          calendar.refetchEvents();
 
                     } catch (error) {
@@ -390,6 +409,12 @@
             });
 
             cancelEventButton.addEventListener('click', hideEventDetails);
+
+                // Disable date input if event is not null
+        document.getElementById('eventDetails').addEventListener('click', function () {
+            const dateInput = document.getElementById('eventDate');
+            dateInput.disabled = !!currentEvent;
+        });
 
         });
     </script>
