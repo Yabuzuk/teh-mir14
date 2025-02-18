@@ -108,20 +108,26 @@ app.post('/book-slot', async (req, res) => {
                 carBrand: carBrand,
                 carNumber: carNumber
             });
+             await bookedSlot.save();
         } else {
             if (!bookedSlot.time.includes(time)) {
                 bookedSlot.time.push(time);
+                 bookedSlot.organization = organization;
+                 bookedSlot.name = name;
+                 bookedSlot.phone = phone;
+                 bookedSlot.vehicleType = vehicleType;
+                 bookedSlot.details = details;
+                 bookedSlot.carBrand = carBrand;
+                 bookedSlot.carNumber = carNumber;
+               await bookedSlot.save();
+            } else {
+               return res.status(400).json({ success: false, message: 'Это время уже забронировано!' });
             }
-            bookedSlot.organization = organization;
-            bookedSlot.name = name;
-            bookedSlot.phone = phone;
-            bookedSlot.vehicleType = vehicleType;
-            bookedSlot.details = details;
-            bookedSlot.carBrand = carBrand;
-            bookedSlot.carNumber = carNumber;
+
         }
 
-        await bookedSlot.save();
+
+
         res.json({ success: true, message: 'Слот успешно забронирован!' });
     } catch (err) {
         console.error('Error booking slot:', err);
