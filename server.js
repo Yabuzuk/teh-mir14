@@ -34,6 +34,9 @@ const BookedSlotSchema = new mongoose.Schema({
 
 const BookedSlot = mongoose.model('BookedSlot', BookedSlotSchema);
 
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'tehosmotr';
+
 // Функция для генерации временных слотов на день
 function generateTimeSlots(dayOfWeek) {
     let startTime = 9;  // 9:00
