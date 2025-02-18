@@ -9,17 +9,17 @@
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
     <style>
         #calendar {
-            max-width: 1400px; /* Увеличена ширина календаря */
+            max-width: 1400px;
             margin: 40px auto;
-            padding: 20px; /* Добавлен отступ вокруг календаря */
-            border: 1px solid #ddd; /* Добавлена рамка вокруг календаря */
-            border-radius: 10px; /* Скругленные углы рамки */
-            background-color: #f9f9f9; /* Светлый фон календаря */
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
         }
 
         /* Общие стили для FullCalendar */
-        .fc .fc-toolbar.fc-toolbar-solid { /* Стиль панели инструментов */
-            background-color: #0088cc; /* Голубой цвет фона */
+        .fc .fc-toolbar.fc-toolbar-solid {
+            background-color: #0088cc;
             color: white;
             padding: 10px;
             border-radius: 8px;
@@ -27,12 +27,12 @@
         }
 
         .fc .fc-toolbar-title {
-            font-size: 1.5em; /* Больше размер заголовка */
+            font-size: 1.5em;
         }
 
         .fc-button {
-            background-color: #fff; /* Белый фон кнопок */
-            color: #333; /* Темный текст кнопок */
+            background-color: #fff;
+            color: #333;
             border: 1px solid #ccc;
             border-radius: 4px;
             padding: 8px 12px;
@@ -50,41 +50,40 @@
         }
 
         .fc-timegrid-slot-label {
-            font-size: 0.9em; /* Увеличен шрифт меток времени */
+            font-size: 0.9em;
             padding: 5px;
             color: #555;
         }
 
         .fc-event-title {
-            font-size: 1em; /* Немного увеличен шрифт для заголовка события */
+            font-size: 0.9em;
             font-weight: bold;
         }
 
         .fc-col-header-cell {
             font-size: 1em;
             color: #333;
-            font-weight: bold; /* Bold day names */
-            padding: 10px; /* Add padding to day names */
-            background-color: #f0f0f0; /* Light grey background for day names */
-            border-bottom: 1px solid #ddd; /* Add a bottom border */
+            font-weight: bold;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ddd;
         }
 
         .fc-timegrid-event {
             overflow: hidden;
             word-wrap: break-word;
-            padding: 8px; /* Добавлен padding внутрь ячейки */
+            padding: 8px;
             box-sizing: border-box;
             border-radius: 4px;
-            border: 1px solid #ccc; /* Add border to events */
-            background-color: #fff; /* White background for events */
-            height: auto; /* Автоматическая высота */
-            margin-bottom: 2px; /* Added a little space between events */
-            line-height: 1.4; /* Улучшение интервала между строк */
+            border: 1px solid #ccc;
+            background-color: #fff;
+            height: 80px; /* Фиксированная высота ячейки */
         }
+
         .fc-timegrid-event:hover {
-           background-color: #f5f5f5; /* Light grey background on hover */
+            background-color: #f5f5f5;
             border-color: #999;
-           box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Add a shadow on hover */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
         }
 
         #eventDetails {
@@ -93,7 +92,7 @@
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background-color: #fff; /* Background color for the details section */
+            background-color: #fff;
         }
 
         #eventDetails label {
@@ -291,7 +290,7 @@
                                     carBrand: booking.carBrand,
                                     carNumber: booking.carNumber,
                                     time: booking.time,
-                                    vehicleType: booking.vehicleType
+                                    vehicleType: vehicleType
                                 },
                                 allDay: false
                             };
