@@ -45,6 +45,35 @@
         .fc-event-title {
             font-size: 0.9em;
         }
+
+        /* Tooltip styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -138,6 +167,31 @@
                 },
                 editable: true,
                 eventDurationEditable: false,
+                eventContent: function(arg) { // Custom event rendering function
+                    const event = arg.event;
+                    const organization = event.extendedProps.organization || '';
+                    const phone = event.extendedProps.phone || '';
+                    const carBrand = event.extendedProps.carBrand || '';
+                    const carNumber = event.extendedProps.carNumber || '';
+
+                    // Create tooltip text
+                    let tooltipHtml = `
+                        <b>Организация:</b> ${organization}<br>
+                        <b>Телефон:</b> ${phone}<br>
+                        <b>Марка ТС:</b> ${carBrand}<br>
+                        <b>Номер ТС:</b> ${carNumber}
+                    `;
+
+                    // Create event content with tooltip
+                    let eventHtml = `
+                        <div class="tooltip">
+                            ${event.title}
+                            <span class="tooltiptext">${tooltipHtml}</span>
+                        </div>
+                    `;
+
+                    return { html: eventHtml };
+                },
                 events: async function(fetchInfo, successCallback, failureCallback) {
                     try {
                         const response = await fetch(`${API_URL}/admin/bookings`);
@@ -147,33 +201,30 @@
                         const bookings = await response.json();
 
                         const events = bookings.map(booking => {
-                            // Проверяем, является ли booking.time строкой, прежде чем пытаться вызвать split
                             let timeValue = booking.time;
                             if (Array.isArray(booking.time)) {
-                                timeValue = booking.time[0]; //  Используем первый элемент массива
+                                timeValue = booking.time[0];
                                 if (!timeValue) {
                                     console.warn('Invalid time format (empty array):', booking.time, booking);
-                                    return null; // Пропускаем, если массив пуст
+                                    return null;
                                 }
                             }
 
                             if (typeof timeValue !== 'string') {
                                 console.warn('Invalid time format (not a string):', booking.time, booking);
-                                return null; // Пропускаем это событие, если время не является строкой
+                                return null;
                             }
 
                             const [hours, minutes] = timeValue.split(':');
-
-                            // Проверка формата даты
                             const isValidDate = !isNaN(new Date(booking.date).getTime());
 
                             if (!isValidDate) {
                                 console.warn('Invalid date format:', booking.date, booking);
-                                return null; // Пропускаем это событие
+                                return null;
                             }
-                            const startTime = `${booking.date}T${hours}:${minutes}:00`;
-                            const endTime = `${booking.date}T${parseInt(hours) + 1}:${minutes}:00`; // Продолжительность 1 час
 
+                            const startTime = `${booking.date}T${hours}:${minutes}:00`;
+                            const endTime = `${booking.date}T${parseInt(hours) + 1}:${minutes}:00`;
 
                             return {
                                 id: booking._id,
@@ -184,7 +235,7 @@
                                     organization: booking.organization,
                                     phone: booking.phone,
                                     details: booking.details,
-                                     carBrand: booking.carBrand,
+                                    carBrand: booking.carBrand,
                                     carNumber: booking.carNumber,
                                     time: booking.time,
                                     vehicleType: booking.vehicleType
@@ -198,7 +249,6 @@
                     }
                 },
                 eventClick: function(info) {
-                    // Обработка клика на событие (показ формы редактирования)
                     currentEvent = info.event;
                     showEventDetails(info.event);
                 },
@@ -213,39 +263,36 @@
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ date: newDate, time: newTime,  }) // Только дата и время
+                            body: JSON.stringify({ date: newDate, time: newTime,  })
                         });
 
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
-                            info.revert(); // Откат изменений в случае ошибки
+                            info.revert();
                         }
-                         info.revert();  //  Перезагрузка  календаря после успешного изменения
+                         info.revert();
                          calendar.refetchEvents();
 
                     } catch (error) {
                         console.error('Error updating event (drop):', error);
                         alert('Ошибка при обновлении события. Пожалуйста, попробуйте еще раз.');
-                        info.revert(); // Откат изменений в случае ошибки
+                        info.revert();
                     }
                 },
                  dateClick: function(info) {
-                     // Обработка клика на пустую ячейку (для создания нового события)
-                    currentEvent = null; // Сбрасываем текущее событие
-                    showEventDetails(null, info.dateStr); // Передаем дату клика
+                    currentEvent = null;
+                    showEventDetails(null, info.dateStr);
                 }
             });
 
             calendar.render();
 
-            // Функции для отображения/скрытия формы деталей
             function showEventDetails(event, dateStr = null) {
                 if (event) {
-                    // Заполнение формы данными существующего события
                     eventDateInput.value = moment(event.start).format('YYYY-MM-DD');
-                    eventTimeSelect.value = moment(event.start).format('HH:mm'); // Assuming your time format is HH:mm
+                    eventTimeSelect.value = moment(event.start).format('HH:mm');
                     eventOrganizationInput.value = event.extendedProps.organization;
-                    eventNameInput.value = event.title.split(' (')[0]; // Извлекаем имя
+                    eventNameInput.value = event.title.split(' (')[0];
                     eventPhoneInput.value = event.extendedProps.phone;
                     eventVehicleTypeSelect.value = event.extendedProps.vehicleType;
                     eventCarBrandInput.value = event.extendedProps.carBrand || '';
@@ -254,9 +301,8 @@
                     eventIdInput.value = event.id;
 
                 } else if (dateStr) {
-                     // Если клик по пустой дате, заполняем только дату и время по умолчанию
                       eventDateInput.value = dateStr;
-                      eventTimeSelect.value = '09:00'; // Или другое значение по умолчанию
+                      eventTimeSelect.value = '09:00';
                       eventOrganizationInput.value = '';
                       eventNameInput.value = '';
                       eventPhoneInput.value = '';
@@ -275,7 +321,6 @@
                 eventDetailsDiv.style.display = 'none';
             }
 
-            // Обработчики событий формы
             saveEventButton.addEventListener('click', async () => {
                 const bookingId = eventIdInput.value;
                 const method = bookingId ? 'PUT' : 'POST';
@@ -309,7 +354,6 @@
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
 
-                    //  Обновление календаря после сохранения
                     calendar.refetchEvents();
                     hideEventDetails();
 
@@ -335,7 +379,6 @@
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }
 
-                        // Обновляем календарь
                         calendar.refetchEvents();
                         hideEventDetails();
 
