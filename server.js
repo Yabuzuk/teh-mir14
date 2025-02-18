@@ -29,7 +29,9 @@ const BookedSlotSchema = new mongoose.Schema({
     name: String,
     phone: String,
     vehicleType: String,
-    details: String
+    details: String,
+    carBrand: String, // Добавляем поле "Марка автомобиля"
+    carNumber: String  // Добавляем поле "Номер автомобиля"
 });
 
 const BookedSlot = mongoose.model('BookedSlot', BookedSlotSchema);
@@ -89,7 +91,7 @@ app.post('/get-available-slots', async (req, res) => {
 
 // Endpoint to book a slot
 app.post('/book-slot', async (req, res) => {
-    const { date, time, organization, name, phone, vehicleType, details } = req.body;
+    const { date, time, organization, name, phone, vehicleType, details, carBrand, carNumber } = req.body;
 
     try {
         let bookedSlot = await BookedSlot.findOne({ date: date });
@@ -102,7 +104,9 @@ app.post('/book-slot', async (req, res) => {
                 name: name,
                 phone: phone,
                 vehicleType: vehicleType,
-                details: details
+                details: details,
+                carBrand: carBrand,
+                carNumber: carNumber
             });
         } else {
             if (!bookedSlot.time.includes(time)) {
@@ -113,6 +117,8 @@ app.post('/book-slot', async (req, res) => {
             bookedSlot.phone = phone;
             bookedSlot.vehicleType = vehicleType;
             bookedSlot.details = details;
+            bookedSlot.carBrand = carBrand;
+            bookedSlot.carNumber = carNumber;
         }
 
         await bookedSlot.save();
