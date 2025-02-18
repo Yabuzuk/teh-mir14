@@ -668,65 +668,72 @@ button:hover {
                     </div>
                 </section>
 
-            <section class="booking-form">
-    <h1 id="formToggle" class="blinking-button">Онлайн запись на техосмотр</h1> <!-- Мигающая кнопка -->
+            </section>
 
-    <div id="formContainer" class="form-container" style="display: none;"> <!-- Изначально скрыто -->
-        <form id="bookingForm">
-            <!-- Имя -->
-            <div class="form-group">
-                <label for="name">Имя</label>
-                <input type="text" id="name" name="name" required placeholder="Введите ваше имя">
+        <!-- Форма бронирования -->
+        <section class="booking-form">
+            <h1 id="formToggle" class="blinking-button">Онлайн запись на техосмотр</h1> <!-- Мигающая кнопка -->
+
+            <div id="formContainer" class="form-container" style="display: none;"> <!-- Изначально скрыто -->
+                <form id="bookingForm">
+
+                    <!-- Организация -->
+                    <div class="form-group">
+                        <label for="organization">Организация</label>
+                        <input type="text" id="organization" name="organization" placeholder="Введите название организации">
+                    </div>
+
+                    <!-- Имя -->
+                    <div class="form-group">
+                        <label for="name">Имя</label>
+                        <input type="text" id="name" name="name" required placeholder="Введите ваше имя">
+                    </div>
+
+                    <!-- Номер телефона -->
+                    <div class="form-group">
+                        <label for="phone">Номер телефона</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="Введите номер телефона">
+                    </div>
+
+                    <!-- Вид транспортного средства -->
+                    <div class="form-group">
+                        <label for="vehicleType">Вид транспортного средства</label>
+                        <select id="vehicleType" name="vehicleType" required>
+                            <option value="">Выберите вид ТС</option>
+                            <option value="легковой автомобиль">Легковой автомобиль</option>
+                            <option value="автобус">Автобус</option>
+                            <option value="грузовой автомобиль">Грузовой автомобиль</option>
+                            <option value="мотоцикл">Мотоцикл</option>
+                            <option value="прицеп">Прицеп</option>
+                        </select>
+                    </div>
+
+                    <!-- Дата -->
+                    <div class="form-group">
+                        <label for="date">Дата</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+
+                    <!-- Время -->
+                    <div class="form-group">
+                        <label for="time">Время</label>
+                        <select id="time" name="time" required>
+                            <option value="">Выберите время</option>
+                        </select>
+                    </div>
+
+                    <!-- Подробности -->
+                    <div class="form-group">
+                        <label for="details">Подробности</label>
+                        <textarea id="details" name="details" rows="4" placeholder="Напишите дополнительные пожелания или комментарии"></textarea>
+                    </div>
+
+                    <!-- Кнопка отправки -->
+                    <button type="submit">Записаться</button>
+                </form>
             </div>
+        </section>
 
-            <!-- Номер телефона -->
-            <div class="form-group">
-                <label for="phone">Номер телефона</label>
-                <input type="tel" id="phone" name="phone" required placeholder="Введите номер телефона">
-            </div>
-
-            <!-- Вид транспортного средства -->
-        <div class="form-group">
-                <label for="vehicleType">Вид транспортного средства</label>
-                <select id="vehicleType" name="vehicleType" required>
-                    <option value="">Выберите вид ТС</option>
-                    <option value="легковой автомобиль">Легковой автомобиль</option>
-                    <option value="автобус">Автобус</option>
-                    <option value="грузовой автомобиль">Грузовой автомобиль</option>
-                    <option value="мотоцикл">Мотоцикл</option>
-                    <option value="прицеп">Прицеп</option>
-                </select>
-            </div>
-
-         
-		
-
-            <!-- Дата -->
-            <div class="form-group">
-                <label for="date">Дата</label>
-                <input type="date" id="date" name="date" required>
-            </div>
-
-            <!-- Время -->
-            <div class="form-group">
-                <label for="time">Время</label>
-                <select id="time" name="time" required>
-                    <option value="">Выберите время</option>
-                </select>
-            </div>
-
-            <!-- Подробности -->
-            <div class="form-group">
-                <label for="details">Подробности</label>
-                <textarea id="details" name="details" rows="4" placeholder="Напишите дополнительные пожелания или комментарии"></textarea>
-            </div>
-
-            <!-- Кнопка отправки -->
-            <button type="submit">Записаться</button>
-        </form>
-    </div>
-	
-</section>
 
 
 
