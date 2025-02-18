@@ -1,128 +1,239 @@
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Admin Panel</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        .booking-item {
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+        .booking-item p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Admin Panel</h1>
 
-const app = express();
-const port = process.env.PORT || 3000;
+    <div id="message"></div>
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+    <h2>Bookings</h2>
+    <div id="bookingList">
+        <!-- Здесь будет список забронированных слотов -->
+    </div>
 
-// MongoDB connection string
-const dbUrl = process.env.MONGODB_URI || 'mongodb://tehmir_tookgrain:8b76bea68aa71605c3d9300bfad2890a0833b0e0@c6oe8.h.filess.io:27018/tehmir_tookgrain';
+    <h2>Create/Edit Booking</h2>
+    <form id="bookingForm">
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date"><br><br>
 
-mongoose.connect(dbUrl, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('MongoDB connection error:', err));
+        <label for="time">Time:</label>
+        <input type="text" id="time" name="time"><br><br>
 
-// Define schema and model
-const BookedSlotSchema = new mongoose.Schema({
-    date: String,
-    time: [String],
-    organization: String, // Добавлено поле organization
-    name: String,
-    phone: String,
-    vehicleType: String,
-    details: String
-});
+        <label for="organization">Organization:</label>
+        <input type="text" id="organization" name="organization"><br><br>
 
-const BookedSlot = mongoose.model('BookedSlot', BookedSlotSchema);
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br><br>
 
-// Функция для генерации временных слотов на день
-function generateTimeSlots(dayOfWeek) {
-    let startTime = 9;  // 9:00
-    let endTime;
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" name="phone"><br><br>
 
-    if (dayOfWeek >= 1 && dayOfWeek <= 5) { // Понедельник - Пятница
-        endTime = 20; // 20:00
-    } else if (dayOfWeek === 6) { // Суббота
-        endTime = 18; // 18:00
-    } else {
-        return []; // Воскресенье - нет слотов
-    }
+        <label for="vehicleType">Vehicle Type:</label>
+        <select id="vehicleType" name="vehicleType">
+            <option value="легковой автомобиль">Легковой автомобиль</option>
+            <option value="автобус">Автобус</option>
+            <option value="грузовой автомобиль">Грузовой автомобиль</option>
+            <option value="мотоцикл">Мотоцикл</option>
+            <option value="прицеп">Прицеп</option>
+        </select><br><br>
 
-    const timeSlots = [];
-    for (let hour = startTime; hour < endTime; hour++) {
-        timeSlots.push(`${String(hour).padStart(2, '0')}:00`);
-        //timeSlots.push(`${String(hour).padStart(2, '0')}:30`); // Убрали интервал в 30 минут
-    }
+        <label for="details">Details:</label>
+        <textarea id="details" name="details"></textarea><br><br>
 
-    return timeSlots;
-}
+        <input type="hidden" id="bookingId" name="bookingId">  <!-- Hidden field for editing -->
 
-// Endpoint to get available slots
-app.post('/get-available-slots', async (req, res) => {
-    const { date } = req.body;
+        <button type="submit">Save</button>
+        <button type="button" id="cancelBtn">Cancel</button>
+        <button type="button" id="deleteBtn" style="color: red;">Delete</button>  <!-- Delete Button -->
+    </form>
 
-    // Check if date is valid
-    if (!date) {
-        return res.status(400).json({ message: 'Date is required' });
-    }
+    <script>
+        const API_URL = 'https://teh-mir14.onrender.com/admin/bookings'; // Замените на URL вашего API
+        const ADMIN_TOKEN = "47e8b2d9-5a6c-4b1f-9e0a-3c8d2f1e7a5b"; // Получаем токен из переменной окружения
+        const bookingList = document.getElementById('bookingList');
+        const bookingForm = document.getElementById('bookingForm');
+        const messageDiv = document.getElementById('message');
+        const deleteBtn = document.getElementById('deleteBtn');
 
-    const selectedDate = new Date(date);
-    const dayOfWeek = selectedDate.getDay(); // 0 (Вс) - 6 (Сб)
-
-    // Generate all time slots for the selected day
-    const allSlots = generateTimeSlots(dayOfWeek);
-
-    // If it's Sunday, return an empty array
-    if (dayOfWeek === 0) {
-        return res.json({ availableSlots: [] });
-    }
-
-    try {
-        const bookedSlot = await BookedSlot.findOne({ date: date });
-        const bookedSlots = bookedSlot ? bookedSlot.time : [];
-
-        const availableSlots = allSlots.filter(slot => !bookedSlots.includes(slot));
-        res.json({ availableSlots });
-    } catch (err) {
-        console.error('Error getting available slots:', err);
-        res.status(500).json({ message: 'Failed to get available slots' });
-    }
-});
-
-// Endpoint to book a slot
-app.post('/book-slot', async (req, res) => {
-    const { date, time, organization, name, phone, vehicleType, details } = req.body; // Added organization, name, phone, vehicleType, details
-
-    try {
-        let bookedSlot = await BookedSlot.findOne({ date: date });
-
-        if (!bookedSlot) {
-            bookedSlot = new BookedSlot({
-                date: date,
-                time: [time],
-                organization: organization,
-                name: name,
-                phone: phone,
-                vehicleType: vehicleType,
-                details: details
-            });
-        } else {
-            if (!bookedSlot.time.includes(time)) {
-                bookedSlot.time.push(time);
-            }
-            bookedSlot.organization = organization;
-            bookedSlot.name = name;
-            bookedSlot.phone = phone;
-            bookedSlot.vehicleType = vehicleType;
-            bookedSlot.details = details;
+        // Function to display messages
+        function displayMessage(message, isError = false) {
+            messageDiv.textContent = message;
+            messageDiv.style.color = isError ? 'red' : 'green';
         }
 
-        await bookedSlot.save();
-        res.json({ success: true, message: 'Слот успешно забронирован!' });
-    } catch (err) {
-        console.error('Error booking slot:', err);
-        res.status(500).json({ message: 'Failed to book slot' });
-    }
-});
+        // Function to fetch and display bookings
+        async function fetchBookings() {
+            try {
+                const response = await fetch(API_URL, {
+                    headers: {
+                        'x-admin-token': ADMIN_TOKEN
+                    }
+                });
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const bookings = await response.json();
+                displayBookings(bookings);
+            } catch (error) {
+                console.error('Error fetching bookings:', error);
+                displayMessage('Error fetching bookings', true);
+            }
+        }
+
+        // Function to display bookings
+        function displayBookings(bookings) {
+            bookingList.innerHTML = '';
+            bookings.forEach(booking => {
+                const bookingDiv = document.createElement('div');
+                bookingDiv.classList.add('booking-item');
+                bookingDiv.innerHTML = `
+                    <p><strong>Date:</strong> ${booking.date}</p>
+                    <p><strong>Time:</strong> ${booking.time}</p>
+                    <p><strong>Organization:</strong> ${booking.organization}</p>
+                    <p><strong>Name:</strong> ${booking.name}</p>
+                    <p><strong>Phone:</strong> ${booking.phone}</p>
+                    <p><strong>Vehicle Type:</strong> ${booking.vehicleType}</p>
+                    <p><strong>Details:</strong> ${booking.details}</p>
+                    <button onclick="editBooking('${booking._id}')">Edit</button>
+                `;
+                bookingList.appendChild(bookingDiv);
+            });
+        }
+
+        // Function to clear the form
+        function clearForm() {
+            bookingForm.reset();
+            document.getElementById('bookingId').value = ''; // Clear hidden ID field
+            deleteBtn.style.display = 'none';  // Hide delete button by default
+        }
+
+        // Function to populate the form for editing
+        async function editBooking(id) {
+            try {
+                const response = await fetch(`${API_URL}/${id}`, {
+                    headers: {
+                        'x-admin-token': ADMIN_TOKEN
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const booking = await response.json();
+
+                document.getElementById('date').value = booking.date;
+                document.getElementById('time').value = booking.time;
+                document.getElementById('organization').value = booking.organization;
+                document.getElementById('name').value = booking.name;
+                document.getElementById('phone').value = booking.phone;
+                document.getElementById('vehicleType').value = booking.vehicleType;
+                document.getElementById('details').value = booking.details;
+                document.getElementById('bookingId').value = booking._id; // Set the hidden ID field
+                deleteBtn.style.display = 'inline'; // Show delete button
+
+                displayMessage(`Editing booking: ${id}`);
+
+            } catch (error) {
+                console.error('Error fetching booking for edit:', error);
+                displayMessage('Error fetching booking for edit', true);
+            }
+        }
+
+        // Function to handle form submission (Create/Update)
+        bookingForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const bookingId = document.getElementById('bookingId').value;
+            const method = bookingId ? 'PUT' : 'POST';  // Determine method based on bookingId
+            const url = bookingId ? `${API_URL}/${bookingId}` : API_URL;
+
+            const formData = {
+                date: document.getElementById('date').value,
+                time: document.getElementById('time').value,
+                organization: document.getElementById('organization').value,
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                vehicleType: document.getElementById('vehicleType').value,
+                details: document.getElementById('details').value
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-admin-token': ADMIN_TOKEN
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                displayMessage(`Booking ${bookingId ? 'updated' : 'created'} successfully`);
+                clearForm();  // Clear the form after submission
+                fetchBookings(); // Refresh the booking list
+
+            } catch (error) {
+                console.error('Error saving booking:', error);
+                displayMessage('Error saving booking', true);
+            }
+        });
+
+        // Function to handle cancel button
+        document.getElementById('cancelBtn').addEventListener('click', clearForm);
+
+         // Function to handle delete button
+        deleteBtn.addEventListener('click', async () => {
+            const bookingId = document.getElementById('bookingId').value;
+
+            if (!bookingId) {
+                displayMessage('No booking selected to delete', true);
+                return;
+            }
+
+            if (confirm('Are you sure you want to delete this booking?')) {
+                try {
+                    const response = await fetch(`${API_URL}/${bookingId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'x-admin-token': ADMIN_TOKEN
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    displayMessage('Booking deleted successfully');
+                    clearForm();
+                    fetchBookings();
+
+                } catch (error) {
+                    console.error('Error deleting booking:', error);
+                    displayMessage('Error deleting booking', true);
+                }
+            }
+        });
+
+        // Initial fetch of bookings on page load
+        fetchBookings();
+    </script>
+</body>
+</html>
