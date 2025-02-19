@@ -1035,7 +1035,15 @@ bookingForm.onsubmit = async function (event) {
 
 
             alert("Запись успешно отправлена!");
-            bookingForm.reset();  //Clear the form
+organizationInput.value = "";
+nameInput.value = "";
+phoneInput.value = "";
+carBrandInput.value = "";
+carNumberInput.value = "";
+vehicleTypeSelect.value = "";
+dateInput.value = "";
+timeSelect.innerHTML = '<option value="">Выберите время</option>';
+updateAvailableTimes();
 
             //Manually reset time select (because reset() doesn't clear options added by js)
             timeSelect.innerHTML = '<option value="">Выберите время</option>';
