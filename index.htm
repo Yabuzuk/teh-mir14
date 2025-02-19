@@ -866,9 +866,10 @@ button:hover {
         });
 
         // JavaScript для работы с формой бронирования        
-     const API_URL = "https://teh-mir14.onrender.com"; // Убедитесь, что это правильный URL
+   <script>
+    const API_URL = "https://teh-mir14.onrender.com"; // Убедитесь, что это правильный URL
 
-    document.getElementById('bookingForm').onsubmit = async function(event) {
+    document.getElementById('bookingForm').onsubmit = function(event) {
         event.preventDefault();
 
         const formData = {
@@ -885,41 +886,40 @@ button:hover {
 
         console.log("API URL:", API_URL); // Добавляем логирование API_URL
 
-        try {
-            const response = await fetch(`${API_URL}/book-slot`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
-
+        fetch(`${API_URL}/book-slot`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
             if (!response.ok) {
-                response.text().then(errorText => { // Читаем ответ как текст
-                    console.log("Error Text:", errorText); // Выводим текст ошибки в консоль
-                    try {
-                        const errorData = JSON.parse(errorText); // Пытаемся распарсить как JSON
-                        if (errorData.errors) {
-                            let errorMessage = "Ошибка валидации:\n";
-                            errorData.errors.forEach(error => {
-                                errorMessage += `- ${error.msg} (${error.path})\n`;
-                            });
-                            throw new Error(errorMessage);
-                        } else {
-                            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-                        }
-                    } catch (e) {
-                        // Если не удалось распарсить JSON, показываем просто текст ошибки
-                        throw new Error(`HTTP error! status: ${response.status}, Error message: ${errorText}`);
+                response.json().then(errorData => {
+                    console.log("Error Data:", errorData); // Add this line!
+                    if (errorData.errors) {
+                        let errorMessage = "Ошибка валидации:\n";
+                        errorData.errors.forEach(error => {
+                            errorMessage += `- ${error.msg} (${error.path})\n`;
+                        });
+                        throw new Error(errorMessage);
+                    } else {
+                        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
                     }
                 });
             } else {
                 return response.json();
             }
-        } catch (error) {
+        })
+        .then(data => {
+            alert('Слот успешно забронирован!');
+            // Optionally reset the form or redirect the user
+        })
+        .catch(error => {
             alert(`Ошибка при бронировании слота: ${error.message}`);
-        }
+        });
     };
+
     </script>
 </body>
 </html>
