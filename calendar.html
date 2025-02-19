@@ -21,46 +21,272 @@
 <body>
     <div id='calendar'></div>
 
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.js'></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl), {
-                initialView: 'dayGridMonth',
+            const calendarEl = document.getElementById('calendar');
+            const eventDetailsDiv = document.getElementById('eventDetails');
+            const eventDateInput = document.getElementById('eventDate');
+            const eventTimeSelect = document.getElementById('eventTime');
+            const eventOrganizationInput = document.getElementById('eventOrganization');
+            const eventNameInput = document.getElementById('eventName');
+            const eventPhoneInput = document.getElementById('eventPhone');
+            const eventVehicleTypeSelect = document.getElementById('eventVehicleType');
+            const eventCarBrandInput = document.getElementById('eventCarBrand');
+            const eventCarNumberInput = document.getElementById('eventCarNumber');
+            const eventDetailsTextarea = document.getElementById('eventDetails');
+            const eventIdInput = document.getElementById('eventId');
+            const saveEventButton = document.getElementById('saveEvent');
+            const deleteEventButton = document.getElementById('deleteEvent');
+            const cancelEventButton = document.getElementById('cancelEvent');
+            const API_URL = 'https://teh-mir14.onrender.com';
+
+            let currentEvent = null;
+
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                slotMinTime: '09:00:00',
+                slotMaxTime: '20:00:00',
                 locale: 'ru',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    right: 'timeGridWeek,timeGridDay'
                 },
-                // Disable editing
-                editable: false,
-                eventResizableFromStart: false,
-                eventStartEditable: false,
+                editable: true,
+                eventDurationEditable: false, // Запрет редактирования длительности
+                slotLabelInterval: '01:00',   // Интервал в 1 час
+                slotDuration: '01:00',        // Размер ячейки в 1 час
+                snapDuration: '01:00',        // Привязка к 1 часу
+                scrollTime: '09:00:00',       // Начальное время прокрутки
+                eventOverlap: false,          // Запрещает наложение событий
+                nowIndicator: true,           // Отображение текущего времени
                 eventContent: function(arg) {
-                    return { html: `<b>${arg.event.title}</b>` };
+                    const event = arg.event;
+                    const organization = event.extendedProps.organization || '';
+                    const phone = event.extendedProps.phone || '';
+                    const carBrand = event.extendedProps.carBrand || '';
+                    const carNumber = event.extendedProps.carNumber || '';
+                    const vehicleType = (event.extendedProps && event.extendedProps.vehicleType) || '';
+                    const name = event.title.split(' (')[0];
+
+                    let eventHtml = `
+                        <div style="color:#000;">
+                            <b>${name}</b><br>
+                            ${vehicleType}<br>
+                            ${organization ? `<b>Орг:</b> ${organization}<br>` : ''}
+                            ${phone ? `<b>Тел:</b> ${phone}<br>` : ''}
+                            ${carBrand ? `<b>М:</b> ${carBrand} ` : ''}
+                            ${carNumber ? `<b>№:</b> ${carNumber}` : ''}
+                        </div>
+                    `;
+
+                    return { html: eventHtml };
                 },
-                events: function(fetchInfo, successCallback, failureCallback) {
-                    fetch('/admin/bookings')  // Замените на ваш API endpoint
-                        .then(response => response.json())
-                        .then(bookings => {
-                            const events = bookings.map(booking => ({
+                events: async function(fetchInfo, successCallback, failureCallback) {
+                    try {
+                        const response = await fetch(`${API_URL}/admin/bookings`);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        const bookings = await response.json();
+
+                        const events = bookings.map(booking => {
+                            let timeValue = booking.time;
+                            if (Array.isArray(booking.time)) {
+                                timeValue = booking.time[0];
+                                if (!timeValue) {
+                                    console.warn('Invalid time format (empty array):', booking.time, booking);
+                                    return null;
+                                }
+                            }
+
+                            if (typeof timeValue !== 'string') {
+                                console.warn('Invalid time format (not a string):', booking.time, booking);
+                                return null;
+                            }
+
+                            const [hours, minutes] = timeValue.split(':');
+                            const isValidDate = !isNaN(new Date(booking.date).getTime());
+
+                            if (!isValidDate) {
+                                console.warn('Invalid date format:', booking.date, booking);
+                                return null;
+                            }
+
+                            const startTime = `${booking.date}T${hours}:${minutes}:00`;
+                            const endTime = `${booking.date}T${parseInt(hours) + 1}:${minutes}:00`;
+
+                            return {
                                 id: booking._id,
                                 title: `${booking.name} (${booking.vehicleType})`,
-                                start: moment(booking.date + 'T' + booking.time).toISOString(),
-                                end: moment(booking.date + 'T' + booking.time).add(1, 'hours').toISOString(),
+                                start: startTime,
+                                end: endTime,
+                                extendedProps: {
+                                    organization: booking.organization,
+                                    phone: booking.phone,
+                                    details: booking.details,
+                                    carBrand: booking.carBrand,
+                                    carNumber: booking.carNumber,
+                                    time: booking.time,
+                                    vehicleType: booking.vehicleType
+                                },
                                 allDay: false
-                            }));
-                            successCallback(events);
-                        })
-                        .catch(error => {
-                            console.error('Error fetching events:', error);
-                            failureCallback(error);
+                            };
+                        }).filter(event => event !== null);
+                        successCallback(events);
+                    } catch (error) {
+                        console.error('Error fetching events:', error);
+                        failureCallback(error);
+                    }
+                },
+                eventClick: function(info) {
+                    currentEvent = info.event;
+                    showEventDetails(info.event);
+                },
+               eventDrop: async function(info) {
+                    const bookingId = info.event.id;
+                    const newDate = info.event.start.toISOString().slice(0, 10);
+                    const newTime = info.event.start.toISOString().slice(11, 16);
+
+                    try {
+                        const response = await fetch(`${API_URL}/admin/bookings/${bookingId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ date: newDate, time: newTime,  })
                         });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                            info.revert();
+                        }
+                         calendar.refetchEvents();
+
+                    } catch (error) {
+                        console.error('Error updating event (drop):', error);
+                        alert('Ошибка при обновлении события. Пожалуйста, попробуйте еще раз.');
+                        info.revert();
+                    }
+                },
+                 dateClick: function(info) {
+                    currentEvent = null;
+                    showEventDetails(null, info.dateStr);
                 }
             });
+
             calendar.render();
+
+            function showEventDetails(event, dateStr = null) {
+                if (event) {
+                    eventDateInput.value = moment(event.start).format('YYYY-MM-DD');
+                    eventTimeSelect.value = moment(event.start).format('HH:mm');
+                    eventOrganizationInput.value = event.extendedProps.organization;
+                    eventNameInput.value = event.title.split(' (')[0];
+                    eventPhoneInput.value = event.extendedProps.phone;
+                    eventVehicleTypeSelect.value = event.extendedProps.vehicleType;
+                    eventCarBrandInput.value = event.extendedProps.carBrand || '';
+                    eventCarNumberInput.value = event.extendedProps.carNumber || '';
+                    eventDetailsTextarea.value = event.extendedProps.details;
+                    eventIdInput.value = event.id;
+
+                } else if (dateStr) {
+                      eventDateInput.value = dateStr;
+                      eventTimeSelect.value = '09:00';
+                      eventOrganizationInput.value = '';
+                      eventNameInput.value = '';
+                      eventPhoneInput.value = '';
+                      eventVehicleTypeSelect.value = 'легковой автомобиль';
+                      eventCarBrandInput.value = '';
+                      eventCarNumberInput.value = '';
+                      eventDetailsTextarea.value = '';
+                      eventIdInput.value = '';
+
+                }
+                eventDetailsDiv.style.display = 'block';
+                deleteEventButton.style.display = event ? 'inline' : 'none';
+            }
+
+            function hideEventDetails() {
+                eventDetailsDiv.style.display = 'none';
+            }
+
+            saveEventButton.addEventListener('click', async () => {
+                const bookingId = eventIdInput.value;
+                const method = bookingId ? 'PUT' : 'POST';
+                const url = `${API_URL}/admin/bookings/${bookingId || ''}`;
+
+                const [hours, minutes] = eventTimeSelect.value.split(':');
+                const eventDate = eventDateInput.value;
+
+                const formData = {
+                    date: eventDate,
+                    time: eventTimeSelect.value,
+                    organization: eventOrganizationInput.value,
+                    name: eventNameInput.value,
+                    phone: eventPhoneInput.value,
+                    vehicleType: eventVehicleTypeSelect.value,
+                    carBrand: eventCarBrandInput.value,
+                    carNumber: eventCarNumberInput.value,
+                    details: eventDetailsTextarea.value
+                };
+
+                try {
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    calendar.refetchEvents();
+                    hideEventDetails();
+
+                } catch (error) {
+                    console.error('Error saving event:', error);
+                    alert('Ошибка при сохранении события. Пожалуйста, попробуйте еще раз.');
+                }
+            });
+
+            deleteEventButton.addEventListener('click', async () => {
+                if (!currentEvent || !currentEvent.id) {
+                    alert('Не выбрано событие для удаления.');
+                    return;
+                }
+
+                if (confirm('Вы уверены, что хотите удалить это бронирование?')) {
+                    try {
+                        const response = await fetch(`${API_URL}/admin/bookings/${currentEvent.id}`, {
+                            method: 'DELETE'
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        calendar.refetchEvents();
+                        hideEventDetails();
+
+                    } catch (error) {
+                        console.error('Error deleting event:', error);
+                        alert('Ошибка при удалении события. Пожалуйста, попробуйте еще раз.');
+                    }
+                }
+            });
+
+            cancelEventButton.addEventListener('click', hideEventDetails);
+
+                // Disable date input if event is not null
+        document.getElementById('eventDetails').addEventListener('click', function () {
+            const dateInput = document.getElementById('eventDate');
+            dateInput.disabled = !!currentEvent;
+        });
+
         });
     </script>
 </body>
