@@ -59,7 +59,7 @@ body {
     .blinking-button:hover {
         background-color: #57b7f7; /* Цвет фона при наведении */
         color: black; /* Цвет текста при наведении */
-
+        
         animation: none; /* Останавливаем анимацию мигания при наведении */
     }
 
@@ -584,20 +584,21 @@ button:hover {
             <div class="header-left">
                 Пункт техосмотра ООО «АиРТ»
             </div>
-
-
+			
+            
         </header>
 
         <main>
-
-
+		
+		
             <!-- Левая колонка -->
-
-
-
+			
+			
+			
+			
             <div class="left-column">
                 <section class="schedule">
-
+				
                     <h1>График работы</h1>
                     <ul>
                         <li>Пн-Пт: 9:00 - 20:00</li>
@@ -605,8 +606,8 @@ button:hover {
                         <li>Вс: Выходной</li>
                     </ul>
                 </section>
-
-
+				
+				
 
                 <section class="prices">
                     <h1>Цена техосмотра</h1>
@@ -629,7 +630,7 @@ button:hover {
                     <tr><td>O3 - Прицепы < 10т</td><td>1529 руб.</td></tr>
                     <tr><td>O4 - Прицепы > 10т</td><td>1529 руб.</td></tr>
                     <tr><td>L - Мотоциклы</td><td>386 руб.</td></tr>
-         <td colspan="2">
+				 <td colspan="2">
                     Размер платы за проведение повторного технического осмотра, который определяется объемом выполненных работ, устанавливается оператором технического осмотра и не может превышать предельный размер платы за проведение технического осмотра.
                 </td>   </tbody>
                     </table>
@@ -694,18 +695,6 @@ button:hover {
                         <input type="tel" id="phone" name="phone" required placeholder="Введите номер телефона">
                     </div>
 
-          <!-- Марка автомобиля -->
-                    <div class="form-group">
-                        <label for="carBrand">Марка автомобиля</label>
-                        <input type="text" id="carBrand" name="carBrand" required placeholder="Укажите марку автомобиля">
-                    </div>
-
-                     <!-- Номер автомобиля -->
-                    <div class="form-group">
-                        <label for="carNumber">Номер автомобиля</label>
-                        <input type="text" id="carNumber" name="carNumber" required placeholder="Укажите номер автомобиля">
-                    </div>
-
                     <!-- Вид транспортного средства -->
                     <div class="form-group">
                         <label for="vehicleType">Вид транспортного средства</label>
@@ -750,8 +739,8 @@ button:hover {
 
         </main>
  <div>
-
-
+ 
+ 
     <!-- FAQ Блок -->
 
        <section class="faq">
@@ -785,7 +774,7 @@ button:hover {
            <br> 2. Далее – диагностическая карта выдается на 6 месяцев.
 
            <br> Сроки исчисляются с даты первого осмотра. Первый технический осмотр проводится до заключения договора ОСАГО. Для последующих осмотров владелец машины должен представить ее до истечения срока действия диагностической карты.</p>
-
+        
  </div>
     </div>
 
@@ -810,7 +799,7 @@ button:hover {
                 <li><a href="https://www.garant.ru/products/ipo/prime/doc/74571754/" target="_blank">Постановление Правительства РФ от 15 сентября 2020 г. № 1434</a></li>
                 <li><a href="https://base.garant.ru/70103612/" target="_blank">Постановление Правительства РФ от 05.12.11</a></li>
                 <li><a href="http://docs.cntd.ru/document/902320557" target="_blank">Технический регламент ТР ТС 018/2/2011 «О безопасности колесных транспортных средств»</a></li>
-    <li><a href="https://base.garant.ru/12192261/53f89421bbdaf741eb2d1ecc4ddb4c33/" target="_blank">Форма типового договора о проведении технического осмотра</a></li>
+				<li><a href="https://base.garant.ru/12192261/53f89421bbdaf741eb2d1ecc4ddb4c33/" target="_blank">Форма типового договора о проведении технического осмотра</a></li>
             </ul>
         </div>
     </div>
@@ -818,7 +807,7 @@ button:hover {
 
         <!-- Сведения об операторе -->
         <section class="operator-info">
-    <div>
+		<div>
             <h1>Сведения об операторе техосмотра</h1>
             <p><strong>№ в реестре:</strong> 10749</p>
             <p><strong>Статус:</strong> Аттестат действителен</p>
@@ -828,8 +817,8 @@ button:hover {
             <p><strong>ОГРН / ОГРНИП:</strong> 1121433000864</p>
             <p><strong>Юридический адрес:</strong> 678175, Саха /Якутия/ Респ, Мирнинский у, г Мирный, ул Советская, д. 12, оф. 16</p>
 </div>
-
-     </section>
+           
+	   </section>
 
 
         <footer>
@@ -837,9 +826,9 @@ button:hover {
         </footer>
     </div>
 
-
+ 
     <script>
-          ymaps.ready(init);
+        ymaps.ready(init);
 
         function init() {
             var map = new ymaps.Map("map", {
@@ -865,7 +854,7 @@ button:hover {
             });
         });
 
-        // JavaScript для работы с формой бронирования        
+        // JavaScript для работы с формой бронирования
         const API_URL = 'https://teh-mir14.onrender.com'; // URL вашего сервера
 
         // Получаем элементы
@@ -875,12 +864,6 @@ button:hover {
         const timeSelect = document.getElementById('time');
         const bookingForm = document.getElementById('bookingForm');
         const vehicleTypeSelect = document.getElementById('vehicleType');
-        const carBrandInput = document.getElementById('carBrand');
-        const carNumberInput = document.getElementById('carNumber');
-        const organizationInput = document.getElementById('organization'); // Получаем input организации
-        const nameInput = document.getElementById('name'); // Получаем input имени
-        const phoneInput = document.getElementById('phone'); // Получаем input телефона
-        const detailsTextarea = document.getElementById('details'); // Получаем textarea деталей
 
         // Функция для обновления доступных временных слотов и ограничения дат
         async function updateAvailableTimes() {
@@ -970,9 +953,7 @@ button:hover {
                         name: formObject.name,
                         phone: formObject.phone,
                         vehicleType: formObject.vehicleType,
-                        details: formObject.details,
-                        carBrand: formObject.carBrand,
-                        carNumber: formObject.carNumber
+                        details: formObject.details
                     })
                 });
 
@@ -1006,8 +987,6 @@ button:hover {
                         Имя: ${formObject.name}
                         Номер телефона: ${formObject.phone}
                         Вид ТС: ${formObject.vehicleType}
-                        Марка автомобиля: ${formObject.carBrand}
-                        Номер автомобиля: ${formObject.carNumber}
                         Дата: ${formObject.date}
                         Время: ${formObject.time}
                         Подробности: ${formObject.details}
@@ -1015,7 +994,7 @@ button:hover {
 
                     await sendTelegramMessage(mainToken, mainChatId, mainMessage);
 
-                    // Если это автобус, отправляем сообщение в Telegram
+                    // Если это автобус, отправляем сообщение в дополнительный чат
                     if (formObject.vehicleType === 'автобус') {
                         const busToken = "549572405:AAHx4MjhJrJAQGERbRqloes3Qcxkn1qUAS4"; // Токен бота для автобусов
                         const busChatId = "-1002391051206"; // ID чата для автобусов
@@ -1025,8 +1004,6 @@ button:hover {
                             Организация: ${formObject.organization}
                             Имя: ${formObject.name}
                             Номер телефона: ${formObject.phone}
-                            Марка автомобиля: ${formObject.carBrand}
-                            Номер автомобиля: ${formObject.carNumber}
                             Дата: ${formObject.date}
                             Время: ${formObject.time}
                             Подробности: ${formObject.details}
@@ -1036,21 +1013,6 @@ button:hover {
                     }
 
                     alert("Запись успешно отправлена!");
-
-                    // Очистка формы (индивидуально для каждого поля)
-                    organizationInput.value = "";
-                    nameInput.value = "";
-                    phoneInput.value = "";
-                    carBrandInput.value = "";
-                    carNumberInput.value = "";
-                    vehicleTypeSelect.value = ""; // Сброс выбора типа ТС
-                    dateInput.value = ""; // Сброс даты
-                    timeSelect.innerHTML = '<option value="">Выберите время</option>'; // Очистка списка времени
-                    detailsTextarea.value = "";
-
-                    // Обновление списка доступного времени
-                    updateAvailableTimes();
-
                 } else {
                     alert(data.message);
                 }
