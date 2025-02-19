@@ -919,6 +919,18 @@ button:hover {
             alert(`Ошибка при бронировании слота: ${error.message}`);
         });
     };
+	      // Добавляем обработчик клика на заголовок для отображения/скрытия формы
+        formToggle.addEventListener('click', function () {
+            // Убираем анимацию мигания
+            formToggle.classList.remove('blinking-text');
+
+            // Переключаем видимость формы
+            if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+                formContainer.style.display = 'block'; // Разворачиваем форму
+            } else {
+                formContainer.style.display = 'none'; // Сворачиваем форму
+            }
+        });
 
     </script>
 </body>
