@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration (restrict to your domain in production)
-const allowedOrigins = ['https://your-domain.com', 'http://localhost:3000']; // Замените на ваш домен
+const allowedOrigins = ['https://teh-mir14.ru', 'http://localhost:3000', 'https://teh-mir14.onrender.com']; // Добавьте ваш домен Render и другие нужные домены
 const corsOptions = {
   origin: function (origin, callback) {
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) { // Allow requests with no origin (like mobile apps)
