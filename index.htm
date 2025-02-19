@@ -879,7 +879,7 @@ button:hover {
         });
 
         // JavaScript для работы с формой бронирования        
-       const API_URL = 'https://teh-mir14.onrender.com';
+      const API_URL = 'https://teh-mir14.onrender.com';
 
 const formContainer = document.getElementById('formContainer');
 const formToggle = document.getElementById('formToggle');
@@ -951,6 +951,13 @@ async function updateAvailableTimes() {
 dateInput.addEventListener('change', updateAvailableTimes);
 vehicleTypeSelect.addEventListener('change', updateAvailableTimes);
 
+
+// Call updateAvailableTimes initially to populate the time slots if date and vehicleType are pre-selected
+if (dateInput.value && vehicleTypeSelect.value) {
+    updateAvailableTimes();
+}
+
+
 // Function to send Telegram message
 async function sendTelegramMessage(token, chatId, message) {
     const url = `https://api.telegram.org/bot${token}/sendMessage`;
@@ -968,6 +975,8 @@ async function sendTelegramMessage(token, chatId, message) {
         console.error("Ошибка при отправке сообщения в Telegram:", error);
     }
 }
+
+
 bookingForm.onsubmit = async function (event) {
     event.preventDefault();
 
@@ -1040,7 +1049,6 @@ bookingForm.onsubmit = async function (event) {
         alert('Ошибка при бронировании слота. Пожалуйста, попробуйте позже.');
     }
 };
-
         // Добавляем обработчик клика на заголовок для отображения/скрытия формы
         formToggle.addEventListener('click', function () {
             // Убираем анимацию мигания
