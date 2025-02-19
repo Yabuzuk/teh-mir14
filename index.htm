@@ -880,7 +880,7 @@ button:hover {
         });
 
         // JavaScript для работы с формой бронирования        
-      const API_URL = 'https://teh-mir14.onrender.com';
+    const API_URL = 'https://teh-mir14.onrender.com';
 
 const formContainer = document.getElementById('formContainer');
 const formToggle = document.getElementById('formToggle');
@@ -952,12 +952,10 @@ async function updateAvailableTimes() {
 dateInput.addEventListener('change', updateAvailableTimes);
 vehicleTypeSelect.addEventListener('change', updateAvailableTimes);
 
-
 // Call updateAvailableTimes initially to populate the time slots if date and vehicleType are pre-selected
 if (dateInput.value && vehicleTypeSelect.value) {
     updateAvailableTimes();
 }
-
 
 // Function to send Telegram message
 async function sendTelegramMessage(token, chatId, message) {
@@ -977,7 +975,6 @@ async function sendTelegramMessage(token, chatId, message) {
     }
 }
 
-
 bookingForm.onsubmit = async function (event) {
     event.preventDefault();
 
@@ -990,7 +987,6 @@ bookingForm.onsubmit = async function (event) {
         alert("Пожалуйста, заполните все обязательные поля.");
         return; //Stop submission
     }
-
 
     try {
         const response = await fetch(`${API_URL}/book-slot`, {
@@ -1017,13 +1013,11 @@ bookingForm.onsubmit = async function (event) {
 
         const data = await response.json();
         if (data.success) {
-
             // Send main message to Telegram
             const mainToken = "6804774061:AAF79b9pf8lW5UXwhpOSx3EMpjjjmTZhGAo"; // Основной токен бота (ВНИМАНИЕ: ХРАНИТЕ ТОКЕНЫ НА СЕРВЕРЕ!)
             const mainChatId = "-1002380612626";
             const mainMessage = `Новая запись:\nОрганизация: ${formObject.organization}\nИмя: ${formObject.name}\nТелефон: ${formObject.phone}\nТС: ${formObject.vehicleType}\nМарка: ${formObject.carBrand}\nНомер: ${formObject.carNumber}\nДата: ${formObject.date}\nВремя: ${formObject.time}\nДетали: ${formObject.details}`;
             await sendTelegramMessage(mainToken, mainChatId, mainMessage);
-
 
             //Send extra message for "bus"
             if (formObject.vehicleType === 'автобус') {
@@ -1033,17 +1027,15 @@ bookingForm.onsubmit = async function (event) {
                 await sendTelegramMessage(busToken, busChatId, busMessage);
             }
 
-
             alert("Запись успешно отправлена!");
-organizationInput.value = "";
-nameInput.value = "";
-phoneInput.value = "";
-carBrandInput.value = "";
-carNumberInput.value = "";
-vehicleTypeSelect.value = "";
-dateInput.value = "";
-timeSelect.innerHTML = '<option value="">Выберите время</option>';
-updateAvailableTimes();
+             setTimeout(() => {
+                console.log('Form reset called');
+                bookingForm.reset();
+
+                console.log('Time select reset called');
+                timeSelect.innerHTML = '<option value="">Выберите время</option>';
+                updateAvailableTimes();
+            }, 100);
 
 
         } else {
