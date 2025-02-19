@@ -14,11 +14,24 @@ mongoose.connect(dbUrl, {
 })
 .catch(err => console.error('MongoDB connection error:', err));
 
+// Define schema and model
+const BookedSlotSchema = new mongoose.Schema({
+    date: String,
+    time: String,
+    organization: String,
+    name: String,
+    phone: String,
+    vehicleType: String,
+    details: String,
+    carBrand: String,
+    carNumber: String
+});
+
+const BookedSlot = mongoose.model('BookedSlot', BookedSlotSchema);
+
 async function updateDates() {
     try {
-        const BookedSlot = mongoose.model('BookedSlot'); // Get the model
-
-        // Find all bookings
+        // Get all bookings
         const bookings = await BookedSlot.find({});
 
         for (const booking of bookings) {
