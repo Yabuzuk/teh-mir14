@@ -4,6 +4,8 @@
      "cors": "^2.8.5",
     "mongodb": "^6.10.0",
     "mongoose": "^7.0.0",
+    "dotenv": "^16.0.1",
+    "express-validator": "^7.2.1",
     "express": "^4.21.2"
     
   },
