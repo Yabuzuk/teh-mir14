@@ -1045,9 +1045,6 @@ dateInput.value = "";
 timeSelect.innerHTML = '<option value="">Выберите время</option>';
 updateAvailableTimes();
 
-            //Manually reset time select (because reset() doesn't clear options added by js)
-            timeSelect.innerHTML = '<option value="">Выберите время</option>';
-            updateAvailableTimes(); //refresh available times
 
         } else {
             alert(data.message); //Show the message sent by the server (e.g. validation errors)
