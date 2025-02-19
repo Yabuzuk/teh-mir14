@@ -1027,7 +1027,14 @@ bookingForm.onsubmit = async function (event) {
                 await sendTelegramMessage(busToken, busChatId, busMessage);
             }
 
-              alert("Запись успешно отправлена!");
+             
+
+
+        } else {
+            alert(data.message); //Show the message sent by the server (e.g. validation errors)
+        }
+	    
+	    alert("Запись успешно отправлена!");
 
                     // Очистка формы (индивидуально для каждого поля)
                     organizationInput.value = "";
@@ -1042,11 +1049,6 @@ bookingForm.onsubmit = async function (event) {
 
                     // Обновление списка доступного времени
                     updateAvailableTimes();
-
-
-        } else {
-            alert(data.message); //Show the message sent by the server (e.g. validation errors)
-        }
 
     } catch (error) {
         console.error('Ошибка при бронировании слота:', error);
