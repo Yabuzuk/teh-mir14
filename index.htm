@@ -879,200 +879,167 @@ button:hover {
         });
 
         // JavaScript для работы с формой бронирования        
-        const API_URL = 'https://teh-mir14.onrender.com'; // URL вашего сервера
+       const API_URL = 'https://teh-mir14.onrender.com';
 
-        // Получаем элементы
-        const formContainer = document.getElementById('formContainer');
-        const formToggle = document.getElementById('formToggle');
-        const dateInput = document.getElementById('date');
-        const timeSelect = document.getElementById('time');
-        const bookingForm = document.getElementById('bookingForm');
-        const vehicleTypeSelect = document.getElementById('vehicleType');
-        const carBrandInput = document.getElementById('carBrand');
-        const carNumberInput = document.getElementById('carNumber');
-        const organizationInput = document.getElementById('organization'); // Получаем input организации
-        const nameInput = document.getElementById('name'); // Получаем input имени
-        const phoneInput = document.getElementById('phone'); // Получаем input телефона
-        const detailsTextarea = document.getElementById('details'); // Получаем textarea деталей
+const formContainer = document.getElementById('formContainer');
+const formToggle = document.getElementById('formToggle');
+const dateInput = document.getElementById('date');
+const timeSelect = document.getElementById('time');
+const bookingForm = document.getElementById('bookingForm');
+const vehicleTypeSelect = document.getElementById('vehicleType');
+const carBrandInput = document.getElementById('carBrand');
+const carNumberInput = document.getElementById('carNumber');
+const organizationInput = document.getElementById('organization');
+const nameInput = document.getElementById('name');
+const phoneInput = document.getElementById('phone');
+const detailsTextarea = document.getElementById('details');
 
-        // Функция для обновления доступных временных слотов и ограничения дат
-        async function updateAvailableTimes() {
-            const date = dateInput.value;
-            const vehicleType = vehicleTypeSelect.value;
+async function updateAvailableTimes() {
+    const date = dateInput.value;
+    const vehicleType = vehicleTypeSelect.value;
 
-            // Очищаем текущие опции времени
-            timeSelect.innerHTML = '<option value="">Выберите время</option>';
+    timeSelect.innerHTML = '<option value="">Выберите время</option>';
 
-            // Если дата или тип ТС не выбраны, ничего не делаем
-            if (!date || !vehicleType) {
-                return;
-            }
+    if (!date || !vehicleType) {
+        return;
+    }
 
-            const selectedDate = new Date(date);
-            const dayOfWeek = selectedDate.getDay();
+    const selectedDate = moment(date);
+    const dayOfWeek = selectedDate.day();
 
-            if (dayOfWeek === 0) { // Sunday is disabled
-                alert('Запись на воскресенье не производится.');
-                dateInput.value = ''; // Сбросить дату
-                return;
-            }
+    if (dayOfWeek === 0) {
+        alert('Запись на воскресенье не производится.');
+        dateInput.value = '';
+        return;
+    }
 
-            // Ограничение выбора дней для "автобуса" (среда и пятница)
-            if (vehicleType === 'автобус') {
-                if (dayOfWeek !== 3 && dayOfWeek !== 5) { // 3 (Ср), 5 (Пт)
-                    alert('Для автобусов доступна запись только по средам и пятницам.');
-                    dateInput.value = ''; // Сбросить дату
-                    return; // Прекратить выполнение функции
-                }
-            }
+    if (vehicleType === 'автобус' && dayOfWeek !== 3 && dayOfWeek !== 5) {
+        alert('Для автобусов доступна запись только по средам и пятницам.');
+        dateInput.value = '';
+        return;
+    }
 
-            try {
-                const response = await fetch(`${API_URL}/get-available-slots`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ date: date })
-                });
+    try {
+        const response = await fetch(`${API_URL}/get-available-slots`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ date: date })
+        });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                const availableSlots = data.availableSlots;
-
-                // Добавляем доступные временные слоты в выпадающий список
-                availableSlots.forEach(slot => {
-                    const option = document.createElement('option');
-                    option.value = slot;
-                    option.textContent = slot;
-                    timeSelect.appendChild(option);
-                });
-
-            } catch (error) {
-                console.error('Ошибка при получении доступных слотов:', error);
-                alert('Ошибка при получении доступных слотов. Пожалуйста, попробуйте позже.');
-            }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // Обработчик события для выбора даты
-        dateInput.addEventListener('change', updateAvailableTimes);
+        const data = await response.json();
+        const availableSlots = data.availableSlots;
 
-        // Обработчик события для выбора типа транспортного средства
-        vehicleTypeSelect.addEventListener('change', updateAvailableTimes);
+        availableSlots.forEach(slot => {
+            const option = document.createElement('option');
+            option.value = slot;
+            option.textContent = slot;
+            timeSelect.appendChild(option);
+        });
 
-        // Функция для отправки данных формы на сервер и в Telegram
-        bookingForm.onsubmit = async function (event) {
-            event.preventDefault(); // Предотвратить стандартное поведение формы
+    } catch (error) {
+        console.error('Ошибка при получении доступных слотов:', error);
+        alert('Ошибка при получении доступных слотов. Пожалуйста, попробуйте позже.');
+    }
+}
 
-            const formData = new FormData(bookingForm);
-            const formObject = {};
-            formData.forEach((value, key) => formObject[key] = value);
+dateInput.addEventListener('change', updateAvailableTimes);
+vehicleTypeSelect.addEventListener('change', updateAvailableTimes);
 
-            try {
-                const response = await fetch(`${API_URL}/book-slot`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        date: formObject.date,
-                        time: formObject.time,
-                        organization: formObject.organization,
-                        name: formObject.name,
-                        phone: formObject.phone,
-                        vehicleType: formObject.vehicleType,
-                        details: formObject.details,
-                        carBrand: formObject.carBrand,
-                        carNumber: formObject.carNumber
-                    })
-                });
+// Function to send Telegram message
+async function sendTelegramMessage(token, chatId, message) {
+    const url = `https://api.telegram.org/bot${token}/sendMessage`;
+    const params = new URLSearchParams({
+        chat_id: chatId,
+        text: message
+    });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+    try {
+        const response = await fetch(`${url}?${params.toString()}`);
+        if (!response.ok) {
+            console.error(`Telegram API error: ${response.status} ${response.statusText}`);
+        }
+    } catch (error) {
+        console.error("Ошибка при отправке сообщения в Telegram:", error);
+    }
+}
+bookingForm.onsubmit = async function (event) {
+    event.preventDefault();
 
-                const data = await response.json();
-                if (data.success) {
-                    // Функция для отправки сообщения в Telegram
-                    async function sendTelegramMessage(token, chatId, message) {
-                        const telegramUrl = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+    const formData = new FormData(bookingForm);
+    const formObject = {};
+    formData.forEach((value, key) => formObject[key] = value);
 
-                        try {
-                            const telegramResponse = await fetch(telegramUrl);
-                            if (!telegramResponse.ok) {
-                                console.error("Ошибка при отправке сообщения в Telegram:", telegramResponse.status);
-                            }
-                        } catch (telegramError) {
-                            console.error("Ошибка при подключении к Telegram:", telegramError);
-                        }
-                    }
+    //Client-side validation example
+    if (!formObject.organization || !formObject.name || !formObject.phone || !formObject.date || !formObject.time) {
+        alert("Пожалуйста, заполните все обязательные поля.");
+        return; //Stop submission
+    }
 
-                    // Отправляем основное сообщение в Telegram
-                    const mainToken = "6804774061:AAF79b9pf8lW5UXwhpOSx3EMpjjjmTZhGAo"; // Основной токен бота
-                    const mainChatId = "-1002380612626"; // Основной chat_id канала
 
-                    const mainMessage = `
-                        Новая запись на техосмотр:
-                        Организация: ${formObject.organization}
-                        Имя: ${formObject.name}
-                        Номер телефона: ${formObject.phone}
-                        Вид ТС: ${formObject.vehicleType}
-                        Марка автомобиля: ${formObject.carBrand}
-                        Номер автомобиля: ${formObject.carNumber}
-                        Дата: ${formObject.date}
-                        Время: ${formObject.time}
-                        Подробности: ${formObject.details}
-                    `;
+    try {
+        const response = await fetch(`${API_URL}/book-slot`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                date: formObject.date,
+                time: formObject.time,
+                organization: formObject.organization,
+                name: formObject.name,
+                phone: formObject.phone,
+                vehicleType: formObject.vehicleType,
+                details: formObject.details,
+                carBrand: formObject.carBrand,
+                carNumber: formObject.carNumber
+            })
+        });
 
-                    await sendTelegramMessage(mainToken, mainChatId, mainMessage);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-                    // Если это автобус, отправляем сообщение в Telegram
-                    if (formObject.vehicleType === 'автобус') {
-                        const busToken = "549572405:AAHx4MjhJrJAQGERbRqloes3Qcxkn1qUAS4"; // Токен бота для автобусов
-                        const busChatId = "-1002391051206"; // ID чата для автобусов
+        const data = await response.json();
+        if (data.success) {
 
-                        const busMessage = `
-                            Новая запись на техосмотр АВТОБУСА:
-                            Организация: ${formObject.organization}
-                            Имя: ${formObject.name}
-                            Номер телефона: ${formObject.phone}
-                            Марка автомобиля: ${formObject.carBrand}
-                            Номер автомобиля: ${formObject.carNumber}
-                            Дата: ${formObject.date}
-                            Время: ${formObject.time}
-                            Подробности: ${formObject.details}
-                        `;
+            // Send main message to Telegram
+            const mainToken = "6804774061:AAF79b9pf8lW5UXwhpOSx3EMpjjjmTZhGAo"; // Основной токен бота (ВНИМАНИЕ: ХРАНИТЕ ТОКЕНЫ НА СЕРВЕРЕ!)
+            const mainChatId = "-1002380612626";
+            const mainMessage = `Новая запись:\nОрганизация: ${formObject.organization}\nИмя: ${formObject.name}\nТелефон: ${formObject.phone}\nТС: ${formObject.vehicleType}\nМарка: ${formObject.carBrand}\nНомер: ${formObject.carNumber}\nДата: ${formObject.date}\nВремя: ${formObject.time}\nДетали: ${formObject.details}`;
+            await sendTelegramMessage(mainToken, mainChatId, mainMessage);
 
-                        await sendTelegramMessage(busToken, busChatId, busMessage);
-                    }
 
-                    alert("Запись успешно отправлена!");
-
-                    // Очистка формы (индивидуально для каждого поля)
-                    organizationInput.value = "";
-                    nameInput.value = "";
-                    phoneInput.value = "";
-                    carBrandInput.value = "";
-                    carNumberInput.value = "";
-                    vehicleTypeSelect.value = ""; // Сброс выбора типа ТС
-                    dateInput.value = ""; // Сброс даты
-                    timeSelect.innerHTML = '<option value="">Выберите время</option>'; // Очистка списка времени
-                    detailsTextarea.value = "";
-
-                    // Обновление списка доступного времени
-                    updateAvailableTimes();
-
-                } else {
-                    alert(data.message);
-                }
-
-            } catch (error) {
-                console.error('Ошибка при бронировании слота:', error);
-                alert('Ошибка при бронировании слота. Пожалуйста, попробуйте позже.');
+            //Send extra message for "bus"
+            if (formObject.vehicleType === 'автобус') {
+                const busToken = "549572405:AAHx4MjhJrJAQGERbRqloes3Qcxkn1qUAS4"; // Токен бота для автобусов(ВНИМАНИЕ: ХРАНИТЕ ТОКЕНЫ НА СЕРВЕРЕ!)
+                const busChatId = "-1002391051206";
+                const busMessage = `Новая запись АВТОБУСА:\nОрганизация: ${formObject.organization}\nИмя: ${formObject.name}\nТелефон: ${formObject.phone}\nМарка: ${formObject.carBrand}\nНомер: ${formObject.carNumber}\nДата: ${formObject.date}\nВремя: ${formObject.time}\nДетали: ${formObject.details}`;
+                await sendTelegramMessage(busToken, busChatId, busMessage);
             }
-        };
+
+
+            alert("Запись успешно отправлена!");
+            bookingForm.reset();  //Clear the form
+
+            //Manually reset time select (because reset() doesn't clear options added by js)
+            timeSelect.innerHTML = '<option value="">Выберите время</option>';
+            updateAvailableTimes(); //refresh available times
+
+        } else {
+            alert(data.message); //Show the message sent by the server (e.g. validation errors)
+        }
+
+    } catch (error) {
+        console.error('Ошибка при бронировании слота:', error);
+        alert('Ошибка при бронировании слота. Пожалуйста, попробуйте позже.');
+    }
+};
 
         // Добавляем обработчик клика на заголовок для отображения/скрытия формы
         formToggle.addEventListener('click', function () {
