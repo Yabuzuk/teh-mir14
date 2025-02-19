@@ -53,8 +53,8 @@
             font-size: 1em;
             padding: 5px;
             color: #555;
-            height: 40px;
-            line-height: 40px;
+            height: 55px;
+            line-height: 100px;
             font-weight: bold;
         }
 
@@ -74,15 +74,12 @@
         }
 
         .fc-timegrid-event {
-            overflow: hidden;
-            word-wrap: break-word;
-            padding: 8px;
-            box-sizing: border-box;
-            border-radius: 4px;
+            min-height: 100%;
+            margin: 0;
             border: 1px solid #ccc;
             background-color: #e0f2f1;
             color: #000;
-            height: 100px;
+            height: 100%;
         }
 
         .fc-timegrid-event:hover {
@@ -182,10 +179,13 @@
                     right: 'timeGridWeek,timeGridDay'
                 },
                 editable: true,
-                eventDurationEditable: false,
-                slotLabelInterval: '01:00', /* Set the interval to 1 hour */
-                snapDuration: '01:00',   /* Set snap duration to 1 hour */
-                scrollTime: '09:00:00', // Initial scroll time
+                eventDurationEditable: false, // Запрет редактирования длительности
+                slotLabelInterval: '01:00',   // Интервал в 1 час
+                slotDuration: '01:00',        // Размер ячейки в 1 час
+                snapDuration: '01:00',        // Привязка к 1 часу
+                scrollTime: '09:00:00',       // Начальное время прокрутки
+                eventOverlap: false,          // Запрещает наложение событий
+                nowIndicator: true,           // Отображение текущего времени
                 eventContent: function(arg) {
                     const event = arg.event;
                     const organization = event.extendedProps.organization || '';
