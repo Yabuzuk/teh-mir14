@@ -179,7 +179,7 @@ app.post('/book-slot', [
             console.error("Telegram main token or chat ID is not defined in environment variables!");
         }
 
-        // Если это автобус, отправляем сообщение в дополнительный чат
+        // Если это автобус, отправляем сообщение в Telegram
         if (vehicleType === 'автобус') {
             const busToken = process.env.TELEGRAM_BUS_TOKEN;  // Используем переменную окружения
             const busChatId = process.env.TELEGRAM_BUS_CHAT_ID; // Используем переменную окружения
