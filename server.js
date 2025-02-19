@@ -1,9 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const { body, validationResult } = require('express-validator');
-const dotenv = require('dotenv'); // Import dotenv
-dotenv.config();
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -11,19 +9,7 @@ const port = process.env.PORT || 3000;
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// CORS configuration (restrict to your domain in production)
-const allowedOrigins = ['https://teh-mir14.ru', 'http://localhost:3000', 'https://teh-mir14.onrender.com']; // Добавьте ваш домен Render и другие нужные домены
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) { // Allow requests with no origin (like mobile apps)
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  }
-}
-app.use(cors(corsOptions));
+app.use(cors()); // Разрешаем запросы со всех доменов (для простоты)
 
 // MongoDB connection string
 const dbUrl = process.env.MONGODB_URI || 'mongodb://tehmir_tookgrain:8b76bea68aa71605c3d9300bfad2890a0833b0e0@c6oe8.h.filess.io:27018/tehmir_tookgrain';
@@ -50,16 +36,13 @@ const BookedSlotSchema = new mongoose.Schema({
 
 const BookedSlot = mongoose.model('BookedSlot', BookedSlotSchema);
 
-// Function to generate time slots
+// Функция для генерации временных слотов на день
 function generateTimeSlots(dayOfWeek) {
     let startTime = 9;  // 9:00
     let endTime;
 
     if (dayOfWeek >= 1 && dayOfWeek <= 5) { // Понедельник - Пятница
         endTime = 20; // 20:00
-         if (dayOfWeek === 3 || dayOfWeek === 5) { // Среда и Пятница
-            endTime = 18; // 18:00 (только до 17:00 запись)
-        }
     } else if (dayOfWeek === 6) { // Суббота
         endTime = 18; // 18:00
     } else {
@@ -80,7 +63,7 @@ app.post('/get-available-slots', async (req, res) => {
 
     // Check if date is valid
     if (!date) {
-        return res.status(400).json({ message: 'Date is required', availableSlots: [] });
+        return res.status(400).json({ message: 'Date is required' });
     }
 
     const selectedDate = new Date(date);
@@ -102,110 +85,47 @@ app.post('/get-available-slots', async (req, res) => {
         res.json({ availableSlots });
     } catch (err) {
         console.error('Error getting available slots:', err);
-        res.status(500).json({ message: 'Failed to get available slots', error: err.message, availableSlots: [] });
+        res.status(500).json({ message: 'Failed to get available slots' });
     }
 });
 
-// Endpoint to book a slot with validation
-app.post('/book-slot', [
-    body('date').isISO8601().withMessage('Неверный формат даты'),
-    body('time').notEmpty().withMessage('Время обязательно'),
-    body('organization').optional().isString().withMessage('Организация должна быть строкой'),
-    body('name').notEmpty().isString().withMessage('Имя обязательно и должно быть строкой'),
-    body('phone').notEmpty().isMobilePhone('ru-RU').withMessage('Неверный формат телефона'),
-    body('vehicleType').notEmpty().isString().withMessage('Тип ТС обязателен и должен быть строкой'),
-    body('details').optional().isString().withMessage('Подробности должны быть строкой'),
-    body('carBrand').notEmpty().isString().withMessage('Марка автомобиля обязательна и должна быть строкой'),
-    body('carNumber').notEmpty().isString().withMessage('Номер автомобиля обязателен и должен быть строкой'),
-], async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      // Если есть ошибки валидации, отправляем их клиенту
-      return res.status(400).json({ errors: errors.array() });
-    }
-
+// Endpoint to book a slot
+app.post('/book-slot', async (req, res) => {
     const { date, time, organization, name, phone, vehicleType, details, carBrand, carNumber } = req.body;
 
     try {
-        // Всегда создаем новую запись
-        const bookedSlot = new BookedSlot({
-            date: date,
-            time: [time],
-            organization: organization,
-            name: name,
-            phone: phone,
-            vehicleType: vehicleType,
-            details: details,
-            carBrand: carBrand,
-            carNumber: carNumber
-        });
+        let bookedSlot = await BookedSlot.findOne({ date: date });
+
+        if (!bookedSlot) {
+            bookedSlot = new BookedSlot({
+                date: date,
+                time: [time],
+                organization: organization,
+                name: name,
+                phone: phone,
+                vehicleType: vehicleType,
+                details: details,
+                carBrand: carBrand,
+                carNumber: carNumber
+            });
+        } else {
+            if (!bookedSlot.time.includes(time)) {
+                bookedSlot.time.push(time);
+            }
+            bookedSlot.organization = organization;
+            bookedSlot.name = name;
+            bookedSlot.phone = phone;
+            bookedSlot.vehicleType = vehicleType;
+            bookedSlot.details = details;
+            bookedSlot.carBrand = carBrand;
+            bookedSlot.carNumber = carNumber;
+        }
 
         await bookedSlot.save();
-
-        // Функция для отправки сообщения в Telegram
-        async function sendTelegramMessage(token, chatId, message) {
-            const telegramUrl = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
-
-            try {
-                const telegramResponse = await fetch(telegramUrl);
-                if (!telegramResponse.ok) {
-                    console.error("Ошибка при отправке сообщения в Telegram:", telegramResponse.status);
-                }
-            } catch (telegramError) {
-                console.error("Ошибка при подключении к Telegram:", telegramError);
-            }
-        }
-
-        // Отправляем основное сообщение в Telegram
-        const mainToken = process.env.TELEGRAM_MAIN_TOKEN;  // Используем переменную окружения
-        const mainChatId = process.env.TELEGRAM_MAIN_CHAT_ID; // Используем переменную окружения
-
-        const mainMessage = `
-            Новая запись на техосмотр:
-            Организация: ${organization}
-            Имя: ${name}
-            Номер телефона: ${phone}
-            Вид ТС: ${vehicleType}
-            Марка автомобиля: ${carBrand}
-            Номер автомобиля: ${carNumber}
-            Дата: ${date}
-            Время: ${time}
-            Подробности: ${details}
-        `;
-
-        if (mainToken && mainChatId) {
-            await sendTelegramMessage(mainToken, mainChatId, mainMessage);
-        } else {
-            console.error("Telegram main token or chat ID is not defined in environment variables!");
-        }
-
-        // Если это автобус, отправляем сообщение в Telegram
-        if (vehicleType === 'автобус') {
-            const busToken = process.env.TELEGRAM_BUS_TOKEN;  // Используем переменную окружения
-            const busChatId = process.env.TELEGRAM_BUS_CHAT_ID; // Используем переменную окружения
-
-            const busMessage = `
-                Новая запись на техосмотр АВТОБУСА:
-                Организация: ${organization}
-                Имя: ${name}
-                Номер телефона: ${phone}
-                Марка автомобиля: ${carBrand}
-                Номер автомобиля: ${carNumber}
-                Дата: ${date}
-                Время: ${time}
-                Подробности: ${details}
-            `;
-            if (busToken && busChatId) {
-                await sendTelegramMessage(busToken, busChatId, busMessage);
-            } else {
-                console.error("Telegram bus token or chat ID is not defined in environment variables!");
-            }
-        }
-
         res.json({ success: true, message: 'Слот успешно забронирован!' });
     } catch (err) {
         console.error('Error booking slot:', err);
-        res.status(500).json({ message: 'Failed to book slot', error: err.message });
+        res.status(500).json({ message: 'Failed to book slot' });
     }
 });
 
