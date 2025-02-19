@@ -1027,15 +1027,21 @@ bookingForm.onsubmit = async function (event) {
                 await sendTelegramMessage(busToken, busChatId, busMessage);
             }
 
-            alert("Запись успешно отправлена!");
-             setTimeout(() => {
-                console.log('Form reset called');
-                bookingForm.reset();
+              alert("Запись успешно отправлена!");
 
-                console.log('Time select reset called');
-                timeSelect.innerHTML = '<option value="">Выберите время</option>';
-                updateAvailableTimes();
-            }, 100);
+                    // Очистка формы (индивидуально для каждого поля)
+                    organizationInput.value = "";
+                    nameInput.value = "";
+                    phoneInput.value = "";
+                    carBrandInput.value = "";
+                    carNumberInput.value = "";
+                    vehicleTypeSelect.value = ""; // Сброс выбора типа ТС
+                    dateInput.value = ""; // Сброс даты
+                    timeSelect.innerHTML = '<option value="">Выберите время</option>'; // Очистка списка времени
+                    detailsTextarea.value = "";
+
+                    // Обновление списка доступного времени
+                    updateAvailableTimes();
 
 
         } else {
