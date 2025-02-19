@@ -120,7 +120,8 @@ app.post('/book-slot', [
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+      // Если есть ошибки валидации, отправляем их клиенту
+      return res.status(400).json({ errors: errors.array() });
     }
 
     const { date, time, organization, name, phone, vehicleType, details, carBrand, carNumber } = req.body;
