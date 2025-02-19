@@ -57,7 +57,7 @@
                 events: function(fetchInfo, successCallback, failureCallback) {
                     console.log('Fetching events...');
 
-                    fetch('/admin/bookings')  // Замените на ваш API endpoint
+                    fetch('https://teh-mir14.onrender.com/admin/bookings')  // Используем URL развернутого сервера
                         .then(response => {
                             if (!response.ok) {
                                 throw new Error(`HTTP error! status: ${response.status}`);
