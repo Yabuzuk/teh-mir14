@@ -59,6 +59,20 @@
         .fc-event-title {
             font-weight: bold;
         }
+
+        /* Custom height and spacing for time grid cells */
+        .fc-timegrid-slot {
+            height: 100px !important; /* Increase the height of each time slot */
+        }
+
+        /* Ensure the calendar stays within the set time limits */
+        .fc-timegrid-hour {
+            height: 100px;
+        }
+
+        .fc-timegrid-slot-label {
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -139,6 +153,11 @@
                 slotDuration: '01:00:00', // Set the interval to 1 hour
                 minTime: '08:00:00', // Start time 08:00
                 maxTime: '20:00:00', // End time 20:00
+                nowIndicator: true, // Show the current time indicator
+                slotLabelInterval: '01:00:00', // Label interval for hours
+                // Adjusting the cell height
+                contentHeight: 'auto', // Dynamically adjust content height
+                aspectRatio: 2, // Maintain proper aspect ratio
             });
 
             calendar.render();
