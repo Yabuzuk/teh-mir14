@@ -12,12 +12,12 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            font-size: 0.8em;
+            font-size: 0.8em; /* Уменьшили общий размер шрифта */
         }
 
         #calendar {
-            max-width: 1120px;
-            margin: 40px auto;
+            max-width: 1120px; /* Уменьшено на 20% */
+            margin: 40px auto; /* Уменьшен отступ */
             background-color: #fff;
             border-radius: 6px;
             box-shadow: 0 0px 0px rgba(0, 0, 0, 0.2);
@@ -32,28 +32,42 @@
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 8px 12px;
+            padding: 8px 12px; /* Уменьшено на 20% */
             border-radius: 3px;
             cursor: pointer;
             margin: 0 4px;
-            font-size: 0.8em;
+            font-size: 0.8em; /* Уменьшен размер текста кнопок */
         }
 
         .fc-button:hover {
             background-color: #0056b3;
         }
 
-        /* Принудительно делаем шрифт событий тонким */
-        .fc-event, 
-        .fc-event-title, 
-        .fc-event-main {
-            font-weight: 100 !important;
-            font-family: Arial, sans-serif !important;
-            color: black !important;
-        }
+       .fc-event {
+    background-color: #28a745;
+    border: none;
+    padding: 3px 3px;
+    margin: 1px;
+    border-radius: 3px;
+    font-size: 0.7em;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 100 !important; /* Теперь `!important` правильно указан */
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.fc-event-title, 
+.fc-event-main {
+    font-weight: 100 !important; /* Принудительно задаем тонкий шрифт для текста */
+}
+
 
         .fc-timegrid-slot {
-            height: 56px !important;
+            height: 56px !important; /* Уменьшена высота слота */
         }
 
         .fc-timegrid-hour {
@@ -61,11 +75,11 @@
         }
 
         .fc-timegrid-slot-label {
-            font-size: 11px;
+            font-size: 11px; /* Уменьшен размер меток времени */
         }
 
         .fc-timegrid-slot div {
-            font-size: 0.8em;
+            font-size: 0.8em; 
             color: #555;
         }
     </style>
@@ -161,17 +175,6 @@
             });
 
             calendar.render();
-
-            // Принудительно применяем стили после загрузки FullCalendar
-            var style = document.createElement("style");
-            style.innerHTML = `
-                .fc-event, .fc-event-title, .fc-event-main {
-                    font-weight: 100 !important;
-                    font-family: Arial, sans-serif !important;
-                    color: black !important;
-                }
-            `;
-            document.head.appendChild(style);
         });
     </script>
 </body>
