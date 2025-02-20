@@ -32,7 +32,7 @@
             background-color: #007bff; /* Blue buttons */
             color: white;
             border: none;
-            padding: 8px 12px;
+            padding: 10px 15px; /* Larger buttons */
             border-radius: 4px;
             cursor: pointer;
             margin: 0 5px;
@@ -46,10 +46,10 @@
             background-color: #28a745; /* Green event color */
             color: white;
             border: none;
-            padding: 5px;
-            margin: 3px;
+            padding: 8px 12px; /* Larger padding */
+            margin: 5px;
             border-radius: 4px;
-            font-size: 0.8em;
+            font-size: 1em; /* Larger font size */
         }
 
         .fc-event-time {
@@ -86,11 +86,11 @@
                 eventStartEditable: false,
                 eventContent: function(arg) {
                     const eventData = arg.event.extendedProps;
-                    const eventHtml = `
+                    const eventHtml = ` 
                         <b>${eventData.organization}</b><br>
                         ${eventData.name}<br>
                         ${eventData.vehicleType}<br>
-                        ${eventData.carBrand || ''} ${eventData.carNumber || ''}
+                        ${eventData.carBrand || ''} ${eventData.carNumber || ''} 
                     `;
                     return { html: eventHtml };
                 },
@@ -114,11 +114,11 @@
 
                             const events = bookings.map(booking => ({
                                 id: booking._id,
-                                title: `${booking.organization}, ${booking.name}`, // Title for display (not used in eventContent)
+                                title: `${booking.organization}, ${booking.name}`,
                                 start: moment(booking.date + 'T' + booking.time).toISOString(),
                                 end: moment(booking.date + 'T' + booking.time).add(1, 'hours').toISOString(),
                                 allDay: false,
-                                extendedProps: {  // Pass extra data
+                                extendedProps: {
                                     organization: booking.organization,
                                     name: booking.name,
                                     vehicleType: booking.vehicleType,
@@ -134,7 +134,11 @@
                             console.error('Error fetching events:', error);
                             failureCallback(error);
                         });
-                }
+                },
+                // Time grid settings
+                slotDuration: '01:00:00', // Set the interval to 1 hour
+                minTime: '08:00:00', // Start time 08:00
+                maxTime: '20:00:00', // End time 20:00
             });
 
             calendar.render();
