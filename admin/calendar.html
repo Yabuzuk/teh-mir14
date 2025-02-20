@@ -73,6 +73,12 @@
         .fc-timegrid-slot-label {
             font-size: 14px;
         }
+
+        /* Text in the slots */
+        .fc-timegrid-slot div {
+            font-size: 0.7em; /* Reduce text size by 30% */
+            color: #555; /* Dark grey text */
+        }
     </style>
 </head>
 <body>
@@ -153,6 +159,8 @@
                 slotDuration: '01:00:00', // Set the interval to 1 hour
                 minTime: '08:00:00', // Start time 08:00
                 maxTime: '20:00:00', // End time 20:00
+                slotMinTime: '08:00:00', // Start time at 08:00
+                slotMaxTime: '20:00:00', // End time at 20:00
                 nowIndicator: true, // Show the current time indicator
                 slotLabelInterval: '01:00:00', // Label interval for hours
                 // Adjusting the cell height
