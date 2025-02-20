@@ -8,79 +8,84 @@
     <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.10'></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            font-size: 0.8em; /* Уменьшили общий размер шрифта */
-        }
-
         #calendar {
-            max-width: 1120px; /* Уменьшено на 20% */
-            margin: 40px auto; /* Уменьшен отступ */
-            background-color: #fff;
-            border-radius: 6px;
-            box-shadow: 0 0px 0px rgba(0, 0, 0, 0.2);
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
         }
 
-        .fc-header-toolbar {
-            padding: 8px;
-            text-align: center;
+        /* Общие стили для FullCalendar */
+        .fc .fc-toolbar.fc-toolbar-solid {
+            background-color: #0088cc;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 1.5em;
         }
 
         .fc-button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 8px 12px; /* Уменьшено на 20% */
-            border-radius: 3px;
-            cursor: pointer;
-            margin: 0 4px;
-            font-size: 0.8em; /* Уменьшен размер текста кнопок */
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin: 0 5px;
+            transition: background-color 0.2s ease;
         }
 
         .fc-button:hover {
-            background-color: #0056b3;
+            background-color: #eee;
+            border-color: #999;
         }
 
-       .fc-event {
-    background-color: #28a745;
-    border: none;
-    padding: 3px 3px;
-    margin: 1px;
-    border-radius: 3px;
-    font-size: 0.7em;
-    text-align: center;
-    text-transform: uppercase;
-    font-weight: 100 !important; /* Теперь `!important` правильно указан */
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-}
-
-.fc-v-event .fc-event-main {
-        color: var(--fc-event-text-color,white);
-        height: 100%;
-     font-weight: 100 !important;
-        }
-
-
-        .fc-timegrid-slot {
-            height: 56px !important; /* Уменьшена высота слота */
-        }
-
-        .fc-timegrid-hour {
-            height: 56px !important;
+        .fc-button:active {
+            background-color: #ddd;
         }
 
         .fc-timegrid-slot-label {
-            font-size: 11px; /* Уменьшен размер меток времени */
+            font-size: 1em;
+            padding: 5px;
+            color: #555;
+            height: 55px;
+            line-height: 100px;
+            font-weight: bold;
         }
 
-        .fc-timegrid-slot div {
-            font-size: 0.8em; 
-            color: #555;
+        .fc-event-title {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .fc-col-header-cell {
+            font-size: 1em;
+            color: #333;
+            font-weight: bold;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .fc-timegrid-event {
+            min-height: 100%;
+            margin: 0;
+            border: 1px solid #ccc;
+            background-color: #e0f2f1;
+            color: #000;
+            height: 100%;
+        }
+
+        .fc-timegrid-event:hover {
+            background-color: #d0e8e6;
+            border-color: #999;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
         }
     </style>
 </head>
