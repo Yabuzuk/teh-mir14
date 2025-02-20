@@ -9,18 +9,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
     <style>
-        /* Basic styling for the calendar */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4; /* Light background */
+            background-color: #f4f4f4;
         }
 
         #calendar {
             max-width: 1400px;
             margin: 50px auto;
-            background-color: #fff; /* White container */
-            border-radius: 8px; /* Rounded corners */
-            box-shadow: 0 0px 0px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0px 0px rgba(0, 0, 0, 0.2);
         }
 
         .fc-header-toolbar {
@@ -29,64 +28,50 @@
         }
 
         .fc-button {
-            background-color: #007bff; /* Blue buttons */
+            background-color: #007bff;
             color: white;
             border: none;
-            padding: 10px 15px; /* Larger buttons */
+            padding: 10px 15px;
             border-radius: 4px;
             cursor: pointer;
             margin: 0 5px;
         }
 
         .fc-button:hover {
-            background-color: #0056b3; /* Darker blue on hover */
+            background-color: #0056b3;
         }
 
         .fc-event {
-            background-color: #28a745; /* Green event color */
+            background-color: #28a745;
             border: none;
-            padding: 4px 4px; /* Larger padding */
+            padding: 4px 4px;
             margin: 1px;
             border-radius: 4px;
-            font-size: 0.7em; /* Larger font size */
+            font-size: 0.7em;
             text-align: center;
-            text-transform: uppercase; /* Make text uppercase */
-            font-style: italic; /* Make text italic */
-
-            /* Flexbox for vertical and horizontal centering */
+            text-transform: uppercase;
+            font-style: italic;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100%; /* Ensures the event takes up the full height of its container */
+            height: 100%;
         }
 
-        .fc-event-time {
-            font-style: italic;
-        }
-
-        .fc-event-title {
-            font-weight: italic;
-            color: #555;
-        }
-
-        /* Custom height and spacing for time grid cells */
         .fc-timegrid-slot {
-            height: 70px !important; /* Reduced the height by 30% */
+            height: 70px !important;
         }
 
-        /* Ensure the calendar stays within the set time limits */
         .fc-timegrid-hour {
-            height: 70px !important; /* Reduced the height by 30% */
+            height: 70px !important;
         }
 
         .fc-timegrid-slot-label {
             font-size: 14px;
         }
 
-        /* Text in the slots */
         .fc-timegrid-slot div {
-            font-size: 1em; /* Reduce text size by 30% */
-            color: #555; /* Dark grey text */
+            font-size: 1em;
+            color: #555;
         }
     </style>
 </head>
@@ -103,12 +88,17 @@
             }
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'timeGridWeek', // Show only weeks and days
+                initialView: 'timeGridWeek',
                 locale: 'ru',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'timeGridWeek,timeGridDay' // Remove dayGridMonth
+                    right: 'timeGridWeek,timeGridDay'
+                },
+                buttonText: {
+                    today: 'Сегодня',
+                    week: 'Неделя',
+                    day: 'День'
                 },
                 editable: false,
                 eventResizableFromStart: false,
@@ -164,17 +154,15 @@
                             failureCallback(error);
                         });
                 },
-                // Time grid settings
-                slotDuration: '01:00:00', // Set the interval to 1 hour
-                minTime: '08:00:00', // Start time 08:00
-                maxTime: '20:00:00', // End time 20:00
-                slotMinTime: '08:00:00', // Start time at 08:00
-                slotMaxTime: '20:00:00', // End time at 20:00
-                nowIndicator: true, // Show the current time indicator
-                slotLabelInterval: '01:00:00', // Label interval for hours
-                // Adjusting the cell height
-                contentHeight: 'auto', // Dynamically adjust content height
-                aspectRatio: 2, // Maintain proper aspect ratio
+                slotDuration: '01:00:00',
+                minTime: '08:00:00',
+                maxTime: '20:00:00',
+                slotMinTime: '08:00:00',
+                slotMaxTime: '20:00:00',
+                nowIndicator: true,
+                slotLabelInterval: '01:00:00',
+                contentHeight: 'auto',
+                aspectRatio: 2,
             });
 
             calendar.render();
