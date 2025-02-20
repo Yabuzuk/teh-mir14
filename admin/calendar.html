@@ -4,15 +4,18 @@
     <meta charset='utf-8' />
     <title>Календарь техосмотра</title>
 
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: "arial", sans-serif; /* Более узкий шрифт */
+            line-height: 1.5;
             background-color: #f4f4f4;
-            font-size: 0.8em; /* Уменьшили общий размер шрифта */
+            font-size: 0.7em; /* Уменьшили общий размер шрифта */
+
         }
 
         #calendar {
@@ -61,17 +64,19 @@
 }
 
 .fc-event-title, 
-.fc-event-main {
-    font-weight: 100 !important; /* Принудительно задаем тонкий шрифт для текста */
+.fc-v-event .fc-event-main {
+    color: var(--fc-event-text-color,#fff);
+    height: 100%;
+    font-weight: 50
 }
 
 
         .fc-timegrid-slot {
-            height: 56px !important; /* Уменьшена высота слота */
+            height: 65px !important; /* Уменьшена высота слота */
         }
 
         .fc-timegrid-hour {
-            height: 56px !important;
+            height: 65px !important;
         }
 
         .fc-timegrid-slot-label {
@@ -79,7 +84,7 @@
         }
 
         .fc-timegrid-slot div {
-            font-size: 1.2em; 
+            font-size: 0.8em; 
             color: #555;
         }
     </style>
