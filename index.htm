@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
+    
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Пункт техосмотра ООО «АиРТ»</title>
@@ -378,7 +380,40 @@ button:hover {
     width: 100%;  /* Задание 100% ширины */
     box-sizing: border-box; /* Учитываем паддинги и границы в общей ширине */
 }
+.gallery {
+    display: flex;
+    gap: 10px; /* Расстояние между фото */
+    flex-wrap: wrap; /* Если не хватает места, изображения переходят на новую строку */
+}
 
+.clickable-image {
+    width: 360px; /* Размер миниатюр */
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.clickable-image:hover {
+    transform: scale(1.1); /* Немного увеличиваем при наведении */
+}
+
+/* Стили для модального окна */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    max-width: 90%;
+    max-height: 90%;
+}
 /* Мобильная адаптивность */
 @media (max-width: 768px) {
     body {
@@ -446,6 +481,11 @@ button:hover {
 
     .gallery-image {
         width: 100%; /* Изображения занимают всю ширину */
+        height: auto;
+        border-radius: 8px;
+    }
+    .galleryy-image {
+        width: 30%; /* Изображения занимают всю ширину */
         height: auto;
         border-radius: 8px;
     }
@@ -671,8 +711,8 @@ button:hover {
 
         <!-- Форма бронирования -->
         <section class="booking-form">
-            <h1 id="formToggle" class="blinking-button">Онлайн запись на техосмотр</h1> <!-- Мигающая кнопка -->
-
+            <h1 id="formToggle" class="blinking-button">Онлайн запись на техосмотр</h1>
+            <a href="https://teh-mir14.ru/admin/calendar.html" class="blinking-button">Календарь техосмотра</a>  
             <div id="formContainer" class="form-container" style="display: none;"> <!-- Изначально скрыто -->
                 <form id="bookingForm">
 
@@ -816,15 +856,20 @@ button:hover {
     </div>
 
 	        <div class="faq-item">
-        <button class="faq-question">Законодательство</button>
+        <button class="faq-question">Наши эксперты</button>
         <div class="faq-answer">
-            <ul>
-                <li><a href="https://base.garant.ru/12187349/" target="_blank">Федеральный закон от 01.07.2011 N 170-ФЗ «О техническом осмотре»</a></li>
-                <li><a href="https://www.garant.ru/products/ipo/prime/doc/74571754/" target="_blank">Постановление Правительства РФ от 15 сентября 2020 г. № 1434</a></li>
-                <li><a href="https://base.garant.ru/70103612/" target="_blank">Постановление Правительства РФ от 05.12.11</a></li>
-                <li><a href="http://docs.cntd.ru/document/902320557" target="_blank">Технический регламент ТР ТС 018/2/2011 «О безопасности колесных транспортных средств»</a></li>
-    <li><a href="https://base.garant.ru/12192261/53f89421bbdaf741eb2d1ecc4ddb4c33/" target="_blank">Форма типового договора о проведении технического осмотра</a></li>
-            </ul>
+            <div class="image-gallery">
+                <div class="gallery">
+                    <img src="свидетельство  Эксперт.jpg" alt="Фото 1" class="clickable-image" onclick="openFullScreen(this)">
+                    <img src="Власов.jpg" alt="Фото 2" class="clickable-image" onclick="openFullScreen(this)">
+                    <img src="Марковский.jpg" alt="Фото 3" class="clickable-image" onclick="openFullScreen(this)">
+                </div>
+                
+                <div id="imageModal" class="modal" onclick="closeFullScreen()">
+                    <img id="modalImage" class="modal-content">
+                </div>
+                
+        </div>
         </div>
     </div>
 	       
@@ -1067,6 +1112,16 @@ bookingForm.onsubmit = async function (event) {
                 formContainer.style.display = 'none'; // Сворачиваем форму
             }
         });
+        function openFullScreen(img) {
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImage");
+    modal.style.display = "flex";
+    modalImg.src = img.src;
+}
+
+function closeFullScreen() {
+    document.getElementById("imageModal").style.display = "none";
+}
     </script>
 </body>
 </html>
