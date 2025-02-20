@@ -12,18 +12,19 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
+            font-size: 0.8em; /* Уменьшили общий размер шрифта */
         }
 
         #calendar {
-            max-width: 1400px;
-            margin: 50px auto;
+            max-width: 1120px; /* Уменьшено на 20% */
+            margin: 40px auto; /* Уменьшен отступ */
             background-color: #fff;
-            border-radius: 8px;
+            border-radius: 6px;
             box-shadow: 0 0px 0px rgba(0, 0, 0, 0.2);
         }
 
         .fc-header-toolbar {
-            padding: 10px;
+            padding: 8px;
             text-align: center;
         }
 
@@ -31,10 +32,11 @@
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
+            padding: 8px 12px; /* Уменьшено на 20% */
+            border-radius: 3px;
             cursor: pointer;
-            margin: 0 5px;
+            margin: 0 4px;
+            font-size: 0.8em; /* Уменьшен размер текста кнопок */
         }
 
         .fc-button:hover {
@@ -44,10 +46,10 @@
         .fc-event {
             background-color: #28a745;
             border: none;
-            padding: 4px 4px;
+            padding: 3px 3px;
             margin: 1px;
-            border-radius: 4px;
-            font-size: 0.7em;
+            border-radius: 3px;
+            font-size: 0.56em; /* Уменьшен размер шрифта */
             text-align: center;
             text-transform: uppercase;
             font-style: italic;
@@ -58,19 +60,19 @@
         }
 
         .fc-timegrid-slot {
-            height: 70px !important;
+            height: 56px !important; /* Уменьшена высота слота */
         }
 
         .fc-timegrid-hour {
-            height: 70px !important;
+            height: 56px !important;
         }
 
         .fc-timegrid-slot-label {
-            font-size: 14px;
+            font-size: 11px; /* Уменьшен размер меток времени */
         }
 
         .fc-timegrid-slot div {
-            font-size: 1em;
+            font-size: 0.8em; 
             color: #555;
         }
     </style>
