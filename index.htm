@@ -972,8 +972,8 @@ async function updateAvailableTimes() {
         return;
     }
 
-    if (vehicleType === 'автобус' && dayOfWeek !== 3 && dayOfWeek !== 5) {
-        alert('Для автобусов доступна запись только по средам и пятницам.');
+    if (vehicleType === 'автобус' && dayOfWeek !== 5) {
+        alert('Для автобусов доступна запись только по пятницам.');
         dateInput.value = '';
         return;
     }
