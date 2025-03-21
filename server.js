@@ -102,7 +102,7 @@ app.post('/get-available-slots', async (req, res) => {
 
 // Endpoint to book a slot
 app.post('/book-slot', async (req, res) => {
-    const { date, time, organization, name, phone, vehicleType, details, carBrand, carNumber } = req.body;
+    const { date, time, organization, name, phone, mail, vehicleType, details, carBrand, carNumber } = req.body;
 
     // Validate required fields
     if (!date || !time || !organization || !name || !phone) {
