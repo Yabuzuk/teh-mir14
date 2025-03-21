@@ -251,25 +251,28 @@ button:hover {
             scrollTime: '09:00:00',       // Начальное время прокрутки
             eventOverlap: false,          // Запрещает наложение событий
             nowIndicator: true,           // Отображение текущего времени
-            eventContent: function (arg) {
-                const event = arg.event;
-                const organization = event.extendedProps.organization || '';
-                const phone = event.extendedProps.phone || '';
-                const carBrand = event.extendedProps.carBrand || '';
-                const carNumber = event.extendedProps.carNumber || '';
-                const vehicleType = (event.extendedProps && event.extendedProps.vehicleType) || '';
-                const name = event.title.split(' (')[0];
+            
+          eventContent: function (arg) {
+    const event = arg.event;
+    const organization = event.extendedProps.organization || '';
+    const phone = event.extendedProps.phone || '';
+    const mail = event.extendedProps.mail || ''; // Добавлено
+    const carBrand = event.extendedProps.carBrand || '';
+    const carNumber = event.extendedProps.carNumber || '';
+    const vehicleType = (event.extendedProps && event.extendedProps.vehicleType) || '';
+    const name = event.title.split(' (')[0];
 
-                let eventHtml = `
-                    <div style="color:#000;">
-                        <b>${name}</b><br>
-                        ${vehicleType}<br>
-                        ${organization ? `<b>Орг:</b> ${organization}<br>` : ''}
-                        ${phone ? `<b>Тел:</b> ${phone}<br>` : ''}
-                        ${carBrand ? `<b>М:</b> ${carBrand} ` : ''}
-                        ${carNumber ? `<b>№:</b> ${carNumber}` : ''}
-                    </div>
-                `;
+    let eventHtml = `
+        <div style="color:#000;">
+            <b>${name}</b><br>
+            ${vehicleType}<br>
+            ${organization ? `<b>Орг:</b> ${organization}<br>` : ''}
+            ${phone ? `<b>Тел:</b> ${phone}<br>` : ''}
+            ${mail ? `<b>Email:</b> ${mail}<br>` : ''} // Добавлено
+            ${carBrand ? `<b>М:</b> ${carBrand} ` : ''}
+            ${carNumber ? `<b>№:</b> ${carNumber}` : ''}
+        </div>
+    `;
 
                 return { html: eventHtml };
             },
