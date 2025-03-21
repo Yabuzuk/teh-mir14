@@ -29,6 +29,7 @@ const BookedSlotSchema = new mongoose.Schema({
     organization: { type: String, required: true },  // Added required
     name: { type: String, required: true },        // Added required
     phone: { type: String, required: true },       // Added required
+    mail: { type: String, required: true },       // Added required
     vehicleType: String,
     details: String,
     carBrand: String,
@@ -116,6 +117,7 @@ app.post('/book-slot', async (req, res) => {
             organization,
             name,
             phone,
+            mail,
             vehicleType,
             details,
             carBrand,
