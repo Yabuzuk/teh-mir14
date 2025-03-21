@@ -18,9 +18,9 @@
             --white: #fff;
             --border-color: #ddd;
 
-            --font-size-small: 0.6em;
-            --font-size-normal: 0.8em;
-            --font-size-large: 1em;
+            --font-size-small: 0.8em;
+            --font-size-normal: 1em;
+            --font-size-large: 1.2em;
         }
 
         body {
@@ -65,7 +65,7 @@
             padding: 5px;
             margin: 2px;
             border-radius: 5px;
-            font-size: var(--font-size-small);
+            font-size: 0.7em; /* Уменьшен размер шрифта на 30% (примерно) */
             text-align: center;
             text-transform: uppercase;
             font-weight: 500 !important;
@@ -466,16 +466,14 @@
 
                 }
                 eventDetailsModal.style.display = "block";
-            deleteEventButton.style.display = event ? 'inline' : 'none';
-        }
-
+                deleteEventButton.style.display = event ? 'inline' : 'none';
+            }
 
             function hideEventDetails() {
                 eventDetailsModal.style.display = "none";
             }
 
-
-              closeBtn.onclick = function () {
+            closeBtn.onclick = function () {
                 eventDetailsModal.style.display = "none";
             }
 
@@ -484,7 +482,6 @@
                     eventDetailsModal.style.display = "none";
                 }
             }
-
 
             saveEventButton.addEventListener('click', async () => {
                 const bookingId = eventIdInput.value;
