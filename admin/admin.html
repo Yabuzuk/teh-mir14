@@ -3,150 +3,88 @@
 <head>
     <title>Админ-панель (Календарь)</title>
     <meta charset='utf-8' />
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.10'></script>
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+   <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
     <style>
+        body {
+            font-family: "Roboto Coundensed", sans-serif; /* Более узкий шрифт */
+            background-color: #f4f4f4;
+            font-size: var(--fc-small-font-size);
+            
+        }
+
         #calendar {
-            max-width: 1400px;
-            margin: 40px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            background-color: #f9f9f9;
+            max-width: 1120px; /* Уменьшено на 20% */
+            margin: auto; /* Уменьшен отступ */
+            background-color: #fff;
+            border-radius: 6px;
+            box-shadow: 0 0px 0px rgba(0, 0, 0, 0.2);
         }
 
-        /* Общие стили для FullCalendar */
-        .fc .fc-toolbar.fc-toolbar-solid {
-            background-color: #0088cc;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .fc .fc-toolbar-title {
-            font-size: 1.5em;
+        .fc-header-toolbar {
+            padding: 8px;
+            text-align: center;
         }
 
         .fc-button {
-            background-color: #fff;
-            color: #333;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 8px 12px;
-            margin: 0 5px;
-            transition: background-color 0.2s ease;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px; /* Уменьшено на 20% */
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 0 4px;
+            font-size: 0.8em; /* Уменьшен размер текста кнопок */
         }
 
         .fc-button:hover {
-            background-color: #eee;
-            border-color: #999;
+            background-color: #0056b3;
         }
 
-        .fc-button:active {
-            background-color: #ddd;
+       .fc-event {
+    background-color: #e0f2f1;
+    border: none;
+    padding: 3px 3px;
+    margin: 1px;
+    border-radius: 3px;
+    font-size: 0.6em;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 100 !important; /* Теперь `!important` правильно указан */
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.fc-event-title, 
+.fc-v-event .fc-event-main {
+    color: var(--fc-event-text-color,black);
+    height: 100%;
+    font-weight: 50
+}
+
+
+        .fc-timegrid-slot {
+            height: 100px !important; /* Уменьшена высота слота */
+        }
+
+        .fc-timegrid-hour {
+            height: 100px !important;
         }
 
         .fc-timegrid-slot-label {
-            font-size: 1em;
-            padding: 5px;
+            font-size: 11px; /* Уменьшен размер меток времени */
+        }
+
+        .fc-timegrid-slot div {
+            font-size: 1.2em; 
             color: #555;
-            height: 55px;
-            line-height: 100px;
-            font-weight: bold;
         }
-
-        .fc-event-title {
-            font-size: 0.9em;
-            font-weight: bold;
-            color: #000;
-        }
-
-        .fc-col-header-cell {
-            font-size: 1em;
-            color: #333;
-            font-weight: bold;
-            padding: 10px;
-            background-color: #f0f0f0;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .fc-timegrid-event {
-            min-height: 100%;
-            margin: 0;
-            border: 1px solid #ccc;
-            background-color: #e0f2f1;
-            color: #000;
-            height: 100%;
-        }
-
-        .fc-timegrid-event:hover {
-            background-color: #d0e8e6;
-            border-color: #999;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-        }
-
-
-.container {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
-    width: 100%;
-}
-
-h2 {
-    text-align: center;
-    color: #333;
-}
-
-label {
-    font-weight: bold;
-    display: block;
-    margin-top: 10px;
-}
-
-input, select, textarea {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-}
-
-button {
-    width: 48%;
-    padding: 10px;
-    margin-top: 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-button.save {
-    background-color: #28a745;
-    color: white;
-}
-
-button.cancel {
-    background-color: #dc3545;
-    color: white;
-}
-
-button:hover {
-    opacity: 0.8;
-}
-
-.buttons {
-    display: flex;
-    justify-content: space-between;
-}
-
     </style>
 </head>
 <body>
