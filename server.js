@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const moment = require('moment');
 const path = require('path');
 
 const app = express();
@@ -10,7 +9,7 @@ const port = process.env.PORT || 3000;
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors()); // Разрешаем запросы со всех доменов (для простоты)
 
 // MongoDB connection string
 const dbUrl = process.env.MONGODB_URI || 'mongodb://tehmir_tookgrain:8b76bea68aa71605c3d9300bfad2890a0833b0e0@c6oe8.h.filess.io:27018/tehmir_tookgrain';
@@ -19,42 +18,35 @@ mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('MongoDB connection error:', err));
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('MongoDB connection error:', err));
 
 // Define schema and model
 const BookedSlotSchema = new mongoose.Schema({
-    date: { type: String, required: true },
-    time: { type: String, required: true },
-    organization: { type: String, required: true },  // Added required
-    name: { type: String, required: true },        // Added required
-    phone: { type: String, required: true },       // Added required
-    mail: { type: String, required: true },       // Added required
+    date: String,
+    time: [String],
+    organization: String,
+    name: String,
+    phone: String,
     vehicleType: String,
     details: String,
-    carBrand: String,
-    carNumber: String
-}, {
-    timestamps: false // Disable timestamps
+    carBrand: String, // Добавляем поле "Марка автомобиля"
+    carNumber: String  // Добавляем поле "Номер автомобиля"
 });
 
-BookedSlotSchema.index({ date: 1, time: 1 }, { unique: true });  // Add unique index
 const BookedSlot = mongoose.model('BookedSlot', BookedSlotSchema);
 
 // Функция для генерации временных слотов на день
 function generateTimeSlots(dayOfWeek) {
-    let startTime = 9;
+    let startTime = 9;  // 9:00
     let endTime;
 
     if (dayOfWeek >= 1 && dayOfWeek <= 5) { // Понедельник - Пятница
-        endTime = 20;
-        if (dayOfWeek === 3 || dayOfWeek === 5) { // Среда и Пятница
-            endTime = 18;
-        }
+        endTime = 20; // 20:00
     } else if (dayOfWeek === 6) { // Суббота
-        endTime = 18;
+        endTime = 18; // 18:00
     } else {
-        return [];
+        return []; // Воскресенье - нет слотов
     }
 
     const timeSlots = [];
@@ -69,30 +61,27 @@ function generateTimeSlots(dayOfWeek) {
 app.post('/get-available-slots', async (req, res) => {
     const { date } = req.body;
 
+    // Check if date is valid
     if (!date) {
         return res.status(400).json({ message: 'Date is required' });
     }
 
+    const selectedDate = new Date(date);
+    const dayOfWeek = selectedDate.getDay(); // 0 (Вс) - 6 (Сб)
+
+    // Generate all time slots for the selected day
+    const allSlots = generateTimeSlots(dayOfWeek);
+
+    // If it's Sunday, return an empty array
+    if (dayOfWeek === 0) {
+        return res.json({ availableSlots: [] });
+    }
+
     try {
-        const selectedDate = moment(date);
-        const dayOfWeek = selectedDate.day(); // 0 (Вс) - 6 (Сб)
+        const bookedSlot = await BookedSlot.findOne({ date: date });
+        const bookedSlots = bookedSlot ? bookedSlot.time : [];
 
-        const allSlots = generateTimeSlots(dayOfWeek);
-
-        if (dayOfWeek === 0) {
-            return res.json({ availableSlots: [] });
-        }
-
-        // Fetch only the 'time' field from the booked slots
-        const bookedSlots = await BookedSlot.find({ date: date }).select('time').exec();
-
-        // Extract the 'time' values into a simple array
-        const bookedTimes = bookedSlots.map(slot => slot.time);
-
-        // Filter the available slots based on the booked times
-        const availableSlots = allSlots.filter(slot => !bookedTimes.includes(slot));
-
-        // Respond with the available slots
+        const availableSlots = allSlots.filter(slot => !bookedSlots.includes(slot));
         res.json({ availableSlots });
     } catch (err) {
         console.error('Error getting available slots:', err);
@@ -102,38 +91,41 @@ app.post('/get-available-slots', async (req, res) => {
 
 // Endpoint to book a slot
 app.post('/book-slot', async (req, res) => {
-    const { date, time, organization, name, phone, mail, vehicleType, details, carBrand, carNumber } = req.body;
-
-    // Validate required fields
-    if (!date || !time || !organization || !name || !phone) {
-        return res.status(400).json({ message: 'Date, time, organization, name and phone are required.' });
-    }
+    const { date, time, organization, name, phone, vehicleType, details, carBrand, carNumber } = req.body;
 
     try {
-        // Attempt to create the new slot
-        const newSlot = new BookedSlot({
-            date,
-            time,
-            organization,
-            name,
-            phone,
-            mail,
-            vehicleType,
-            details,
-            carBrand,
-            carNumber
-        });
+        let bookedSlot = await BookedSlot.findOne({ date: date });
 
-        await newSlot.save();  // Save the new slot
-        return res.status(201).json({ message: 'Слот успешно забронирован!' });
-
-    } catch (error) {
-        if (error.code === 11000) {
-            return res.status(400).json({ message: 'Этот слот времени уже забронирован.' });
+        if (!bookedSlot) {
+            bookedSlot = new BookedSlot({
+                date: date,
+                time: [time],
+                organization: organization,
+                name: name,
+                phone: phone,
+                vehicleType: vehicleType,
+                details: details,
+                carBrand: carBrand,
+                carNumber: carNumber
+            });
+        } else {
+            if (!bookedSlot.time.includes(time)) {
+                bookedSlot.time.push(time);
+            }
+            bookedSlot.organization = organization;
+            bookedSlot.name = name;
+            bookedSlot.phone = phone;
+            bookedSlot.vehicleType = vehicleType;
+            bookedSlot.details = details;
+            bookedSlot.carBrand = carBrand;
+            bookedSlot.carNumber = carNumber;
         }
 
-        console.error("Ошибка при бронировании:", error);
-        return res.status(500).json({ message: "Ошибка при бронировании слота.", error: error.message });
+        await bookedSlot.save();
+        res.json({ success: true, message: 'Слот успешно забронирован!' });
+    } catch (err) {
+        console.error('Error booking slot:', err);
+        res.status(500).json({ message: 'Failed to book slot' });
     }
 });
 
@@ -177,7 +169,7 @@ app.post('/admin/bookings', async (req, res) => {
 // Редактирование существующей записи (PUT /admin/bookings/:id)
 app.put('/admin/bookings/:id', async (req, res) => {
     try {
-        const updatedBooking = await BookedSlot.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        const updatedBooking = await BookedSlot.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!updatedBooking) {
             return res.status(404).json({ message: 'Booking not found' });
         }
