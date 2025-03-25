@@ -979,8 +979,14 @@ button:hover {
             return;
         }
 
+  if (vehicleType === 'автобус' && dayOfWeek !== 2) {
+            alert('Для автобусов доступна запись только по ВТОРНИКАМ И ПЯТНИЦАМ.');
+            dateInput.value = '';
+            return;
+        }
+	    
         if (vehicleType === 'автобус' && dayOfWeek !== 5) {
-            alert('Для автобусов доступна запись только по пятницам.');
+            alert('Для автобусов доступна запись только по ВТОРНИКАМ И ПЯТНИЦАМ.');
             dateInput.value = '';
             return;
         }
