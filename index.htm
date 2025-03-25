@@ -322,7 +322,12 @@ footer {
     }
 }
 
-/* Общие стили для форм */
+/* 
+	    Общие стили для форм */
+.red-text {
+    color: red;
+}
+	    
 .form-group {
     margin-bottom: 15px;
 }
@@ -979,17 +984,12 @@ button:hover {
             return;
         }
 
-  if (vehicleType === 'автобус' && dayOfWeek !== 2) {
-            alert('Для автобусов доступна запись только по ВТОРНИКАМ И ПЯТНИЦАМ.');
-            dateInput.value = '';
-            return;
-        }
 	    
-        if (vehicleType === 'автобус' && dayOfWeek !== 5) {
-            alert('Для автобусов доступна запись только по ВТОРНИКАМ И ПЯТНИЦАМ.');
-            dateInput.value = '';
-            return;
-        }
+     if (vehicleType === 'автобус' && dayOfWeek !== 2 && dayOfWeek !== 5) {
+    alert('Для автобусов доступна запись только по ВТОРНИКАМ И ПЯТНИЦАМ.');
+    dateInput.value = '';
+    return;
+}
 
         try {
             const response = await fetch(`${API_URL}/get-available-slots`, {
