@@ -11,11 +11,13 @@
 
 <style>
     :root {
-        --primary-color: #007bff;
-        --hover-color: #0056b3;
+        --primary-color: #0088cc;
+        --hover-color: #005fa3;
         --background-color: #f7f9fc;
         --card-bg: #ffffff;
         --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        --text-color: #333;
+        --border-color: #e0e0e0;
     }
 
     body {
@@ -23,7 +25,8 @@
         background-color: var(--background-color);
         margin: 0;
         padding: 20px;
-        color: #333;
+        color: var(--text-color);
+        line-height: 1.5;
     }
 
     .container {
@@ -44,6 +47,22 @@
         margin: 0;
         font-size: 1.8em;
         color: var(--primary-color);
+    }
+
+    .back-button {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 8px 16px;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+        background-color: var(--hover-color);
     }
 
     #calendar {
@@ -81,38 +100,45 @@
         font-size: 0.75em;
         line-height: 1.2;
         color: #000000;
-        transition: transform 0.2s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-.fc-v-event .fc-event-main {
-    color: #000000;
-    color: var(--fc-event-text-color, #000000);
-    height: 100%;
-}
 
-    /* Цвета по типу ТС */
+    .fc-event:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 5;
+    }
+
+    .fc-v-event .fc-event-main {
+        color: #000000;
+        color: var(--fc-event-text-color, #000000);
+        height: 100%;
+    }
+
+    /* Цвета по типу ТС с улучшенным контрастом */
     .fc-event.vehicle-легковой {
-        background-color: #e0f7fa;
-        border-color: #b2ebf2;
+        background-color: #e3f2fd;
+        border-color: #90caf9;
     }
 
     .fc-event.vehicle-автобус {
         background-color: #ffebee;
-        border-color: #ffcdd2;
+        border-color: #ef9a9a;
     }
 
     .fc-event.vehicle-грузовой {
         background-color: #f3e5f5;
-        border-color: #e1bee7;
+        border-color: #ce93d8;
     }
 
     .fc-event.vehicle-мотоцикл {
         background-color: #e8f5e9;
-        border-color: #c8e6c9;
+        border-color: #a5d6a7;
     }
 
     .fc-event.vehicle-прицеп {
-        background-color: #fff3e0;
-        border-color: #ffe0b2;
+        background-color: #fff8e1;
+        border-color: #ffe082;
     }
 
     .fc-timegrid-slot {
@@ -122,6 +148,26 @@
     .fc-timegrid-slot-label {
         font-size: 12px;
         color: #666;
+    }
+
+    /* Стилизация полосы прокрутки */
+    .fc-scroller::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .fc-scroller::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .fc-scroller::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+
+    .fc-scroller::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
     }
 
     footer {
@@ -141,13 +187,62 @@
         display: none;
     }
 
+    .loading:after {
+        content: ".";
+        animation: dots 1s steps(5, end) infinite;
+    }
+
+    @keyframes dots {
+        0%, 20% { content: "."; }
+        40% { content: ".."; }
+        60% { content: "..."; }
+        80%, 100% { content: ""; }
+    }
+
+    /* Легенда типов транспортных средств */
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 15px 0;
+        padding: 10px;
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+    }
+
+    .legend-color {
+        width: 16px;
+        height: 16px;
+        margin-right: 5px;
+        border-radius: 3px;
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .color-легковой { background-color: #e3f2fd; }
+    .color-автобус { background-color: #ffebee; }
+    .color-грузовой { background-color: #f3e5f5; }
+    .color-мотоцикл { background-color: #e8f5e9; }
+    .color-прицеп { background-color: #fff8e1; }
+
+    /* Адаптивный дизайн для мобильных устройств */
     @media (max-width: 768px) {
         body {
             padding: 10px;
         }
 
         header h1 {
-            font-size: 1.5em;
+            font-size: 1.4em;
+        }
+
+        .fc-toolbar-title {
+            font-size: 1.2em !important;
         }
 
         .fc-button {
@@ -157,10 +252,58 @@
 
         .fc-event {
             font-size: 0.65em;
+            padding: 3px;
         }
 
         .fc-timegrid-slot {
             height: 60px !important;
+        }
+
+        /* Настройка панели инструментов календаря на мобильных */
+        .fc-header-toolbar {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .fc-toolbar-chunk {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+
+        /* Изменение вида мобильного календаря */
+        .fc-direction-ltr .fc-toolbar > * > :not(:first-child) {
+            margin-left: 5px;
+        }
+
+        /* Изменение отображения событий на мобильных */
+        .fc-event-title {
+            font-size: 10px;
+            white-space: normal;
+        }
+
+        /* Легенда на мобильных */
+        .legend {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+    }
+
+    /* Стили для вертикальной ориентации мобильного устройства */
+    @media (max-width: 480px) {
+        .fc-col-header-cell-cushion,
+        .fc-timegrid-slot-label-cushion {
+            font-size: 12px;
+        }
+
+        .fc-toolbar-title {
+            font-size: 1em !important;
+        }
+
+        .fc-button {
+            padding: 5px 8px;
+            font-size: 0.7em;
         }
     }
 </style>
@@ -170,8 +313,33 @@
     <div class="container">
         <header>
             <h1>Календарь техосмотра - ООО «АиРТ»</h1>
+            <a href="/" class="back-button">Вернуться на главную</a>
         </header>
-        <div class="loading" id="loading">Загрузка записей...</div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color color-легковой"></div>
+                <span>Легковой</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color color-автобус"></div>
+                <span>Автобус</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color color-грузовой"></div>
+                <span>Грузовой</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color color-мотоцикл"></div>
+                <span>Мотоцикл</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color color-прицеп"></div>
+                <span>Прицеп</span>
+            </div>
+        </div>
+        
+        <div class="loading" id="loading">Загрузка записей</div>
         <div id="calendar"></div>
         <footer>
             <p>© 2024 Пункт техосмотра ООО «АиРТ». Все права защищены.</p>
@@ -187,8 +355,14 @@
             return;
         }
 
+        // Определение оптимального начального view на основе размера экрана
+        let initialView = 'timeGridWeek';
+        if (window.innerWidth < 768) {
+            initialView = 'timeGridDay';
+        }
+
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'timeGridWeek',
+            initialView: initialView,
             locale: 'ru',
             headerToolbar: {
                 left: 'prev,next today',
@@ -200,17 +374,28 @@
                 week: 'Неделя',
                 day: 'День'
             },
+            dayHeaderFormat: { weekday: window.innerWidth < 768 ? 'short' : 'long' },
             editable: false,
             eventResizableFromStart: false,
             eventStartEditable: false,
             eventContent: function(arg) {
                 const eventData = arg.event.extendedProps;
-                const eventHtml = `
-                    <b>${eventData.organization}</b><br>
-                    ${eventData.name}<br>
-                    ${eventData.vehicleType}<br>
-                    ${eventData.carBrand || ''} ${eventData.carNumber || ''}
-                `;
+                // Адаптивное отображение содержимого события в зависимости от размера экрана
+                let eventHtml;
+                if (window.innerWidth < 480) {
+                    // Упрощенное представление для очень маленьких экранов
+                    eventHtml = `
+                        <b>${eventData.name}</b><br>
+                        ${eventData.vehicleType}
+                    `;
+                } else {
+                    eventHtml = `
+                        <b>${eventData.organization}</b><br>
+                        ${eventData.name}<br>
+                        ${eventData.vehicleType}<br>
+                        ${eventData.carBrand || ''} ${eventData.carNumber || ''}
+                    `;
+                }
                 return { html: eventHtml };
             },
             eventClassNames: function(arg) {
@@ -258,6 +443,8 @@
                         console.error('Error fetching events:', error);
                         loadingEl.style.display = 'none';
                         failureCallback(error);
+                        // Показываем сообщение об ошибке пользователю
+                        alert('Ошибка при загрузке данных. Пожалуйста, обновите страницу или попробуйте позже.');
                     });
             },
             slotDuration: '01:00:00',
@@ -266,7 +453,17 @@
             nowIndicator: true,
             slotLabelInterval: '01:00:00',
             contentHeight: 'auto',
-            aspectRatio: 2
+            aspectRatio: 1.8, // Более компактный вид для лучшей адаптивности
+            windowResize: function(view) {
+                // Адаптируем вид календаря при изменении размера окна
+                if (window.innerWidth < 768) {
+                    calendar.changeView('timeGridDay');
+                    calendar.setOption('dayHeaderFormat', { weekday: 'short' });
+                } else {
+                    calendar.changeView('timeGridWeek');
+                    calendar.setOption('dayHeaderFormat', { weekday: 'long' });
+                }
+            }
         });
 
         calendar.render();
