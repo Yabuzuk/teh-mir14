@@ -101,10 +101,6 @@
         line-height: 1.2;
         color: #000000;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
-        max-height: 90%;
-        overflow: auto;
-        word-break: break-word;
-        text-overflow: ellipsis;
     }
 
     .fc-event:hover {
@@ -117,10 +113,21 @@
         color: #000000;
         color: var(--fc-event-text-color, #000000);
         height: 100%;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 4;
-        -webkit-box-orient: vertical;
+    }
+
+    /* Исправление переполнения текста - убраны ограничения */
+    .fc-timegrid-event {
+        min-height: 100%;
+    }
+
+    /* Устанавливаем размер слота на 80px для еженедельного вида и 100px для дневного вида */
+    .fc-timegrid-slot {
+        height: 80px !important;
+    }
+    
+    /* Увеличиваем ячейки календаря для лучшего отображения контента */
+    .fc-timegrid-col-frame {
+        min-height: 80px;
     }
 
     /* Цвета по типу ТС с улучшенным контрастом */
@@ -149,23 +156,9 @@
         border-color: #ffe082;
     }
 
-    /* Исправление переполнения текста */
-    .fc-timegrid-event-harness {
-        max-height: 100%;
-    }
-
-    .fc-timegrid-event {
-        overflow: hidden;
-        max-height: 100%;
-    }
-
     .fc-event-title {
         overflow: hidden;
         text-overflow: ellipsis;
-    }
-
-    .fc-timegrid-slot {
-        height: 80px !important;
     }
 
     .fc-timegrid-slot-label {
@@ -329,6 +322,34 @@
             font-size: 0.7em;
         }
     }
+
+    /* Дополнительные стили для лучшего отображения событий */
+    .fc-event-main {
+        padding: 2px;
+        font-size: 11px !important;
+    }
+    
+    .fc-timegrid-event .fc-event-main {
+        padding: 2px 4px;
+    }
+    
+    .fc-timegrid-slot {
+        height: 100px !important; /* Увеличиваем высоту слота */
+    }
+    
+    .fc-timegrid-col-frame {
+        min-height: 100px;
+    }
+    
+    /* Исправляем размеры для недельного представления */
+    .fc-timeGridWeek-view .fc-timegrid-slot {
+        height: 100px !important;
+    }
+    
+    /* Стили для дневного представления */
+    .fc-timeGridDay-view .fc-timegrid-slot {
+        height: 120px !important;
+    }
 </style>
 
 </head>
@@ -410,23 +431,33 @@
                 if (window.innerWidth < 480) {
                     // Упрощенное представление для очень маленьких экранов
                     eventHtml = `
-                        <b>${eventData.name}</b><br>
-                        ${eventData.vehicleType}
+                        <div style="font-size: 10px;">
+                            <b>${eventData.name}</b><br>
+                            ${eventData.vehicleType}
+                        </div>
                     `;
                 } else if (isWeekView) {
                     // Компактное представление для недельного вида
                     eventHtml = `
-                        <b>${eventData.organization.substring(0, 12)}${eventData.organization.length > 12 ? '...' : ''}</b><br>
-                        ${eventData.name.split(' ')[0]}<br>
-                        ${eventData.vehicleType}
+                        <div style="font-size: 10px; line-height: 1.1;">
+                            <b>${eventData.organization.length > 15 
+                                ? eventData.organization.substring(0, 15) + '...' 
+                                : eventData.organization}</b><br>
+                            ${eventData.name.length > 15 
+                                ? eventData.name.substring(0, 15) + '...' 
+                                : eventData.name}<br>
+                            ${eventData.vehicleType}
+                        </div>
                     `;
                 } else {
                     // Полное представление для дневного вида
                     eventHtml = `
-                        <b>${eventData.organization}</b><br>
-                        ${eventData.name}<br>
-                        ${eventData.vehicleType}<br>
-                        ${eventData.carBrand || ''} ${eventData.carNumber || ''}
+                        <div style="font-size: 11px; line-height: 1.2;">
+                            <b>${eventData.organization}</b><br>
+                            ${eventData.name}<br>
+                            ${eventData.vehicleType}<br>
+                            ${eventData.carBrand || ''} ${eventData.carNumber || ''}
+                        </div>
                     `;
                 }
                 return { html: eventHtml };
@@ -487,6 +518,8 @@
             slotLabelInterval: '01:00:00',
             contentHeight: 'auto',
             aspectRatio: 1.8, // Более компактный вид для лучшей адаптивности
+            slotHeight: 100, // Увеличиваем высоту слота для лучшего отображения
+            eventMinHeight: 100, // Увеличиваем минимальную высоту события
             windowResize: function(view) {
                 // Адаптируем вид календаря при изменении размера окна
                 if (window.innerWidth < 768) {
