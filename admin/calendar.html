@@ -547,16 +547,7 @@
                             console.error('Error processing event data:', error);
                             successCallback([]); // Возвращаем пустой массив вместо ошибки
                         }
-                    })
-                    .catch(error => {
-                        clearTimeout(timeoutId); // Очищаем таймаут при ошибке
-                        console.error('Error fetching events:', error);
-                        loadingEl.style.display = 'none';
-                        // Предоставляем пустые данные вместо ошибки
-                        successCallback([]);
-                        // Показываем сообщение об ошибке пользователю
-                        alert('Ошибка при загрузке данных: ' + error.message + '. Календарь может отображаться пустым.');
-                    });
+                   
             },
             slotDuration: '01:00:00',
             slotMinTime: '09:00:00',
