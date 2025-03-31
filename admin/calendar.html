@@ -96,11 +96,13 @@
         background-color: #e0f2f1;
         border: 1px solid #b2dfdb;
         border-radius: 4px;
-        padding: 5px;
+        padding: 4px;
         font-size: 0.75em;
         line-height: 1.2;
         color: #000000;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
+        overflow: hidden;
+        max-height: 100%;
     }
 
     .fc-event:hover {
@@ -113,6 +115,7 @@
         color: #000000;
         color: var(--fc-event-text-color, #000000);
         height: 100%;
+        overflow: hidden;
     }
 
     /* Исправление переполнения текста - убраны ограничения */
@@ -159,6 +162,7 @@
     .fc-event-title {
         overflow: hidden;
         text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .fc-timegrid-slot-label {
@@ -327,10 +331,12 @@
     .fc-event-main {
         padding: 2px;
         font-size: 11px !important;
+        overflow: hidden;
     }
     
     .fc-timegrid-event .fc-event-main {
-        padding: 2px 4px;
+        padding: 2px;
+        overflow: hidden;
     }
     
     .fc-timegrid-slot {
@@ -429,28 +435,32 @@
                 const isWeekView = calendar.view.type === 'timeGridWeek';
                 
                 if (window.innerWidth < 480) {
-                    // Упрощенное представление для очень маленьких экранов
+                    // Очень компактное представление для маленьких экранов
                     eventHtml = `
-                        <div style="font-size: 10px;">
-                            <b>${eventData.name}</b><br>
-                            ${eventData.vehicleType}
+                        <div style="font-size: 9px; line-height: 1; margin: 0; padding: 0; text-align: center;">
+                            <b>${eventData.name.substring(0, 10)}${eventData.name.length > 10 ? '..' : ''}</b>
+                            <br>${eventData.vehicleType}
                         </div>
                     `;
                 } else if (isWeekView) {
-                    // Компактное представление для недельного вида
+                    // Сверхкомпактное представление для недельного вида
+                    const orgName = eventData.organization.length > 10 
+                        ? eventData.organization.substring(0, 10) + '..' 
+                        : eventData.organization;
+                    
+                    const personName = eventData.name.length > 10 
+                        ? eventData.name.substring(0, 10) + '..' 
+                        : eventData.name;
+                    
                     eventHtml = `
-                        <div style="font-size: 10px; line-height: 1.1;">
-                            <b>${eventData.organization.length > 15 
-                                ? eventData.organization.substring(0, 15) + '...' 
-                                : eventData.organization}</b><br>
-                            ${eventData.name.length > 15 
-                                ? eventData.name.substring(0, 15) + '...' 
-                                : eventData.name}<br>
-                            ${eventData.vehicleType}
+                        <div style="font-size: 9px; line-height: 1; text-align: center; margin: 0; padding: 0;">
+                            <b>${orgName}</b><br>
+                            ${personName}<br>
+                            <i>${eventData.vehicleType}</i>
                         </div>
                     `;
                 } else {
-                    // Полное представление для дневного вида
+                    // Стандартное представление для дневного вида
                     eventHtml = `
                         <div style="font-size: 11px; line-height: 1.2;">
                             <b>${eventData.organization}</b><br>
@@ -469,10 +479,23 @@
                 console.log('Fetching events...');
                 loadingEl.style.display = 'block';
 
-                fetch('https://teh-mir14.onrender.com/admin/bookings')
+                // Добавляем таймаут для предотвращения бесконечной загрузки
+                const timeoutId = setTimeout(() => {
+                    loadingEl.style.display = 'none';
+                    alert('Превышено время ожидания ответа от сервера. Пожалуйста, обновите страницу.');
+                }, 30000); // 30 секунд таймаут
+
+                fetch('https://teh-mir14.onrender.com/admin/bookings', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    },
+                })
                     .then(response => {
+                        clearTimeout(timeoutId); // Очищаем таймаут при получении ответа
                         if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
+                            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
                         }
                         return response.json();
                     })
@@ -482,33 +505,56 @@
 
                         if (!bookings || !Array.isArray(bookings)) {
                             console.warn('API returned invalid data:', bookings);
+                            successCallback([]); // Возвращаем пустой массив вместо ошибки
                             return;
                         }
 
-                        const events = bookings.map(booking => ({
-                            id: booking._id,
-                            title: `${booking.organization}, ${booking.name}`,
-                            start: moment(booking.date + 'T' + booking.time).toISOString(),
-                            end: moment(booking.date + 'T' + booking.time).add(1, 'hours').toISOString(),
-                            allDay: false,
-                            extendedProps: {
-                                organization: booking.organization,
-                                name: booking.name,
-                                vehicleType: booking.vehicleType,
-                                carBrand: booking.carBrand,
-                                carNumber: booking.carNumber
-                            }
-                        }));
+                        try {
+                            const events = bookings.map(booking => {
+                                // Проверяем наличие полей для избежания ошибок
+                                if (!booking.date || !booking.time) {
+                                    console.warn('Booking missing date or time:', booking);
+                                    return null;
+                                }
 
-                        console.log('Events to render:', events);
-                        successCallback(events);
+                                // Проверяем формат даты и времени
+                                const startDate = moment(booking.date + 'T' + booking.time);
+                                if (!startDate.isValid()) {
+                                    console.warn('Invalid date/time format:', booking.date, booking.time);
+                                    return null;
+                                }
+
+                                return {
+                                    id: booking._id || 'id-' + Math.random().toString(36).substr(2, 9),
+                                    title: `${booking.organization || 'Неизвестно'}, ${booking.name || 'Неизвестно'}`,
+                                    start: startDate.toISOString(),
+                                    end: startDate.add(1, 'hours').toISOString(),
+                                    allDay: false,
+                                    extendedProps: {
+                                        organization: booking.organization || 'Неизвестно',
+                                        name: booking.name || 'Неизвестно',
+                                        vehicleType: booking.vehicleType || 'Не указано',
+                                        carBrand: booking.carBrand || '',
+                                        carNumber: booking.carNumber || ''
+                                    }
+                                };
+                            }).filter(event => event !== null); // Фильтруем события с ошибками
+
+                            console.log('Events to render:', events);
+                            successCallback(events);
+                        } catch (error) {
+                            console.error('Error processing event data:', error);
+                            successCallback([]); // Возвращаем пустой массив вместо ошибки
+                        }
                     })
                     .catch(error => {
+                        clearTimeout(timeoutId); // Очищаем таймаут при ошибке
                         console.error('Error fetching events:', error);
                         loadingEl.style.display = 'none';
-                        failureCallback(error);
+                        // Предоставляем пустые данные вместо ошибки
+                        successCallback([]);
                         // Показываем сообщение об ошибке пользователю
-                        alert('Ошибка при загрузке данных. Пожалуйста, обновите страницу или попробуйте позже.');
+                        alert('Ошибка при загрузке данных: ' + error.message + '. Календарь может отображаться пустым.');
                     });
             },
             slotDuration: '01:00:00',
