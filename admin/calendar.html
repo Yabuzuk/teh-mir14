@@ -101,8 +101,8 @@
         line-height: 1.2;
         color: #000000;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
-        overflow: hidden;
-        max-height: 100%;
+        overflow: visible;
+        max-height: none;
     }
 
     .fc-event:hover {
@@ -115,7 +115,7 @@
         color: #000000;
         color: var(--fc-event-text-color, #000000);
         height: 100%;
-        overflow: hidden;
+        overflow: visible;
     }
 
     /* Исправление переполнения текста - убраны ограничения */
@@ -160,9 +160,9 @@
     }
 
     .fc-event-title {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        overflow: visible;
+        text-overflow: clip;
+        white-space: normal;
     }
 
     .fc-timegrid-slot-label {
@@ -331,12 +331,12 @@
     .fc-event-main {
         padding: 2px;
         font-size: 11px !important;
-        overflow: hidden;
+        overflow: visible;
     }
     
     .fc-timegrid-event .fc-event-main {
         padding: 2px;
-        overflow: hidden;
+        overflow: visible;
     }
     
     .fc-timegrid-slot {
@@ -355,6 +355,51 @@
     /* Стили для дневного представления - уменьшаем высоту */
     .fc-timeGridDay-view .fc-timegrid-slot {
         height: 70px !important;
+    }
+
+    /* Стили для ПК версии (десктоп) */
+    @media (min-width: 992px) {
+        .fc-event {
+            z-index: 4; /* Чтобы текст был поверх других элементов */
+        }
+        
+        .fc-event:hover {
+            z-index: 10; /* Увеличиваем при наведении */
+        }
+
+        .fc-timegrid-slot {
+            height: 100px !important; /* Увеличенная высота для ПК */
+        }
+        
+        .fc-timeGridWeek-view .fc-timegrid-slot {
+            height: 100px !important; /* Увеличенная высота для недельного вида на ПК */
+        }
+    }
+
+    /* Оставляем ограничения только для мобильной версии */
+    @media (max-width: 991px) {
+        .fc-event {
+            overflow: hidden;
+            max-height: 100%;
+        }
+        
+        .fc-v-event .fc-event-main {
+            overflow: hidden;
+        }
+        
+        .fc-event-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .fc-event-main {
+            overflow: hidden;
+        }
+        
+        .fc-timegrid-event .fc-event-main {
+            overflow: hidden;
+        }
     }
 </style>
 
@@ -433,6 +478,7 @@
                 // Адаптивное отображение содержимого события в зависимости от размера экрана и типа представления
                 let eventHtml;
                 const isWeekView = calendar.view.type === 'timeGridWeek';
+                const isDesktop = window.innerWidth >= 992;
                 
                 if (window.innerWidth < 480) {
                     // Очень компактное представление для маленьких экранов
@@ -442,8 +488,8 @@
                             <br>${eventData.vehicleType}
                         </div>
                     `;
-                } else if (isWeekView) {
-                    // Сверхкомпактное представление для недельного вида
+                } else if (isWeekView && !isDesktop) {
+                    // Сверхкомпактное представление для недельного вида на планшетах
                     const orgName = eventData.organization.length > 10 
                         ? eventData.organization.substring(0, 10) + '..' 
                         : eventData.organization;
@@ -459,8 +505,18 @@
                             <i>${eventData.vehicleType}</i>
                         </div>
                     `;
+                } else if (isWeekView && isDesktop) {
+                    // Полное представление для недельного вида на ПК
+                    eventHtml = `
+                        <div style="font-size: 10px; line-height: 1.1; margin: 0; padding: 1px; text-align: left;">
+                            <b>${eventData.organization}</b><br>
+                            ${eventData.name}<br>
+                            <i>${eventData.vehicleType}</i>
+                            ${eventData.carBrand && eventData.carNumber ? '<br>' + eventData.carBrand + ' ' + eventData.carNumber : ''}
+                        </div>
+                    `;
                 } else {
-                    // Стандартное представление для дневного вида - более компактное
+                    // Стандартное представление для дневного вида
                     eventHtml = `
                         <div style="font-size: 10px; line-height: 1.1; margin: 0; padding: 1px;">
                             <b>${eventData.organization}</b><br>
