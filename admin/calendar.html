@@ -125,12 +125,12 @@
 
     /* Устанавливаем размер слота на 80px для еженедельного вида и 100px для дневного вида */
     .fc-timegrid-slot {
-        height: 80px !important;
+        height: 70px !important;
     }
     
     /* Увеличиваем ячейки календаря для лучшего отображения контента */
     .fc-timegrid-col-frame {
-        min-height: 80px;
+        min-height: 70px;
     }
 
     /* Цвета по типу ТС с улучшенным контрастом */
@@ -349,12 +349,12 @@
     
     /* Исправляем размеры для недельного представления */
     .fc-timeGridWeek-view .fc-timegrid-slot {
-        height: 100px !important;
+        height: 80px !important;
     }
     
-    /* Стили для дневного представления */
+    /* Стили для дневного представления - уменьшаем высоту */
     .fc-timeGridDay-view .fc-timegrid-slot {
-        height: 120px !important;
+        height: 70px !important;
     }
 </style>
 
@@ -460,12 +460,13 @@
                         </div>
                     `;
                 } else {
-                    // Стандартное представление для дневного вида
+                    // Стандартное представление для дневного вида - более компактное
                     eventHtml = `
-                        <div style="font-size: 11px; line-height: 1.2;">
+                        <div style="font-size: 10px; line-height: 1.1; margin: 0; padding: 1px;">
                             <b>${eventData.organization}</b><br>
                             ${eventData.name}<br>
-                            ${eventData.vehicleType}<br>
+                            <i>${eventData.vehicleType}</i>
+                            ${eventData.carBrand || eventData.carNumber ? '<br>' : ''}
                             ${eventData.carBrand || ''} ${eventData.carNumber || ''}
                         </div>
                     `;
@@ -564,8 +565,8 @@
             slotLabelInterval: '01:00:00',
             contentHeight: 'auto',
             aspectRatio: 1.8, // Более компактный вид для лучшей адаптивности
-            slotHeight: 100, // Увеличиваем высоту слота для лучшего отображения
-            eventMinHeight: 100, // Увеличиваем минимальную высоту события
+            slotHeight: 70, // Уменьшаем высоту слота для компактности
+            eventMinHeight: 70, // Уменьшаем минимальную высоту события
             windowResize: function(view) {
                 // Адаптируем вид календаря при изменении размера окна
                 if (window.innerWidth < 768) {
