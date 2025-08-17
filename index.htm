@@ -646,7 +646,7 @@ button:hover {
                     <h1>График работы</h1>
                     <ul>
                         <li>Пн-Пт: 9:00 - 22:00</li>
-                        <li>Сб: 9:00 - 18:00</li>
+                        <li>Сб: Выходной</li>
                         <li>Вс: Выходной</li>
                     </ul>
                 </section>
@@ -980,6 +980,17 @@ button:hover {
 
         if (dayOfWeek === 0) {
             alert('Запись на воскресенье не производится.');
+            dateInput.value = '';
+            return;
+        }
+
+		    }
+
+        const selectedDate = moment(date);
+        const dayOfWeek = selectedDate.day();
+
+        if (dayOfWeek === 6) {
+            alert('Запись на субботу не производится.');
             dateInput.value = '';
             return;
         }
