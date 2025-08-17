@@ -984,15 +984,6 @@ button:hover {
             return;
         }
 
-        const selectedDate = moment(date);
-        const dayOfWeek = selectedDate.day();
-
-        if (dayOfWeek === 6) {
-            alert('Запись на субботу не производится.');
-            dateInput.value = '';
-            return;
-        }
-
         // Проверка для автобусов - могут записаться только во вторник и пятницу
         if (vehicleType === 'автобус' && dayOfWeek !== 2 && dayOfWeek !== 5) {
             alert('Для автобусов доступна запись только по ВТОРНИКАМ И ПЯТНИЦАМ.');
