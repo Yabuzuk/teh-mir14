@@ -228,6 +228,8 @@
                 <option value="18:00">18:00</option>
                 <option value="19:00">19:00</option>
                 <option value="20:00">20:00</option>
+                <option value="21:00">21:00</option>
+                <option value="22:00">22:00</option>
             </select>
 
             <label for="eventOrganization">Организация:</label>
@@ -297,7 +299,7 @@
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'timeGridWeek',
                 slotMinTime: '09:00:00',
-                slotMaxTime: '20:00:00',
+                slotMaxTime: '22:00:00',
                 locale: 'ru',
                 headerToolbar: {
                     left: 'prev,next,today',
