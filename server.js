@@ -44,7 +44,7 @@ const BookedSlot = mongoose.model('BookedSlot', BookedSlotSchema);
 
 // Функция для генерации временных слотов на день
 function generateTimeSlots(dayOfWeek) {
-    let startTime = 9;
+    let startTime = 19;
     let endTime;
 
     if (dayOfWeek >= 1 && dayOfWeek <= 5) {
@@ -217,5 +217,6 @@ app.delete('/admin/bookings/:id', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
 
 
