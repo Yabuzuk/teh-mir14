@@ -50,7 +50,7 @@ function generateTimeSlots(dayOfWeek) {
     if (dayOfWeek >= 1 && dayOfWeek <= 5) {
         endTime = 22;
         if (dayOfWeek === 2 || dayOfWeek === 3 || dayOfWeek === 5) { // Добавили проверку на вторник (2)
-            endTime = 18;
+            endTime = 22;
         }
     } else if (dayOfWeek === 6) {
         endTime = 18;
@@ -217,4 +217,5 @@ app.delete('/admin/bookings/:id', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
 
