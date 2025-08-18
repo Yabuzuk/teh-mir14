@@ -204,7 +204,7 @@
 </head>
 
 <body>
-    <div id='calendar'></div>
+      <div id='calendar'></div>
 
     <div id="eventDetails" class="modal">
         <div class="modal-content">
@@ -212,7 +212,7 @@
             <h2>Детали бронирования</h2>
 
             <label for="eventDate">Дата:</label>
-            <input type="text" id="eventDate" placeholder="YYYY-MM-DD">
+            <input type="date" id="eventDate">
 
             <label for="eventTime">Время:</label>
             <select id="eventTime">
@@ -424,13 +424,13 @@
                 const isValidDate = !isNaN(Date.parse(eventDate));
 
                 if (!isValidDate) {
-                    alert('Некорректная дата! Пожалуйста, введите дату в формате YYYY-MM-DD.');
+                    alert('Некорректная дата! Пожалуйста, выберите дату.');
                     return;
                 }
 
                 const formData = {
-                    date: eventDate,
-                    time: eventTimeSelect.value,
+                    date: eventDate, // только дата
+                    time: eventTimeSelect.value, // время остается в форме данных
                     organization: eventOrganizationInput.value,
                     name: eventNameInput.value,
                     phone: eventPhoneInput.value,
@@ -451,7 +451,8 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error(`Ошибка: ${response.statusText}`);
+                        const errorText = await response.text(); // Получаем текст ошибки
+                        throw new Error(`Ошибка: ${errorText}`);
                     }
 
                     const result = await response.json();
