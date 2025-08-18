@@ -212,7 +212,7 @@
             <h2>Детали бронирования</h2>
 
             <label for="eventDate">Дата:</label>
-            <input type="date" id="eventDate" readonly>
+            <input type="text" id="eventDate" placeholder="YYYY-MM-DD">
 
             <label for="eventTime">Время:</label>
             <select id="eventTime">
@@ -262,6 +262,7 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const calendarEl = document.getElementById('calendar');
@@ -304,32 +305,6 @@
                 eventOverlap: false,
                 nowIndicator: true,
 
-                eventContent: function (arg) {
-                    const event = arg.event;
-                    const organization = event.extendedProps.organization || '';
-                    const phone = event.extendedProps.phone || '';
-                    const mail = event.extendedProps.mail || '';
-                    const carBrand = event.extendedProps.carBrand || '';
-                    const carNumber = event.extendedProps.carNumber || '';
-                    const vehicleType = (event.extendedProps && event.extendedProps.vehicleType) || '';
-                    const name = event.title.split(' (')[0];
-
-                    let eventHtml = `
-                    <div style="color:#000;">
-                        <b>${name}</b><br>
-                        ${vehicleType}<br>
-                        ${organization ? `<b>Орг:</b> ${organization}<br>` : ''}
-                        ${phone ? `<b>Тел:</b> ${phone}<br>` : ''}
-                        ${mail ? `<b>Email:</b> ${mail}<br>` : ''}
-                        ${carBrand ? `<b>М:</b> ${carBrand} ` : ''}
-                        ${carNumber ? `<b>№:</b> ${carNumber}` : ''}
-                    </div>
-                `;
-
-                    return {
-                        html: eventHtml
-                    };
-                },
                 events: async function (fetchInfo, successCallback, failureCallback) {
                     try {
                         const response = await fetch(`${API_URL}/admin/bookings`);
@@ -372,7 +347,7 @@
                                 extendedProps: {
                                     organization: booking.organization,
                                     phone: booking.phone,
-                                    mail: booking.mail, // Добавлено
+                                    mail: booking.mail,
                                     details: booking.details,
                                     carBrand: booking.carBrand,
                                     carNumber: booking.carNumber,
@@ -392,35 +367,6 @@
                     currentEvent = info.event;
                     showEventDetails(info.event);
                 },
-                eventDrop: async function (info) {
-                    const bookingId = info.event.id;
-                    const newDate = info.event.start.toISOString().slice(0, 10);
-                    const newTime = info.event.start.toISOString().slice(11, 16);
-
-                    try {
-                        const response = await fetch(`${API_URL}/admin/bookings/${bookingId}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                date: newDate,
-                                time: newTime,
-                            })
-                        });
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                            info.revert();
-                        }
-                        calendar.refetchEvents();
-
-                    } catch (error) {
-                        console.error('Error updating event (drop):', error);
-                        alert('Ошибка при обновлении события. Пожалуйста, попробуйте еще раз.');
-                        info.revert();
-                    }
-                },
                 dateClick: function (info) {
                     currentEvent = null;
                     showEventDetails(null, info.dateStr);
@@ -431,12 +377,12 @@
 
             function showEventDetails(event, dateStr = null) {
                 if (event) {
-                    eventDateInput.value = moment(event.start).format('DD-MM-YYYY');
+                    eventDateInput.value = moment(event.start).format('YYYY-MM-DD');
                     eventTimeSelect.value = moment(event.start).format('HH:mm');
                     eventOrganizationInput.value = event.extendedProps.organization;
                     eventNameInput.value = event.title.split(' (')[0];
                     eventPhoneInput.value = event.extendedProps.phone;
-                    eventMailInput.value = event.extendedProps.mail || ''; // Добавлено
+                    eventMailInput.value = event.extendedProps.mail || '';
                     eventVehicleTypeSelect.value = event.extendedProps.vehicleType;
                     eventCarBrandInput.value = event.extendedProps.carBrand || '';
                     eventCarNumberInput.value = event.extendedProps.carNumber || '';
@@ -445,24 +391,19 @@
 
                 } else if (dateStr) {
                     eventDateInput.value = dateStr;
-                    eventTimeSelect.value = '09:00';
+                    eventTimeSelect.value = '19:00';
                     eventOrganizationInput.value = '';
                     eventNameInput.value = '';
                     eventPhoneInput.value = '';
-                    eventMailInput.value = ''; // Добавлено
+                    eventMailInput.value = '';
                     eventVehicleTypeSelect.value = 'легковой автомобиль';
                     eventCarBrandInput.value = '';
                     eventCarNumberInput.value = '';
                     eventDetailsTextarea.value = '';
                     eventIdInput.value = '';
-
                 }
                 eventDetailsModal.style.display = "block";
                 deleteEventButton.style.display = event ? 'inline' : 'none';
-            }
-
-            function hideEventDetails() {
-                eventDetailsModal.style.display = "none";
             }
 
             closeBtn.onclick = function () {
@@ -475,52 +416,53 @@
                 }
             }
 
-saveEventButton.addEventListener('click', async () => {
-    const bookingId = eventIdInput.value;
-    const method = bookingId ? 'PUT' : 'POST';
-    const url = `${API_URL}/admin/bookings/${bookingId || ''}`;
+            saveEventButton.addEventListener('click', async () => {
+                const bookingId = eventIdInput.value;
+                const method = bookingId ? 'PUT' : 'POST';
+                const url = `${API_URL}/admin/bookings/${bookingId || ''}`;
+                const eventDate = eventDateInput.value;
+                const isValidDate = !isNaN(Date.parse(eventDate));
 
-    const eventDate = eventDateInput.value;
-    const isValidDate = !isNaN(Date.parse(eventDate));
+                if (!isValidDate) {
+                    alert('Некорректная дата! Пожалуйста, введите дату в формате YYYY-MM-DD.');
+                    return;
+                }
 
-    if (!isValidDate) {
-        alert('Некорректная дата! Пожалуйста, введите дату в формате YYYY-MM-DD.');
-        return;
-    }
+                const formData = {
+                    date: eventDate,
+                    time: eventTimeSelect.value,
+                    organization: eventOrganizationInput.value,
+                    name: eventNameInput.value,
+                    phone: eventPhoneInput.value,
+                    mail: eventMailInput.value,
+                    vehicleType: eventVehicleTypeSelect.value,
+                    carBrand: eventCarBrandInput.value,
+                    carNumber: eventCarNumberInput.value,
+                    details: eventDetailsTextarea.value
+                };
 
-    const formData = {
-        date: eventDate,
-        time: eventTimeSelect.value,
-        organization: eventOrganizationInput.value,
-        name: eventNameInput.value,
-        phone: eventPhoneInput.value,
-        mail: eventMailInput.value,
-        vehicleType: eventVehicleTypeSelect.value,
-        carBrand: eventCarBrandInput.value,
-        carNumber: eventCarNumberInput.value,
-        details: eventDetailsTextarea.value
-    };
+                try {
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData),
+                    });
 
-    try {
-        const response = await fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
-        });
+                    if (!response.ok) {
+                        throw new Error(`Ошибка: ${response.statusText}`);
+                    }
 
-        if (!response.ok) {
-            throw new Error(`Ошибка: ${response.statusText}`);
-        }
+                    const result = await response.json();
+                    calendar.refetchEvents();
+                    hideEventDetails();
 
-        const result = await response.json();
-        // Обработка успешного ответа
-    } catch (error) {
-        console.error('Ошибка при сохранении события:', error);
-        alert('Произошла ошибка при сохранении события. Пожалуйста, попробуйте еще раз.');
-    }
-});
+                } catch (error) {
+                    console.error('Ошибка при сохранении события:', error);
+                    alert('Произошла ошибка при сохранении события. Пожалуйста, попробуйте еще раз.');
+                }
+            });
 
             deleteEventButton.addEventListener('click', async () => {
                 if (!currentEvent || !currentEvent.id) {
@@ -548,14 +490,9 @@ saveEventButton.addEventListener('click', async () => {
                 }
             });
 
-            cancelEventButton.addEventListener('click', hideEventDetails);
-
-            // Disable date input if event is not null
-            document.getElementById('eventDetails').addEventListener('click', function () {
-                const dateInput = document.getElementById('eventDate');
-                dateInput.disabled = !!currentEvent;
+            cancelEventButton.addEventListener('click', () => {
+                eventDetailsModal.style.display = "none";
             });
-
         });
     </script>
 </body>
