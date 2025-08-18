@@ -431,7 +431,7 @@
 
             function showEventDetails(event, dateStr = null) {
                 if (event) {
-                    eventDateInput.value = moment(event.start).format('YYYY-MM-DD');
+                    eventDateInput.value = moment(event.start).format('DD-MM-YYYY');
                     eventTimeSelect.value = moment(event.start).format('HH:mm');
                     eventOrganizationInput.value = event.extendedProps.organization;
                     eventNameInput.value = event.title.split(' (')[0];
