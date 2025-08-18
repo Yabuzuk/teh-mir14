@@ -369,6 +369,7 @@
                 },
                 dateClick: function (info) {
                     currentEvent = null;
+                    eventDateInput.value = info.dateStr; // Устанавливаем дату в поле ввода
                     showEventDetails(null, info.dateStr);
                 }
             });
