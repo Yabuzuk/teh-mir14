@@ -964,19 +964,7 @@ button:hover {
             return;
         }
 
-        // Проверка для автобусов - могут записаться только во вторник и пятницу
-        if (vehicleType === 'автобус' && dayOfWeek !== 2 && dayOfWeek !== 5) {
-            alert('Для автобусов доступна запись только по ВТОРНИКАМ И ПЯТНИЦАМ.');
-            dateInput.value = '';
-            return;
-        }
-        
-        // Проверка для других ТС - не могут записаться во вторник и пятницу
-        if (vehicleType !== 'автобус' && (dayOfWeek === 2 || dayOfWeek === 5)) {
-            alert('На ВТОРНИК и ПЯТНИЦУ доступна запись только для автобусов.');
-            dateInput.value = '';
-            return;
-        }
+
 
         try {
             const response = await fetch(`${API_URL}/get-available-slots`, {
