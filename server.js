@@ -174,15 +174,15 @@ app.get('/admin/bookings/:id', async (req, res) => {
     }
 });
 
-// Создание новой записи (POST /admin/bookings)
-app.post('/admin/bookings', async (req, res) => {
+/ Создание новой записи (POST /admin/bookings/no-validation) без валидации
+app.post('/admin/bookings/no-validation', async (req, res) => {
     try {
         const newBooking = new BookedSlot(req.body);
         const savedBooking = await newBooking.save();
         res.status(201).json(savedBooking);
     } catch (err) {
-        console.error('Error creating booking:', err);
-        res.status(400).json({ message: 'Failed to create booking', error: err.message });
+        console.error('Error creating booking without validation:', err);
+        res.status(400).json({ message: 'Failed to create booking without validation', error: err.message });
     }
 });
 
@@ -217,6 +217,7 @@ app.delete('/admin/bookings/:id', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
 
 
 
