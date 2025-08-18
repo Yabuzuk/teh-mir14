@@ -475,48 +475,52 @@
                 }
             }
 
-            saveEventButton.addEventListener('click', async () => {
-                const bookingId = eventIdInput.value;
-                const method = bookingId ? 'PUT' : 'POST';
-                const url = `${API_URL}/admin/bookings/${bookingId || ''}`;
+saveEventButton.addEventListener('click', async () => {
+    const bookingId = eventIdInput.value;
+    const method = bookingId ? 'PUT' : 'POST';
+    const url = `${API_URL}/admin/bookings/${bookingId || ''}`;
 
-                const [hours, minutes] = eventTimeSelect.value.split(':');
-                const eventDate = eventDateInput.value;
+    const eventDate = eventDateInput.value;
+    const isValidDate = !isNaN(Date.parse(eventDate));
 
-                const formData = {
-                    date: eventDate,
-                    time: eventTimeSelect.value,
-                    organization: eventOrganizationInput.value,
-                    name: eventNameInput.value,
-                    phone: eventPhoneInput.value,
-                    mail: eventMailInput.value, // Добавлено
-                    vehicleType: eventVehicleTypeSelect.value,
-                    carBrand: eventCarBrandInput.value,
-                    carNumber: eventCarNumberInput.value,
-                    details: eventDetailsTextarea.value
-                };
+    if (!isValidDate) {
+        alert('Некорректная дата! Пожалуйста, введите дату в формате YYYY-MM-DD.');
+        return;
+    }
 
-                try {
-                    const response = await fetch(url, {
-                        method: method,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(formData)
-                    });
+    const formData = {
+        date: eventDate,
+        time: eventTimeSelect.value,
+        organization: eventOrganizationInput.value,
+        name: eventNameInput.value,
+        phone: eventPhoneInput.value,
+        mail: eventMailInput.value,
+        vehicleType: eventVehicleTypeSelect.value,
+        carBrand: eventCarBrandInput.value,
+        carNumber: eventCarNumberInput.value,
+        details: eventDetailsTextarea.value
+    };
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
 
-                    calendar.refetchEvents();
-                    hideEventDetails();
+        if (!response.ok) {
+            throw new Error(`Ошибка: ${response.statusText}`);
+        }
 
-                } catch (error) {
-                    console.error('Error saving event:', error);
-                    alert('Ошибка при сохранении события. Пожалуйста, попробуйте еще раз.');
-                }
-            });
+        const result = await response.json();
+        // Обработка успешного ответа
+    } catch (error) {
+        console.error('Ошибка при сохранении события:', error);
+        alert('Произошла ошибка при сохранении события. Пожалуйста, попробуйте еще раз.');
+    }
+});
 
             deleteEventButton.addEventListener('click', async () => {
                 if (!currentEvent || !currentEvent.id) {
