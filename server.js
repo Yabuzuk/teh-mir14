@@ -174,7 +174,7 @@ app.get('/admin/bookings/:id', async (req, res) => {
     }
 });
 
-/ Создание новой записи (POST /admin/bookings/no-validation) без валидации
+// Создание новой записи (POST /admin/bookings/no-validation) без валидации
 app.post('/admin/bookings/no-validation', async (req, res) => {
     try {
         const newBooking = new BookedSlot(req.body);
@@ -217,6 +217,7 @@ app.delete('/admin/bookings/:id', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
 
 
 
